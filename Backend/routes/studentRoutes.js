@@ -15,7 +15,14 @@ import {
   createNote,
   updateNote,
   deleteNote,
-  searchAll
+  searchAll,
+  getStudentQuizzes,
+  getQuizQuestions,
+  submitQuizAttempt,
+  getStudentBookmarks,
+  toggleBookmark,
+  getStudentProgressStats,
+  getStudentNotifications
 } from '../controllers/studentControllers.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -44,5 +51,15 @@ router.put('/notes/:noteId', updateNote);
 router.delete('/notes/:noteId', deleteNote);
 router.get('/search', searchAll);
 
+// V2 Learning System Routes
+router.get('/quizzes', getStudentQuizzes);
+router.get('/quizzes/:quizId', getQuizQuestions);
+router.post('/quizzes/submit', submitQuizAttempt);
+router.get('/bookmarks', getStudentBookmarks);
+router.post('/bookmarks/toggle', toggleBookmark);
+router.get('/progress', getStudentProgressStats);
+router.get('/notifications', getStudentNotifications);
+
 export default router;
+
 

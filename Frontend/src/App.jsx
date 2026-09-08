@@ -23,6 +23,10 @@ import ContactAdmin from './pages/Student/ContactAdmin';
 import Courses from './pages/Student/Courses';
 import PersonalNotes from './pages/Student/PersonalNotes';
 import GlobalSearch from './pages/Student/GlobalSearch';
+import Quizzes from './pages/Student/Quizzes';
+import Bookmarks from './pages/Student/Bookmarks';
+import ProgressTracking from './pages/Student/ProgressTracking';
+import NotificationsFeed from './pages/Student/NotificationsFeed';
 
 // Teacher Pages
 import TeacherDashboard from './pages/Teacher/TeacherDashboard';
@@ -61,6 +65,10 @@ function App() {
                 <Routes>
                   <Route path="/" element={<StudentDashboard />} />
                   <Route path="/courses" element={<Courses />} />
+                  <Route path="/quizzes" element={<Quizzes />} />
+                  <Route path="/progress" element={<ProgressTracking />} />
+                  <Route path="/bookmarks" element={<Bookmarks />} />
+                  <Route path="/notifications-feed" element={<NotificationsFeed />} />
                   <Route path="/notes" element={<PersonalNotes />} />
                   <Route path="/search" element={<GlobalSearch />} />
                   <Route path="/assignments" element={<ViewAssignments />} />

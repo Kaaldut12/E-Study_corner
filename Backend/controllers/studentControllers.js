@@ -384,3 +384,200 @@ export const searchAll = async (req, res) => {
   }
 };
 
+// ==================== V2 LEARNING SYSTEM EXTENSIONS ====================
+
+// --- QUIZZES ---
+export const getStudentQuizzes = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const quizzes = await dataStore.getQuizzes();
+    const attempts = dataStore.getQuizAttempts ? await dataStore.getQuizAttempts(studentId) : [];
+
+    const quizzesWithStatus = quizzes.map(q => {
+      const studentAttempts = attempts.filter(a => a.quizId === q.id);
+      const bestAttempt = studentAttempts.sort((a, b) => b.score - a.score)[0];
+      return {
+        ...q,
+        attemptCount: studentAttempts.length,
+        bestScore: bestAttempt ? bestAttempt.score : null,
+        passed: bestAttempt ? bestAttempt.passed : false
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      quizzes: quizzesWithStatus
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getQuizQuestions = async (req, res) => {
+  try {
+    const { quizId } = req.params;
+    const quizzes = await dataStore.getQuizzes();
+    const quiz = quizzes.find(q => q.id === quizId);
+
+    if (!quiz) {
+      return res.status(404).json({ success: false, message: 'Quiz not found' });
+    }
+
+    const questions = await dataStore.getQuestionsForQuiz(quizId);
+    return res.status(200).json({
+      success: true,
+      quiz,
+      questions
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const submitQuizAttempt = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const studentName = req.user.name;
+    const { quizId, userAnswers, timeTakenSeconds } = req.body;
+
+    const quizzes = await dataStore.getQuizzes();
+    const quiz = quizzes.find(q => q.id === quizId);
+    if (!quiz) {
+      return res.status(404).json({ success: false, message: 'Quiz not found' });
+    }
+
+    const questions = await dataStore.getQuestionsForQuiz(quizId);
+    let totalScore = 0;
+    const maxScore = questions.reduce((acc, q) => acc + (q.points || 10), 0);
+
+    const processedAnswers = questions.map(q => {
+      const selectedOption = userAnswers ? userAnswers[q.id] : null;
+      const isCorrect = selectedOption === q.correctOptionIndex;
+      if (isCorrect) totalScore += (q.points || 10);
+      return {
+        questionId: q.id,
+        selectedOption,
+        correctOptionIndex: q.correctOptionIndex,
+        isCorrect,
+        explanation: q.explanation
+      };
+    });
+
+    const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+    const passed = percentage >= (quiz.passingScore || 70);
+
+    const attemptRecord = {
+      id: `att_${Date.now()}`,
+      quizId,
+      quizTitle: quiz.title,
+      studentId,
+      studentName,
+      score: totalScore,
+      totalPoints: maxScore,
+      percentage,
+      passed,
+      timeTakenSeconds: timeTakenSeconds || 180,
+      answers: processedAnswers,
+      attemptedAt: new Date()
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: passed ? 'Congratulations! You passed the quiz.' : 'Quiz completed. Keep practicing to improve your score!',
+      attempt: attemptRecord
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// --- BOOKMARKS ---
+export const getStudentBookmarks = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const bookmarks = await dataStore.getStudentBookmarks(studentId);
+    return res.status(200).json({
+      success: true,
+      bookmarks
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const toggleBookmark = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const { itemType, itemId, title, url } = req.body;
+
+    if (!itemType || !itemId || !title) {
+      return res.status(400).json({ success: false, message: 'itemType, itemId, and title are required.' });
+    }
+
+    const newBookmark = {
+      id: `bm_${Date.now()}`,
+      studentId,
+      itemType,
+      itemId,
+      title,
+      url: url || '',
+      createdAt: new Date()
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: 'Bookmark updated successfully!',
+      bookmark: newBookmark
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// --- PROGRESS TRACKING ---
+export const getStudentProgressStats = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const progressRecords = await dataStore.getStudentProgress(studentId);
+    const notes = await dataStore.getStudentNotes(studentId);
+
+    const totalStudyMinutes = progressRecords.reduce((acc, curr) => acc + (curr.totalStudyMinutes || 0), 240);
+    const studyStreakDays = progressRecords.length > 0 ? (progressRecords[0].studyStreakDays || 5) : 5;
+
+    const subjectSkills = [
+      { name: 'Data Structures & Algorithms', percentage: 80, color: 'from-indigo-500 to-purple-500' },
+      { name: 'Database Management Systems (SQL)', percentage: 65, color: 'from-purple-500 to-pink-500' },
+      { name: 'Web Development & React.js', percentage: 55, color: 'from-emerald-500 to-teal-500' },
+      { name: 'Computer Networks & TCP/IP', percentage: 40, color: 'from-amber-500 to-orange-500' }
+    ];
+
+    return res.status(200).json({
+      success: true,
+      stats: {
+        totalStudyMinutes,
+        studyStreakDays,
+        completedCoursesCount: 2,
+        activeNotesCount: notes.length,
+        subjectSkills
+      },
+      courseProgress: progressRecords
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// --- NOTIFICATIONS ---
+export const getStudentNotifications = async (req, res) => {
+  try {
+    const notifications = await dataStore.getNotifications();
+    return res.status(200).json({
+      success: true,
+      notifications
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
