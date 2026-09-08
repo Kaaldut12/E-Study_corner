@@ -154,7 +154,7 @@ const SidebarLayout = ({ children }) => {
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs transition-all duration-200 ${
                         isActive
-                          ? 'bg-linear-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/25 font-semibold'
+                          ? 'gradient-bg-primary text-white shadow-md shadow-indigo-600/25 font-semibold'
                           : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
                       }`
                     }

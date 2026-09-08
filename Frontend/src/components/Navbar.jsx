@@ -1,8 +1,33 @@
-// frontend/src/components/Navbar.jsx
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
+  const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem('estudy_theme') || 'indigo');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('estudy_theme');
+    if (saved && saved !== 'indigo') {
+      document.documentElement.setAttribute('data-theme', saved);
+    }
+  }, []);
+
+  const changeTheme = (themeName) => {
+    setCurrentTheme(themeName);
+    localStorage.setItem('estudy_theme', themeName);
+    if (themeName === 'indigo') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', themeName);
+    }
+  };
+
+  const themes = [
+    { id: 'indigo', label: 'Indigo', color: 'bg-indigo-500' },
+    { id: 'emerald', label: 'Emerald', color: 'bg-emerald-500' },
+    { id: 'amber', label: 'Amber', color: 'bg-amber-500' },
+    { id: 'rose', label: 'Rose', color: 'bg-rose-500' }
+  ];
 
   const getRoleBadgeColor = (role) => {
     switch (role) {
@@ -27,7 +52,7 @@ const Navbar = ({ toggleSidebar }) => {
         </button>
 
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-linear-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
+          <div className="w-8 h-8 rounded-lg gradient-bg-primary flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">
             E
           </div>
           <span className="font-extrabold text-lg tracking-tight bg-linear-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent hidden sm:inline-block">
@@ -36,10 +61,25 @@ const Navbar = ({ toggleSidebar }) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
+        {/* Custom Theme Palette Switcher */}
+        <div className="flex items-center gap-1.5 p-1 bg-slate-950/80 rounded-xl border border-slate-800" title="Custom Theme Palette">
+          {themes.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => changeTheme(t.id)}
+              className={`w-5 h-5 rounded-lg transition-all ${t.color} ${
+                currentTheme === t.id ? 'ring-2 ring-white scale-110 shadow-md' : 'opacity-60 hover:opacity-100'
+              }`}
+              title={`Switch to ${t.label} Theme`}
+              aria-label={`${t.label} Theme`}
+            />
+          ))}
+        </div>
+
         {user && (
           <>
-            <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${getRoleBadgeColor(user.role)} capitalize`}>
+            <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border ${getRoleBadgeColor(user.role)} capitalize hidden sm:inline-block`}>
               {user.role} Portal
             </span>
 
