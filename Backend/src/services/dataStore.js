@@ -427,6 +427,20 @@ export const dataStore = {
     if (isDBConnected()) return await Course.find().lean();
     return courses;
   },
+  createCourse: async (courseData) => {
+    const payload = {
+      id: `course_${Date.now()}`,
+      createdAt: new Date(),
+      status: 'active',
+      ...courseData
+    };
+    if (isDBConnected()) {
+      const doc = await Course.create(payload);
+      return doc.toObject();
+    }
+    courses.unshift(payload);
+    return payload;
+  },
 
   // --- LESSONS ---
   getLessonsForCourse: async (courseId) => {

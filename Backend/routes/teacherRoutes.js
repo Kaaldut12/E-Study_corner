@@ -6,7 +6,9 @@ import {
   createAssignment,
   deleteAssignment,
   getSubmissionsForAssignment,
-  gradeSubmission
+  gradeSubmission,
+  getTeacherCourses,
+  createTeacherCourse
 } from '../controllers/teacherController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -22,4 +24,9 @@ router.delete('/assignments/:id', deleteAssignment);
 router.get('/submissions/:assignmentId', getSubmissionsForAssignment);
 router.post('/grade-submission', gradeSubmission);
 
+// V4 Course Creator Routes
+router.get('/courses', getTeacherCourses);
+router.post('/create-course', createTeacherCourse);
+
 export default router;
+

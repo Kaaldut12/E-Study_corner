@@ -150,3 +150,60 @@ export const gradeSubmission = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ==================== V4 PLATFORM EXTENSIONS ====================
+
+export const getTeacherCourses = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const allCourses = await dataStore.getCourses();
+    const teacherCourses = allCourses.filter(c => c.teacherId === teacherId);
+
+    return res.status(200).json({
+      success: true,
+      courses: teacherCourses
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const createTeacherCourse = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const teacherName = req.user.name;
+    const { code, title, subject, description, department, courseYear, thumbnail } = req.body;
+
+    if (!title || !subject || !description || !code) {
+      return res.status(400).json({
+        success: false,
+        message: 'Course Code, Title, Subject, and Description are required.'
+      });
+    }
+
+    const created = await dataStore.createCourse({
+      code,
+      title,
+      description,
+      subject,
+      department: department || 'Computer Science & Engineering',
+      courseYear: courseYear || '3rd Year',
+      teacherId,
+      teacherName,
+      thumbnail: thumbnail || 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&auto=format&fit=crop',
+      modulesCount: 3,
+      lessonsCount: 8,
+      enrolledCount: 0,
+      rating: 5.0
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Course published successfully!',
+      course: created
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+

@@ -16,7 +16,8 @@ import {
   deleteEnquiry,
   uploadStudyMaterial,
   deleteStudyMaterial,
-  sendEmailBroadcast
+  sendEmailBroadcast,
+  getAdminAnalytics
 } from '../controllers/adminController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -26,6 +27,7 @@ router.use(verifyToken);
 router.use(requireRole(['admin']));
 
 router.get('/dashboard', getAdminDashboard);
+router.get('/analytics', getAdminAnalytics);
 router.get('/users', getAllUsers);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);
@@ -51,3 +53,4 @@ router.delete('/study-material/:id', deleteStudyMaterial);
 router.post('/send-email', sendEmailBroadcast);
 
 export default router;
+

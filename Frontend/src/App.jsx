@@ -35,6 +35,8 @@ import WeakTopicDetector from './pages/Student/WeakTopicDetector';
 import TeacherDashboard from './pages/Teacher/TeacherDashboard';
 import CreateAssignment from './pages/Teacher/CreateAssignment';
 import ViewSubmissions from './pages/Teacher/ViewSubmissions';
+import ManageCourses from './pages/Teacher/ManageCourses';
+import CreateCourse from './pages/Teacher/CreateCourse';
 
 // Admin Pages
 import AdminDashboard from './pages/Admin/AdminDashboard';
@@ -45,6 +47,7 @@ import UploadStudyMaterial from './pages/Admin/UploadStudyMaterial';
 import ViewFeedback from './pages/Admin/ViewFeedback';
 import ViewMessages from './pages/Admin/ViewMessages';
 import SendEmail from './pages/Admin/SendEmail';
+import PlatformAnalytics from './pages/Admin/PlatformAnalytics';
 
 // Common Pages
 import NotFound from './pages/NotFound';
@@ -97,6 +100,8 @@ function App() {
               <ProtectedRoute requiredRole="teacher">
                 <Routes>
                   <Route path="/" element={<TeacherDashboard />} />
+                  <Route path="/courses" element={<ManageCourses />} />
+                  <Route path="/create-course" element={<CreateCourse />} />
                   <Route path="/create-assignment" element={<CreateAssignment />} />
                   <Route path="/submissions/:assignmentId" element={<ViewSubmissions />} />
                   <Route path="*" element={<NotFound />} />
@@ -112,6 +117,7 @@ function App() {
               <ProtectedRoute requiredRole="admin">
                 <Routes>
                   <Route path="/" element={<AdminDashboard />} />
+                  <Route path="/analytics" element={<PlatformAnalytics />} />
                   <Route path="/users" element={<UserManagement />} />
                   <Route path="/notifications" element={<NotificationManagement />} />
                   <Route path="/enquiries" element={<EnquiryManagement />} />
