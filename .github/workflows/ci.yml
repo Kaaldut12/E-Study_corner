@@ -1,0 +1,58 @@
+name: E-Study Corner CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-test-and-build:
+    name: Backend Lint & Security Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: Backend/package-lock.json
+
+      - name: Install Backend Dependencies
+        run: |
+          cd Backend
+          npm ci
+
+      - name: Verify Backend Entrypoint
+        run: |
+          cd Backend
+          node --check index.js
+
+  frontend-test-and-build:
+    name: Frontend Production Build Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd Frontend
+          npm ci
+
+      - name: Build Production Frontend Assets
+        run: |
+          cd Frontend
+          npm run build

@@ -8,7 +8,8 @@ import {
   getSubmissionsForAssignment,
   gradeSubmission,
   getTeacherCourses,
-  createTeacherCourse
+  createTeacherCourse,
+  getTeacherStudents
 } from '../controllers/teacherController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -18,6 +19,7 @@ router.use(verifyToken);
 router.use(requireRole(['teacher']));
 
 router.get('/dashboard', getTeacherDashboard);
+router.get('/students', getTeacherStudents);
 router.get('/assignments', getTeacherAssignments);
 router.post('/assignments', createAssignment);
 router.delete('/assignments/:id', deleteAssignment);

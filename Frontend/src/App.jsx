@@ -37,6 +37,8 @@ import CreateAssignment from './pages/Teacher/CreateAssignment';
 import ViewSubmissions from './pages/Teacher/ViewSubmissions';
 import ManageCourses from './pages/Teacher/ManageCourses';
 import CreateCourse from './pages/Teacher/CreateCourse';
+import ManageStudents from './pages/Teacher/ManageStudents';
+import ManageAssignments from './pages/Teacher/ManageAssignments';
 
 // Admin Pages
 import AdminDashboard from './pages/Admin/AdminDashboard';
@@ -48,13 +50,16 @@ import ViewFeedback from './pages/Admin/ViewFeedback';
 import ViewMessages from './pages/Admin/ViewMessages';
 import SendEmail from './pages/Admin/SendEmail';
 import PlatformAnalytics from './pages/Admin/PlatformAnalytics';
+import SystemHealth from './pages/Admin/SystemHealth';
 
-// Common Pages
+// Common Components & Pages
+import ErrorBoundary from './components/common/ErrorBoundary';
 import NotFound from './pages/NotFound';
 
 function App() {
   return (
-    <Router>
+    <ErrorBoundary>
+      <Router>
       <AuthProvider>
         <Routes>
           {/* Public Routes */}
@@ -100,8 +105,10 @@ function App() {
               <ProtectedRoute requiredRole="teacher">
                 <Routes>
                   <Route path="/" element={<TeacherDashboard />} />
+                  <Route path="/students" element={<ManageStudents />} />
                   <Route path="/courses" element={<ManageCourses />} />
                   <Route path="/create-course" element={<CreateCourse />} />
+                  <Route path="/assignments" element={<ManageAssignments />} />
                   <Route path="/create-assignment" element={<CreateAssignment />} />
                   <Route path="/submissions/:assignmentId" element={<ViewSubmissions />} />
                   <Route path="*" element={<NotFound />} />
@@ -118,6 +125,7 @@ function App() {
                 <Routes>
                   <Route path="/" element={<AdminDashboard />} />
                   <Route path="/analytics" element={<PlatformAnalytics />} />
+                  <Route path="/health" element={<SystemHealth />} />
                   <Route path="/users" element={<UserManagement />} />
                   <Route path="/notifications" element={<NotificationManagement />} />
                   <Route path="/enquiries" element={<EnquiryManagement />} />
@@ -136,6 +144,7 @@ function App() {
         </Routes>
       </AuthProvider>
     </Router>
+    </ErrorBoundary>
   );
 }
 

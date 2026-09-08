@@ -126,15 +126,28 @@ const UserManagement = () => {
             <p className="text-sm text-slate-400">Create, edit roles, and manage permissions across the platform</p>
           </div>
 
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="py-2.5 px-4 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition flex items-center justify-center gap-2 self-start sm:self-auto"
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-            </svg>
-            <span>Add New User</span>
-          </button>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <button
+              onClick={() => {
+                setRole('teacher');
+                setDepartment('Computer Science & Engineering');
+                setShowAddModal(true);
+              }}
+              className="py-2.5 px-4 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition flex items-center justify-center gap-2"
+            >
+              <span>👨‍🏫 + Provision Teacher Account</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setRole('student');
+                setShowAddModal(true);
+              }}
+              className="py-2.5 px-4 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-200 text-xs font-semibold rounded-xl transition flex items-center justify-center gap-2"
+            >
+              <span>+ Add User</span>
+            </button>
+          </div>
         </div>
 
         {toastMsg && (
@@ -236,70 +249,124 @@ const UserManagement = () => {
           <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="glass-panel max-w-md w-full p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="text-lg font-bold text-white">Add New Platform User</h3>
+                <div>
+                  <h3 className="text-lg font-bold text-white">
+                    {role === 'teacher' ? '👨‍🏫 Provision New Teacher Account' : 'Add New Platform User'}
+                  </h3>
+                  <p className="text-[11px] text-slate-400">
+                    {role === 'teacher'
+                      ? 'Issue official faculty credentials & department assignment'
+                      : 'Create new user account for student or administrator'}
+                  </p>
+                </div>
                 <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white p-1">
                   ✕
                 </button>
               </div>
 
+              {/* Role Toggle Selector */}
+              <div className="grid grid-cols-3 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setRole('teacher')}
+                  className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                    role === 'teacher'
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <span>👨‍🏫 Teacher</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('student')}
+                  className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                    role === 'student'
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <span>🎓 Student</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRole('admin')}
+                  className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                    role === 'admin'
+                      ? 'bg-amber-600 text-white shadow-md'
+                      : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  <span>⚙️ Admin</span>
+                </button>
+              </div>
+
               <form onSubmit={handleAddUser} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    {role === 'teacher' ? 'Faculty Full Name' : 'Full Name'}
+                  </label>
                   <input
                     type="text"
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g. Sarah Williams"
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
+                    placeholder={role === 'teacher' ? 'e.g. Er. Durgesh Nandani' : 'e.g. Sarah Williams'}
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    {role === 'teacher' ? 'Faculty Email Address' : 'Email Address'}
+                  </label>
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="sarah@estudy.com"
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
+                    placeholder={role === 'teacher' ? 'teacher@estudy.com' : 'sarah@estudy.com'}
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Account Password</label>
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
+                    placeholder="••••••••"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Role</label>
-                  <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
-                  >
-                    <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="admin">Administrator</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Department / Grade Level</label>
-                  <input
-                    type="text"
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    placeholder="e.g. Grade 11 or Computer Science"
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
-                  />
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    {role === 'teacher' ? 'Academic Department / Specialization' : 'Department / Grade Level'}
+                  </label>
+                  {role === 'teacher' ? (
+                    <select
+                      value={department}
+                      onChange={(e) => setDepartment(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                      <option value="Information Technology">Information Technology</option>
+                      <option value="Electronics Engineering">Electronics Engineering</option>
+                      <option value="Electrical Engineering">Electrical Engineering</option>
+                      <option value="Mechanical Engineering">Mechanical Engineering</option>
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={department}
+                      onChange={(e) => setDepartment(e.target.value)}
+                      placeholder="e.g. 3rd Year CS or Operations"
+                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                    />
+                  )}
                 </div>
 
                 <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
@@ -313,9 +380,13 @@ const UserManagement = () => {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="py-2 px-5 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
+                    className={`py-2 px-5 text-white text-xs font-bold rounded-xl shadow-lg transition disabled:opacity-50 ${
+                      role === 'teacher'
+                        ? 'bg-linear-to-r from-purple-600 to-indigo-600 shadow-purple-600/30 hover:opacity-95'
+                        : 'gradient-bg-primary shadow-indigo-600/30 hover:opacity-95'
+                    }`}
                   >
-                    {submitting ? 'Creating...' : 'Create Account'}
+                    {submitting ? 'Creating Account...' : role === 'teacher' ? 'Provision Teacher' : 'Create User Account'}
                   </button>
                 </div>
               </form>

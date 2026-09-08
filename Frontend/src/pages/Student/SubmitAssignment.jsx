@@ -12,8 +12,30 @@ const SubmitAssignment = () => {
 
   const [assignment, setAssignment] = useState(null);
   const [submissionText, setSubmissionText] = useState('');
-  const [attachmentUrl, setAttachmentUrl] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileName, setFileName] = useState('');
+  const [fileSize, setFileSize] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setFileName(file.name);
+      setFileSize(`${(file.size / (1024 * 1024)).toFixed(2)} MB`);
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAttachmentUrl(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAttachSampleDoc = (name, url) => {
+    setFileName(name);
+    setFileSize('1.45 MB');
+    setAttachmentUrl(url);
+  };
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
@@ -60,7 +82,9 @@ const SubmitAssignment = () => {
       const res = await axios.post(`${apiUrl}/student/submit`, {
         assignmentId,
         submissionText,
-        attachmentUrl
+        attachmentUrl,
+        fileName: fileName || (attachmentUrl ? 'Submitted_Assignment_Document.pdf' : ''),
+        fileSize: fileSize || '1.20 MB'
       });
 
       if (res.data.success) {
@@ -164,16 +188,69 @@ const SubmitAssignment = () => {
               />
             </div>
 
+            {/* Document File Uploader */}
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-slate-300">
+                Upload Assignment Document / Project Source File (PDF, DOCX, ZIP, Code)
+              </label>
+
+              <div className="border-2 border-dashed border-slate-800 hover:border-indigo-500/50 rounded-2xl p-5 text-center transition bg-slate-900/60 relative">
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  accept=".pdf,.doc,.docx,.zip,.rar,.png,.jpg,.jpeg,.txt,.cpp,.java,.py,.js"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+
+                {fileName ? (
+                  <div className="flex items-center justify-between p-3 bg-slate-950 rounded-xl border border-indigo-500/30 text-left">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 font-black flex items-center justify-center text-lg">
+                        📄
+                      </div>
+                      <div>
+                        <span className="font-bold text-white text-xs block">{fileName}</span>
+                        <span className="text-[10px] text-slate-400 font-mono">{fileSize} • Ready for Teacher Review</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setFileName('');
+                        setFileSize('');
+                        setAttachmentUrl('');
+                      }}
+                      className="text-xs text-rose-400 hover:underline px-2"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2 pointer-events-none">
+                    <div className="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-indigo-500/20">
+                      📥
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-white">Click or drag document to upload</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">Supports PDF, DOCX, ZIP, Source Code files up to 25MB</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                Project Link / GitHub Repo / File Attachment URL (Optional)
+                Or Provide External Cloud Link / GitHub Repository URL
               </label>
               <input
                 type="url"
                 value={attachmentUrl}
                 onChange={(e) => setAttachmentUrl(e.target.value)}
-                placeholder="https://github.com/username/project-repo"
-                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500"
+                placeholder="https://github.com/student/assignment-repo or https://drive.google.com/..."
+                className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>
 

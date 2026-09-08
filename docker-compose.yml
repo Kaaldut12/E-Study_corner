@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:6-jammy
+    container_name: estudy_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: e-study-corder
+    volumes:
+      - mongo_data:/data/db
+
+  # Backend Express API Service
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: estudy_backend
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/e-study-corder
+      - JWT_SECRET=production_secret_key_estudy_2026
+      - FRONTEND_URL=http://localhost:80
+    depends_on:
+      - mongodb
+
+  # Frontend Nginx / Vite Web Application
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: estudy_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

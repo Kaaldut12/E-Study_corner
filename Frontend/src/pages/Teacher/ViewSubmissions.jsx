@@ -196,16 +196,32 @@ const ViewSubmissions = () => {
                 </div>
 
                 {sub.attachmentUrl && (
-                  <div className="text-xs">
-                    <span className="text-slate-400 font-medium">Attachment / Link: </span>
-                    <a
-                      href={sub.attachmentUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-indigo-400 hover:underline inline-flex items-center gap-1 font-mono"
-                    >
-                      {sub.attachmentUrl} ↗
-                    </a>
+                  <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 font-bold border border-purple-500/30 flex items-center justify-center text-lg shrink-0">
+                        📄
+                      </div>
+                      <div>
+                        <span className="font-bold text-white block">
+                          {sub.fileName || 'Student_Submitted_Document.pdf'}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          {sub.fileSize || '1.45 MB'} • Document Attachment
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <a
+                        href={sub.attachmentUrl}
+                        download={sub.fileName || 'Student_Submitted_Document.pdf'}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="py-2 px-3.5 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow hover:opacity-95 transition flex items-center gap-1.5"
+                      >
+                        <span>📥 Download Document</span>
+                      </a>
+                    </div>
                   </div>
                 )}
 

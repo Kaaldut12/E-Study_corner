@@ -207,3 +207,34 @@ export const createTeacherCourse = async (req, res) => {
   }
 };
 
+export const getTeacherStudents = async (req, res) => {
+  try {
+    const allUsers = await dataStore.getUsers();
+    const students = allUsers.filter(u => u.role === 'student');
+
+    const allSubmissions = await dataStore.getSubmissions();
+
+    const studentsWithStats = students.map(s => {
+      const studentSubs = allSubmissions.filter(sub => sub.studentId === s.id);
+      const gradedSubs = studentSubs.filter(sub => sub.status === 'graded');
+      const avgGrade = gradedSubs.length > 0
+        ? Math.round(gradedSubs.reduce((acc, sub) => acc + (Number(sub.grade) || 0), 0) / gradedSubs.length)
+        : 'N/A';
+
+      const { password, ...studentData } = s;
+      return {
+        ...studentData,
+        submissionsCount: studentSubs.length,
+        avgGrade: avgGrade !== 'N/A' ? `${avgGrade}%` : 'No Grades'
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      students: studentsWithStats
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+

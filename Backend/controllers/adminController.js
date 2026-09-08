@@ -58,7 +58,7 @@ export const getAllUsers = async (req, res) => {
 
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role, gradeLevel, department, collegeName, course } = req.body;
+    const { name, email, password, role, gradeLevel, department, collegeName, course, subject } = req.body;
     if (!name || !email || !password || !role) {
       return res.status(400).json({ success: false, message: 'Name, email, password, and role are required.' });
     }
@@ -73,8 +73,9 @@ export const createUser = async (req, res) => {
       email,
       password,
       role,
+      department: department || (role === 'teacher' ? 'Computer Science & Engineering' : 'General'),
+      subject: subject || (role === 'teacher' ? 'Computer Science' : ''),
       gradeLevel: gradeLevel || '3rd Year',
-      department: department || 'Computer Science & Engineering',
       collegeName: collegeName || 'Government Polytechnic Aurai, Bhadohi',
       course: course || 'Diploma in Computer Science & Engineering'
     });
@@ -82,7 +83,7 @@ export const createUser = async (req, res) => {
     const { password: _, ...userNoPass } = newUser;
     return res.status(201).json({
       success: true,
-      message: 'User created successfully',
+      message: `${role.charAt(0).toUpperCase() + role.slice(1)} account created successfully!`,
       user: userNoPass
     });
   } catch (error) {

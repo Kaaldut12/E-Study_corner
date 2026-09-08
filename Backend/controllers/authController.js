@@ -60,13 +60,16 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role, gradeLevel, department, collegeName, course, courseYear, gender, mobileNo, dob, addressP } = req.body;
-    if (!name || !email || !password || !role) {
+    const { name, email, password, gradeLevel, department, collegeName, course, courseYear, gender, mobileNo, dob, addressP } = req.body;
+    if (!name || !email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Name, email, password, and role are required.'
+        message: 'Name, email, and password are required.'
       });
     }
+
+    // Public self-registration is strictly restricted to Student accounts only
+    const role = 'student';
 
     const existingUser = await dataStore.getUserByEmail(email);
     if (existingUser) {

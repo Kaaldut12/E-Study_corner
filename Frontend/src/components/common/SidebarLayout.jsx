@@ -1,25 +1,22 @@
 // frontend/src/components/common/SidebarLayout.jsx
-import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../Navbar';
 
 const SidebarLayout = ({ children }) => {
   const { user } = useAuth();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
 
   const role = user?.role || 'student';
 
   const navSectionsByRole = {
     student: [
-      {
-        sectionTitle: 'AI Coach & Smart Learning',
-        items: [
-          { path: '/student/ai-coach', label: 'AI Study Coach', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
-          { path: '/student/ai-recommendations', label: 'AI Recommendations', icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' },
-          { path: '/student/weak-topics', label: 'Weak Topic Detector', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }
-        ]
-      },
       {
         sectionTitle: 'Learning System',
         items: [
@@ -36,6 +33,14 @@ const SidebarLayout = ({ children }) => {
           { path: '/student/study-material', label: 'Down Study Material', icon: 'M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
           { path: '/student/bookmarks', label: 'Saved Bookmarks', icon: 'M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z' },
           { path: '/student/search', label: 'Global Search Omnibar', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' }
+        ]
+      },
+      {
+        sectionTitle: 'AI Coach & Smart Learning',
+        items: [
+          { path: '/student/ai-coach', label: 'AI Study Coach', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+          { path: '/student/ai-recommendations', label: 'AI Recommendations', icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' },
+          { path: '/student/weak-topics', label: 'Weak Topic Detector', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }
         ]
       },
       {
@@ -59,15 +64,17 @@ const SidebarLayout = ({ children }) => {
       {
         sectionTitle: 'Overview',
         items: [
-          { path: '/teacher', label: 'Teacher Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' }
+          { path: '/teacher', label: 'Teacher Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
+          { path: '/teacher/students', label: 'Class Students Roster', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' }
         ]
       },
       {
         sectionTitle: 'Course Creator & Assignments',
         items: [
+          { path: '/teacher/assignments', label: 'Check & Manage Assignments', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' },
+          { path: '/teacher/create-assignment', label: 'Create New Assignment', icon: 'M12 4v16m8-8H4' },
           { path: '/teacher/courses', label: 'Manage Courses', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' },
-          { path: '/teacher/create-course', label: 'Create New Course', icon: 'M12 4v16m8-8H4' },
-          { path: '/teacher/create-assignment', label: 'Create Assignment', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' }
+          { path: '/teacher/create-course', label: 'Create New Course', icon: 'M12 4v16m8-8H4' }
         ]
       }
     ],
@@ -77,6 +84,7 @@ const SidebarLayout = ({ children }) => {
         items: [
           { path: '/admin', label: 'Admin Overview', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
           { path: '/admin/analytics', label: 'Platform Analytics', icon: 'M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z' },
+          { path: '/admin/health', label: 'System Health & Security', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
           { path: '/admin/users', label: 'Student Management', icon: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z' }
         ]
       },
@@ -114,9 +122,9 @@ const SidebarLayout = ({ children }) => {
           />
         )}
 
-        {/* Sidebar Navigation */}
+        {/* Sidebar Navigation - Fixed/Sticky with independent scrolling */}
         <aside
-          className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 transform transition-transform duration-200 ease-in-out flex flex-col pt-16 lg:pt-0 ${
+          className={`fixed lg:sticky top-0 lg:top-16 left-0 z-40 w-64 h-screen lg:h-[calc(100vh-4rem)] bg-slate-900 border-r border-slate-800 transform transition-transform duration-200 ease-in-out flex flex-col pt-16 lg:pt-0 shrink-0 ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
         >
@@ -139,7 +147,10 @@ const SidebarLayout = ({ children }) => {
                     key={item.path}
                     to={item.path}
                     end={item.path === `/student` || item.path === `/teacher` || item.path === `/admin`}
-                    onClick={() => setSidebarOpen(false)}
+                    onClick={() => {
+                      setSidebarOpen(false);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3.5 py-2 rounded-xl font-medium text-xs transition-all duration-200 ${
                         isActive

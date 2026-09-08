@@ -72,10 +72,19 @@ const Register = () => {
           <div className="w-12 h-12 bg-linear-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2 font-black text-white text-xl">
             E
           </div>
-          <h1 className="text-2xl font-bold text-white">New Student Registration</h1>
+          <h1 className="text-2xl font-bold text-white">Student Registration Portal</h1>
           <p className="text-xs text-slate-400 mt-1">
-            Government Polytechnic Aurai, Bhadohi · BTEUP Student Portal
+            Government Polytechnic Aurai, Bhadohi · BTEUP Student Registration
           </p>
+        </div>
+
+        {/* Role Restriction Alert Banner */}
+        <div className="mb-6 p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs flex items-start gap-2.5">
+          <span className="text-base">🎓</span>
+          <div>
+            <strong className="font-bold text-white block">Student Direct Registration</strong>
+            <span>Public registration is reserved exclusively for Polytechnic Students. Faculty and Teacher accounts are created directly by Institutional Administrators.</span>
+          </div>
         </div>
 
         {successMsg && (

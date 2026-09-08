@@ -9,7 +9,11 @@ import studentRoutes from './routes/studentRoutes.js';
 import teacherRoutes from './routes/teacherRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
+import systemRoutes from './routes/systemRoutes.js';
 import { connectDB } from './src/config/db.js';
+
+// V5 Production Security Middleware
+import { securityHeaders, apiRateLimiter, sanitizeInput } from './src/middleware/security.js';
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +25,11 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ==================== Middleware ====================
+
+// Security headers & sliding-window rate limiting
+app.use(securityHeaders);
+app.use(apiRateLimiter);
+app.use(sanitizeInput);
 
 // CORS configuration - allow frontend to communicate with backend
 app.use(cors({
@@ -53,6 +62,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/system', systemRoutes);
 
 // ==================== Error Handling ====================
 
