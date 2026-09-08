@@ -27,6 +27,9 @@ import Quizzes from './pages/Student/Quizzes';
 import Bookmarks from './pages/Student/Bookmarks';
 import ProgressTracking from './pages/Student/ProgressTracking';
 import NotificationsFeed from './pages/Student/NotificationsFeed';
+import AICoach from './pages/Student/AICoach';
+import AIRecommendations from './pages/Student/AIRecommendations';
+import WeakTopicDetector from './pages/Student/WeakTopicDetector';
 
 // Teacher Pages
 import TeacherDashboard from './pages/Teacher/TeacherDashboard';
@@ -64,6 +67,9 @@ function App() {
               <ProtectedRoute requiredRole="student">
                 <Routes>
                   <Route path="/" element={<StudentDashboard />} />
+                  <Route path="/ai-coach" element={<AICoach />} />
+                  <Route path="/ai-recommendations" element={<AIRecommendations />} />
+                  <Route path="/weak-topics" element={<WeakTopicDetector />} />
                   <Route path="/courses" element={<Courses />} />
                   <Route path="/quizzes" element={<Quizzes />} />
                   <Route path="/progress" element={<ProgressTracking />} />

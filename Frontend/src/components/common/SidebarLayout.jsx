@@ -13,6 +13,14 @@ const SidebarLayout = ({ children }) => {
   const navSectionsByRole = {
     student: [
       {
+        sectionTitle: 'AI Coach & Smart Learning',
+        items: [
+          { path: '/student/ai-coach', label: 'AI Study Coach', icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' },
+          { path: '/student/ai-recommendations', label: 'AI Recommendations', icon: 'M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z' },
+          { path: '/student/weak-topics', label: 'Weak Topic Detector', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }
+        ]
+      },
+      {
         sectionTitle: 'Learning System',
         items: [
           { path: '/student', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },

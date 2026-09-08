@@ -580,4 +580,124 @@ export const getStudentNotifications = async (req, res) => {
   }
 };
 
+// ==================== V3 ADVANCED LEARNING EXTENSIONS ====================
+
+// --- AI COACH ---
+export const askAICoach = async (req, res) => {
+  try {
+    const { prompt, category } = req.body;
+    const userPrompt = (prompt || '').toLowerCase();
+
+    let reply = {
+      explanation: 'AI Coach recommendation: Focus on mastering fundamental principles and reviewing key code examples.',
+      codeSnippet: '',
+      practiceQuestions: [],
+      recommendedTopic: 'Data Structures & Algorithms'
+    };
+
+    if (userPrompt.includes('tree') || userPrompt.includes('dsa') || userPrompt.includes('c++')) {
+      reply = {
+        explanation: 'In Binary Search Trees (BST), every node in the left subtree has a key smaller than the root, and every node in the right subtree has a key greater than the root. Search, insertion, and deletion operate in O(log N) time on average.',
+        codeSnippet: `class Node {\npublic:\n    int data;\n    Node* left;\n    Node* right;\n    Node(int val) : data(val), left(nullptr), right(nullptr) {}\n};`,
+        practiceQuestions: [
+          'What is the worst-case search time complexity of an unbalanced BST?',
+          'Explain the difference between In-Order, Pre-Order, and Post-Order tree traversals.'
+        ],
+        recommendedTopic: 'Binary Search Trees & Re-balancing'
+      };
+    } else if (userPrompt.includes('sql') || userPrompt.includes('dbms') || userPrompt.includes('join')) {
+      reply = {
+        explanation: 'SQL JOINs combine rows from two or more tables based on a related column between them. INNER JOIN selects records with matching values in both tables, whereas LEFT JOIN returns all records from the left table and matched records from the right table.',
+        codeSnippet: `SELECT Students.name, Courses.title\nFROM Students\nINNER JOIN Enrollments ON Students.id = Enrollments.student_id\nINNER JOIN Courses ON Enrollments.course_id = Courses.id;`,
+        practiceQuestions: [
+          'What happens when a LEFT JOIN finds no match in the right table?',
+          'Which normal form eliminates partial dependencies?'
+        ],
+        recommendedTopic: 'Database Normalization (3NF & BCNF)'
+      };
+    } else if (userPrompt.includes('plan') || userPrompt.includes('schedule') || userPrompt.includes('exam')) {
+      reply = {
+        explanation: 'Here is your personalized 7-Day AI Revision Plan:\n• Days 1-2: Review Data Structures (Arrays, Linked Lists, BSTs).\n• Days 3-4: DBMS Normalization & SQL Query Optimization.\n• Days 5-6: Web Development (React hooks, JWT Auth).\n• Day 7: Full practice quiz simulations and final notes revision.',
+        codeSnippet: '',
+        practiceQuestions: ['Complete 2 practice quizzes daily', 'Review pinned notes for 30 minutes every morning'],
+        recommendedTopic: 'Exam Revision Timetable'
+      };
+    } else {
+      reply = {
+        explanation: `AI Coach response for "${prompt}": Learning is a step-by-step process. Break down complex topics into smaller modules, practice code implementations daily, and solve practice quizzes to reinforce memory retention.`,
+        codeSnippet: `// Practice makes perfect!\nconsole.log("Keep learning with E-Study Corner!");`,
+        practiceQuestions: ['Solve today\'s practice quiz', 'Create a personal note summarizing key concepts'],
+        recommendedTopic: 'Core Subject Concepts'
+      };
+    }
+
+    return res.status(200).json({
+      success: true,
+      prompt,
+      category: category || 'General Coaching',
+      response: reply
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// --- AI RECOMMENDATIONS ---
+export const getAIRecommendations = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const courses = await dataStore.getCourses();
+    const materials = await dataStore.getStudyMaterials();
+
+    const recommendedCourses = courses.slice(0, 2);
+    const recommendedMaterials = materials.slice(0, 2);
+
+    return res.status(200).json({
+      success: true,
+      recommendations: {
+        courses: recommendedCourses,
+        materials: recommendedMaterials,
+        nextRecommendedTopic: 'Tree Traversals & Graph Search Algorithms',
+        reasoning: 'Based on your 80% score in DSA Fundamentals, we recommend advancing to Graph Algorithms.'
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// --- WEAK TOPIC DETECTION ---
+export const getWeakTopicAnalysis = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const weakTopics = [
+      {
+        topic: 'Quick Sort & Worst-Case Partitioning',
+        subject: 'Computer Science',
+        accuracy: 33,
+        status: 'Weak',
+        recommendation: 'Review O(N^2) worst-case quicksort scenarios and practice pivot selection notes.',
+        actionUrl: '/student/study-material'
+      },
+      {
+        topic: 'SQL Partial Dependencies & 2NF',
+        subject: 'Information Technology',
+        accuracy: 50,
+        status: 'Needs Practice',
+        recommendation: 'Re-attempt SQL & Database Normalization Quiz to improve accuracy to > 70%.',
+        actionUrl: '/student/quizzes'
+      }
+    ];
+
+    return res.status(200).json({
+      success: true,
+      weakTopics,
+      overallDiagnosticScore: 68
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 

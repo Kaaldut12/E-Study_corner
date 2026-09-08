@@ -22,7 +22,10 @@ import {
   getStudentBookmarks,
   toggleBookmark,
   getStudentProgressStats,
-  getStudentNotifications
+  getStudentNotifications,
+  askAICoach,
+  getAIRecommendations,
+  getWeakTopicAnalysis
 } from '../controllers/studentControllers.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -60,6 +63,12 @@ router.post('/bookmarks/toggle', toggleBookmark);
 router.get('/progress', getStudentProgressStats);
 router.get('/notifications', getStudentNotifications);
 
+// V3 Advanced Learning Routes
+router.post('/ai-coach', askAICoach);
+router.get('/recommendations', getAIRecommendations);
+router.get('/weak-topics', getWeakTopicAnalysis);
+
 export default router;
+
 
 
