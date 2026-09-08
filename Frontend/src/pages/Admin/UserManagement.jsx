@@ -253,10 +253,8 @@ const UserManagement = () => {
                   <h3 className="text-lg font-bold text-white">
                     {role === 'teacher' ? '👨‍🏫 Provision New Teacher Account' : 'Add New Platform User'}
                   </h3>
-                  <p className="text-[11px] text-slate-400">
-                    {role === 'teacher'
-                      ? 'Issue official faculty credentials & department assignment'
-                      : 'Create new user account for student or administrator'}
+                  <p className="text-[11px] text-purple-400 font-semibold">
+                    🔒 Admin Privilege Required: Only System Administrators can add Teacher & Faculty accounts.
                   </p>
                 </div>
                 <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white p-1">

@@ -69,6 +69,13 @@ export const register = async (req, res) => {
     }
 
     // Public self-registration is strictly restricted to Student accounts only
+    if (req.body.role && req.body.role !== 'student') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Teacher and Administrator accounts cannot be self-registered. Only System Administrators can add Teacher accounts.'
+      });
+    }
+
     const role = 'student';
 
     const existingUser = await dataStore.getUserByEmail(email);
