@@ -18,4 +18,8 @@ const teacherQuestionSchema = new mongoose.Schema({
   repliedAt: { type: Date, default: null }
 }, { timestamps: true });
 
+teacherQuestionSchema.index({ studentId: 1 });
+teacherQuestionSchema.index({ teacherId: 1 });
+teacherQuestionSchema.index({ status: 1 });
+
 export default mongoose.model('TeacherQuestion', teacherQuestionSchema);

@@ -132,25 +132,61 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+    const body = req.body || {};
 
     const targetUser = await dataStore.getUserById(id);
     if (!targetUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    if ((targetUser.role === 'superadmin' || updates.role === 'superadmin') && req.user?.role !== 'superadmin') {
+    if ((targetUser.role === 'superadmin' || body.role === 'superadmin') && req.user?.role !== 'superadmin') {
       return res.status(403).json({
         success: false,
         message: 'Access denied: Only a Super Admin can modify Super Admin accounts or permissions.'
       });
     }
 
-    if (updates.permissions && !Array.isArray(updates.permissions)) {
+    // Whitelist allowable user fields - explicitly preventing arbitrary mutation of id, email, password
+    const ALLOWED_UPDATE_FIELDS = [
+      'name',
+      'firstName',
+      'lastName',
+      'department',
+      'course',
+      'courseYear',
+      'gradeLevel',
+      'gender',
+      'mobileNo',
+      'dob',
+      'addressP',
+      'subject',
+      'collegeName',
+      'userpic',
+      'status',
+      'permissions'
+    ];
+
+    if (req.user?.role === 'superadmin') {
+      ALLOWED_UPDATE_FIELDS.push('role');
+    }
+
+    const filteredUpdates = {};
+    for (const key of ALLOWED_UPDATE_FIELDS) {
+      if (body[key] !== undefined) {
+        filteredUpdates[key] = body[key];
+      }
+    }
+
+    if (filteredUpdates.permissions && !Array.isArray(filteredUpdates.permissions)) {
       return res.status(400).json({ success: false, message: 'Permissions must be an array of permission IDs' });
     }
 
-    const updated = await dataStore.updateUser(id, updates);
+    // If password change is requested, explicitly hash the password before saving
+    if (body.password && typeof body.password === 'string' && body.password.length >= 8) {
+      filteredUpdates.password = hashPassword(body.password);
+    }
+
+    const updated = await dataStore.updateUser(id, filteredUpdates);
 
     const { password, ...userNoPass } = updated;
     return res.status(200).json({
@@ -224,9 +260,11 @@ export const getSupportMessages = async (req, res) => {
 export const updateMessageStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status, adminReply } = req.body;
+    const { status, adminReply, replyText } = req.body;
+    const finalReply = (adminReply || replyText || '').trim();
+    const finalStatus = status || 'resolved';
 
-    const updated = await dataStore.updateSupportMessageStatus(id, status, adminReply);
+    const updated = await dataStore.updateSupportMessageStatus(id, finalStatus, finalReply);
     if (!updated) {
       return res.status(404).json({ success: false, message: 'Support ticket not found.' });
     }
@@ -235,7 +273,7 @@ export const updateMessageStatus = async (req, res) => {
     try {
       const user = await dataStore.getUserById(updated.userId);
       const recipientEmail = user ? user.email : 'student@estudy.com';
-      await sendSupportReplyEmail(recipientEmail, updated.userName, updated.subject, adminReply || status);
+      await sendSupportReplyEmail(recipientEmail, updated.userName, updated.subject, finalReply || finalStatus);
     } catch (e) {
       console.warn('Failed sending support resolution email:', e);
     }
@@ -261,11 +299,11 @@ export const getAdminNotifications = async (req, res) => {
 
 export const createNotification = async (req, res) => {
   try {
-    const { Noti_Message } = req.body;
-    if (!Noti_Message) {
+    const message = req.body.message || req.body.Noti_Message;
+    if (!message) {
       return res.status(400).json({ success: false, message: 'Notification message is required.' });
     }
-    const noti = await dataStore.createNotification(Noti_Message);
+    const noti = await dataStore.createNotification(message);
     return res.status(201).json({
       success: true,
       message: 'Notification published successfully.',
@@ -305,19 +343,33 @@ export const deleteEnquiry = async (req, res) => {
   }
 };
 
+export const getAdminStudyMaterials = async (req, res) => {
+  try {
+    const materials = await dataStore.getStudyMaterials();
+    return res.status(200).json({ success: true, materials });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const uploadStudyMaterial = async (req, res) => {
   try {
-    const { Subject, Title, Description, FileName, fileUrl } = req.body;
-    if (!Subject || !Title || !Description) {
+    const subject = req.body.subject || req.body.Subject;
+    const title = req.body.title || req.body.Title;
+    const description = req.body.description || req.body.Description;
+    const fileName = req.body.fileName || req.body.FileName || 'Study_Material_Doc.pdf';
+    const fileUrl = req.body.fileUrl || req.body.FileUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+
+    if (!subject || !title || !description) {
       return res.status(400).json({ success: false, message: 'Subject, Title, and Description are required.' });
     }
 
     const material = await dataStore.createStudyMaterial({
-      subject: Subject,
-      title: Title,
-      description: Description,
-      fileName: FileName || 'Study_Material_Doc.pdf',
-      fileUrl: fileUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'
+      subject,
+      title,
+      description,
+      fileName,
+      fileUrl
     });
 
     return res.status(201).json({
@@ -425,17 +477,17 @@ export const getAdminAnalytics = async (req, res) => {
       }
     });
 
-    const avgSubmissionGrade = gradedCountWithScore > 0 ? Math.round(totalGradeSum / gradedCountWithScore) : 88;
+    const avgSubmissionGrade = gradedCountWithScore > 0 ? Math.round(totalGradeSum / gradedCountWithScore) : 0;
     const studentsList = users.filter(u => u.role === 'student');
     const courseworkSubmissionRate = assignments.length > 0 && studentsList.length > 0
       ? Math.min(100, Math.round((submissions.length / (assignments.length * studentsList.length)) * 100))
-      : 85;
+      : 0;
 
     // 3. Student Doubts (Teacher Q&A) Analytics
     const totalDoubts = teacherQuestions.length;
     const answeredDoubts = teacherQuestions.filter(q => q.status === 'answered').length;
     const pendingDoubts = teacherQuestions.filter(q => q.status === 'pending').length;
-    const doubtResolutionRate = totalDoubts > 0 ? Math.round((answeredDoubts / totalDoubts) * 100) : 100;
+    const doubtResolutionRate = totalDoubts > 0 ? Math.round((answeredDoubts / totalDoubts) * 100) : 0;
 
     const subjectDoubtsCount = {};
     teacherQuestions.forEach(q => {
@@ -454,19 +506,19 @@ export const getAdminAnalytics = async (req, res) => {
       const qCount = a.totalQuestions || 5;
       return (a.score / qCount) >= 0.5;
     }).length;
-    const passRate = totalAttempts > 0 ? Math.round((passedAttempts / totalAttempts) * 100) : 92;
+    const passRate = totalAttempts > 0 ? Math.round((passedAttempts / totalAttempts) * 100) : 0;
 
     let totalScoreSum = 0;
     quizAttempts.forEach(a => {
       const qCount = a.totalQuestions || 5;
       totalScoreSum += Math.round((a.score / qCount) * 100);
     });
-    const avgQuizScore = totalAttempts > 0 ? Math.round(totalScoreSum / totalAttempts) : 86;
+    const avgQuizScore = totalAttempts > 0 ? Math.round(totalScoreSum / totalAttempts) : 0;
 
     // 5. Helpdesk SLA & Support Metrics
     const pendingSupport = supportMessages.filter(m => m.status === 'pending').length;
     const resolvedSupport = supportMessages.filter(m => m.status === 'resolved').length;
-    const supportResolutionRate = supportMessages.length > 0 ? Math.round((resolvedSupport / supportMessages.length) * 100) : 100;
+    const supportResolutionRate = supportMessages.length > 0 ? Math.round((resolvedSupport / supportMessages.length) * 100) : 0;
 
     // 6. Platform Sentiment & Feedback Breakdown
     let totalRatingSum = 0;

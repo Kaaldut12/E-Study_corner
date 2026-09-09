@@ -1,6 +1,6 @@
 // frontend/src/components/common/EnquiryModal.jsx
 import { useState, useEffect } from 'react';
-import api from '../../services/api';
+import publicService from '../../services/publicService';
 
 const EnquiryModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,14 +24,14 @@ const EnquiryModal = () => {
     setSuccessMsg('');
 
     try {
-      const res = await api.post('/public/enquiry', {
+      const res = await publicService.submitEnquiry({
         Name: name,
         EmailId: email,
         MobileNo: mobileNo,
         Message: message
       });
 
-      if (res.data.success) {
+      if (res.success) {
         setSuccessMsg('Enquiry saved successfully! Our team will contact you.');
         setName('');
         setEmail('');

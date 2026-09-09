@@ -19,7 +19,7 @@ import SupportMessage from '../../models/SupportMessage.js';
 import Feedback from '../../models/Feedback.js';
 import TeacherQuestion from '../../models/TeacherQuestion.js';
 import Enrollment from '../../models/Enrollment.js';
-import { hashPassword, verifyPassword } from '../utils/password.js';
+import { hashPassword, verifyPassword, hashOTP, isBcryptHash } from '../utils/password.js';
 import { getDefaultPermissions } from '../constants/permissions.js';
 import {
   seedUsers,
@@ -71,7 +71,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const list = await User.find().lean();
-        if (list && list.length > 0) {
+        if (list) {
           return list.map(u => ({
             ...u,
             permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
@@ -97,6 +97,7 @@ export const dataStore = {
             permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
           };
         }
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getUserById error, using fallback:', err.message);
       }
@@ -121,6 +122,7 @@ export const dataStore = {
             permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
           };
         }
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getUserByEmail error, using fallback:', err.message);
       }
@@ -172,6 +174,9 @@ export const dataStore = {
   },
 
   updateUser: async (id, updates) => {
+    if (updates.password && !isBcryptHash(updates.password)) {
+      updates.password = hashPassword(updates.password);
+    }
     if (isDBConnected()) {
       try {
         const doc = await User.findOneAndUpdate({ id }, { $set: updates }, { new: true }).lean();
@@ -202,11 +207,12 @@ export const dataStore = {
 
   setResetOTP: async (email, resetCode) => {
     const expires = Date.now() + 15 * 60 * 1000;
+    const hashedCode = hashOTP(resetCode);
     if (isDBConnected()) {
       try {
         return await User.findOneAndUpdate(
           { email: email.toLowerCase() },
-          { $set: { resetCode, resetExpires: expires } },
+          { $set: { resetCode: hashedCode, resetExpires: expires } },
           { new: true }
         ).lean();
       } catch (err) {
@@ -215,7 +221,7 @@ export const dataStore = {
     }
     const u = memUsers.find(x => x.email.toLowerCase() === email.toLowerCase());
     if (u) {
-      u.resetCode = resetCode;
+      u.resetCode = hashedCode;
       u.resetExpires = expires;
       return u;
     }
@@ -236,7 +242,9 @@ export const dataStore = {
       user = memUsers.find(x => x.email.toLowerCase() === cleanEmail);
     }
     if (!user) return { success: false, message: 'No account found with this email.' };
-    if (!user.resetCode || user.resetCode !== resetCode) {
+    const hashedAttempt = hashOTP(resetCode);
+    const codeValid = user.resetCode === hashedAttempt || user.resetCode === resetCode;
+    if (!user.resetCode || !codeValid) {
       return { success: false, message: 'Invalid 6-digit OTP reset code.' };
     }
     if (Date.now() > user.resetExpires) {
@@ -419,7 +427,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await StudyMaterial.find().sort({ createdAt: -1 }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getStudyMaterials error:', err.message);
       }
@@ -468,7 +476,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Assignment.find().sort({ createdAt: -1 }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getAssignments error:', err.message);
       }
@@ -481,6 +489,7 @@ export const dataStore = {
       try {
         const doc = await Assignment.findOne({ id }).lean();
         if (doc) return doc;
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getAssignmentById error:', err.message);
       }
@@ -528,7 +537,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Submission.find().sort({ createdAt: -1 }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getSubmissions error:', err.message);
       }
@@ -541,6 +550,7 @@ export const dataStore = {
       try {
         const doc = await Submission.findOne({ id }).lean();
         if (doc) return doc;
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getSubmissionById error:', err.message);
       }
@@ -552,7 +562,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Submission.find({ studentId }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getSubmissionsForStudent error:', err.message);
       }
@@ -564,7 +574,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Submission.find({ assignmentId }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getSubmissionsForAssignment error:', err.message);
       }
@@ -734,7 +744,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Course.find().lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getCourses error:', err.message);
       }
@@ -747,6 +757,7 @@ export const dataStore = {
       try {
         const doc = await Course.findOne({ id }).lean();
         if (doc) return doc;
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getCourseById error:', err.message);
       }
@@ -950,7 +961,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Quiz.find().lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getQuizzes error:', err.message);
       }
@@ -963,6 +974,7 @@ export const dataStore = {
       try {
         const doc = await Quiz.findOne({ id: quizId }).lean();
         if (doc) return doc;
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getQuizById error:', err.message);
       }
@@ -1079,7 +1091,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await QuizAttempt.find({ studentId }).sort({ attemptedAt: -1 }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getQuizAttempts error:', err.message);
       }
@@ -1104,7 +1116,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Question.find({ quizId }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getQuestionsForQuiz error:', err.message);
       }
@@ -1117,6 +1129,7 @@ export const dataStore = {
       try {
         const doc = await Question.findOne({ id: questionId }).lean();
         if (doc) return doc;
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getQuestionById error:', err.message);
       }
@@ -1214,7 +1227,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Note.find({ studentId }).sort({ isPinned: -1, updatedAt: -1 }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getStudentNotes error:', err.message);
       }
@@ -1277,7 +1290,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Bookmark.find({ studentId }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getStudentBookmarks error:', err.message);
       }
@@ -1341,7 +1354,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Progress.find({ studentId }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getStudentProgress error:', err.message);
       }
@@ -1378,6 +1391,7 @@ export const dataStore = {
       try {
         const doc = await Enrollment.findOne({ studentId, courseId }).lean();
         if (doc) return doc;
+        return null;
       } catch (err) {
         console.warn('[dataStore] DB getEnrollment error:', err.message);
       }
@@ -1389,7 +1403,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await Enrollment.find({ studentId }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getStudentEnrollments error:', err.message);
       }
@@ -1635,7 +1649,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await TeacherQuestion.find({ studentId }).sort({ createdAt: -1 }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getTeacherQuestionsForStudent error:', err.message);
       }
@@ -1647,7 +1661,7 @@ export const dataStore = {
     if (isDBConnected()) {
       try {
         const docs = await TeacherQuestion.find({ teacherId }).sort({ createdAt: -1 }).lean();
-        if (docs && docs.length > 0) return docs;
+        if (docs) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getTeacherQuestionsForTeacher error:', err.message);
       }

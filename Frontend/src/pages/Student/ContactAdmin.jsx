@@ -1,11 +1,9 @@
 // frontend/src/pages/Student/ContactAdmin.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import studentService from '../../services/studentService';
 
 const ContactAdmin = () => {
-  const { apiUrl } = useAuth();
   const [subject, setSubject] = useState('');
   const [category, setCategory] = useState('Technical Support');
   const [message, setMessage] = useState('');
@@ -34,16 +32,16 @@ const ContactAdmin = () => {
     setSuccessMsg('');
 
     try {
-      const res = await axios.post(`${apiUrl}/student/contact-admin`, {
+      const data = await studentService.contactAdmin({
         subject,
         category,
         message
       });
 
-      if (res.data.success) {
+      if (data.success) {
         setSuccessMsg('Support ticket sent to Administrator.');
-        if (res.data.ticket) {
-          setMyTickets((prev) => [res.data.ticket, ...prev]);
+        if (data.ticket) {
+          setMyTickets((prev) => [data.ticket, ...prev]);
         }
         setSubject('');
         setMessage('');

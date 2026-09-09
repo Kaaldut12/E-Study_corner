@@ -16,6 +16,7 @@ import {
   deleteNotification,
   getAdminEnquiries,
   deleteEnquiry,
+  getAdminStudyMaterials,
   uploadStudyMaterial,
   deleteStudyMaterial,
   sendEmailBroadcast,
@@ -36,11 +37,14 @@ router.get('/permissions', getSystemPermissions);
 router.get('/users', getAllUsers);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);
-router.put('/users/:id/status', toggleUserStatus);
+router.route('/users/:id/status')
+  .put(toggleUserStatus)
+  .patch(toggleUserStatus);
 router.delete('/users/:id', deleteUser);
 router.get('/feedback', getFeedbackList);
 router.get('/messages', getSupportMessages);
 router.put('/messages/:id', updateMessageStatus);
+router.post('/messages/:id/reply', updateMessageStatus);
 router.put('/questions/:id/reply', adminReplyStudentQuestion);
 router.post('/action/resync', triggerDatabaseResync);
 
@@ -53,13 +57,12 @@ router.delete('/notifications/:id', deleteNotification);
 router.get('/enquiries', getAdminEnquiries);
 router.delete('/enquiries/:id', deleteEnquiry);
 
-// Study Material Upload (Tbl_StudyMaterial)
-router.post('/study-material', uploadStudyMaterial);
-router.delete('/study-material/:id', deleteStudyMaterial);
+// Study Material Management (Tbl_StudyMaterial) - supports canonical singular and plural
+router.get(['/study-material', '/study-materials'], getAdminStudyMaterials);
+router.post(['/study-material', '/study-materials'], uploadStudyMaterial);
+router.delete(['/study-material/:id', '/study-materials/:id'], deleteStudyMaterial);
 
 // Email Sender (EmailSender)
 router.post('/send-email', sendEmailBroadcast);
 
 export default router;
-
-

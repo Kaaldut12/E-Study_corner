@@ -1,10 +1,9 @@
 // frontend/src/pages/Student/GlobalSearch.jsx
 import { useState } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import studentService from '../../services/studentService';
 
 const GlobalSearch = () => {
-  const { apiUrl } = useAuth();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({ courses: [], materials: [], notes: [] });
   const [loading, setLoading] = useState(false);
@@ -16,11 +15,7 @@ const GlobalSearch = () => {
 
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/student/search?q=${encodeURIComponent(query)}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
+      const data = await studentService.searchAll(query);
       if (data.success) {
         setResults(data.results);
       }

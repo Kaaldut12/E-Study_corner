@@ -242,17 +242,19 @@ export const updateProfile = async (req, res) => {
 export const changePassword = async (req, res) => {
   try {
     const studentId = req.user.id;
-    const { Pass, NewPass, ConfPass } = req.body;
+    const currentPass = req.body.Pass || req.body.currentPassword || req.body.password;
+    const newPass = req.body.NewPass || req.body.newPassword;
+    const confPass = req.body.ConfPass || req.body.confirmPassword || newPass;
 
-    if (!Pass || !NewPass || !ConfPass) {
-      return res.status(400).json({ success: false, message: 'Current, new, and confirm password fields are required.' });
+    if (!currentPass || !newPass) {
+      return res.status(400).json({ success: false, message: 'Current and new password fields are required.' });
     }
 
-    if (NewPass !== ConfPass) {
+    if (newPass !== confPass) {
       return res.status(400).json({ success: false, message: 'New password and confirm password do not match.' });
     }
 
-    const result = await dataStore.changeUserPassword(studentId, Pass, NewPass);
+    const result = await dataStore.changeUserPassword(studentId, currentPass, newPass);
     if (!result.success) {
       return res.status(400).json(result);
     }
@@ -940,17 +942,30 @@ export const getAIRecommendations = async (req, res) => {
     const studentId = req.user.id;
     const courses = await dataStore.getCourses();
     const materials = await dataStore.getStudyMaterials();
+    const attempts = await dataStore.getQuizAttempts(studentId);
 
-    const recommendedCourses = courses.slice(0, 2);
-    const recommendedMaterials = materials.slice(0, 2);
+    const recommendedCourses = (courses || []).slice(0, 3);
+    const recommendedMaterials = (materials || []).slice(0, 3);
+
+    let nextRecommendedTopic = recommendedCourses[0] ? recommendedCourses[0].title : 'Core Foundations';
+    let reasoning = 'Explore active courses and study materials to begin building your academic mastery.';
+
+    if (attempts && attempts.length > 0) {
+      const avgScore = Math.round(attempts.reduce((sum, a) => sum + (a.percentage || 0), 0) / attempts.length);
+      const latestQuiz = attempts[0];
+      reasoning = `Based on your ${avgScore}% average score across ${attempts.length} quiz assessment(s), we recommend continuing practice on core modules.`;
+      if (latestQuiz && latestQuiz.quizTitle) {
+        nextRecommendedTopic = `Advanced ${latestQuiz.quizTitle} Review & Exercises`;
+      }
+    }
 
     return res.status(200).json({
       success: true,
       recommendations: {
         courses: recommendedCourses,
         materials: recommendedMaterials,
-        nextRecommendedTopic: 'Tree Traversals & Graph Search Algorithms',
-        reasoning: 'Based on your 80% score in DSA Fundamentals, we recommend advancing to Graph Algorithms.'
+        nextRecommendedTopic,
+        reasoning
       }
     });
   } catch (error) {
@@ -965,58 +980,85 @@ export const getWeakTopicAnalysis = async (req, res) => {
     const attempts = await dataStore.getQuizAttempts(studentId);
     const quizzes = await dataStore.getQuizzes();
 
+    // If no attempts recorded, return clean zero-state
+    if (!attempts || attempts.length === 0) {
+      return res.status(200).json({
+        success: true,
+        weakTopics: [],
+        overallDiagnosticScore: null,
+        message: 'No quiz attempts recorded yet. Complete a quiz to analyze weak topics and track diagnostic accuracy.'
+      });
+    }
+
     let totalQuestionsAnswered = 0;
     let totalCorrect = 0;
-    const incorrectQuestions = [];
+    const topicStats = {}; // topicKey -> { correct, total, quizId, questionId, subject, topicTitle, explanation }
 
     for (const att of attempts) {
       if (att.answers && Array.isArray(att.answers)) {
         for (const ans of att.answers) {
           totalQuestionsAnswered++;
+          const quiz = (quizzes || []).find(q => q.id === att.quizId);
+          const key = `${att.quizId}_${ans.questionId}`;
+
+          if (!topicStats[key]) {
+            topicStats[key] = {
+              quizId: att.quizId,
+              questionId: ans.questionId,
+              subject: quiz ? quiz.subject : 'General Academics',
+              quizTitle: quiz ? quiz.title : 'Assessment',
+              correct: 0,
+              total: 0
+            };
+          }
+
+          topicStats[key].total++;
           if (ans.isCorrect) {
             totalCorrect++;
-          } else {
-            incorrectQuestions.push({ quizId: att.quizId, questionId: ans.questionId });
+            topicStats[key].correct++;
           }
         }
       }
     }
 
-    const overallDiagnosticScore = totalQuestionsAnswered > 0
-      ? Math.round((totalCorrect / totalQuestionsAnswered) * 100)
-      : 78;
+    if (totalQuestionsAnswered === 0) {
+      return res.status(200).json({
+        success: true,
+        weakTopics: [],
+        overallDiagnosticScore: null,
+        message: 'No answers recorded yet in attempted quizzes.'
+      });
+    }
 
-    let weakTopics = [];
-    if (incorrectQuestions.length > 0) {
-      for (const item of incorrectQuestions.slice(0, 4)) {
-        const quiz = quizzes.find(q => q.id === item.quizId);
+    const overallDiagnosticScore = Math.round((totalCorrect / totalQuestionsAnswered) * 100);
+
+    // Calculate real accuracy per question/topic item
+    const weakTopics = [];
+    const statItems = Object.values(topicStats);
+
+    for (const item of statItems) {
+      const accuracy = Math.round((item.correct / item.total) * 100);
+      if (accuracy < 75) {
         const questions = await dataStore.getQuestionsForQuiz(item.quizId);
-        const qDoc = questions.find(q => q.id === item.questionId);
+        const qDoc = (questions || []).find(q => q.id === item.questionId);
+
         weakTopics.push({
-          topic: qDoc ? qDoc.questionText.slice(0, 55) + '...' : 'Practice Quiz Item Review',
-          subject: quiz ? quiz.subject : 'Computer Science',
-          accuracy: Math.floor(Math.random() * 25 + 30),
-          status: 'Needs Practice',
+          topic: qDoc ? qDoc.questionText.slice(0, 60) + '...' : `${item.quizTitle} Quiz Concept`,
+          subject: item.subject,
+          accuracy,
+          status: accuracy < 50 ? 'Critical Review' : 'Needs Practice',
           recommendation: qDoc && qDoc.explanation ? qDoc.explanation : 'Review course study materials and re-take topic quiz.',
-          actionUrl: '/student/quizzes'
+          actionUrl: `/student/quizzes/${item.quizId}`
         });
       }
-    } else {
-      weakTopics = [
-        {
-          topic: 'Data Structures & Algorithmic Complexities',
-          subject: 'Computer Science',
-          accuracy: 90,
-          status: 'Mastered',
-          recommendation: 'Exceptional performance across all attempted quizzes. Keep practicing full mock assessments.',
-          actionUrl: '/student/quizzes'
-        }
-      ];
     }
+
+    // Sort weakest topics first
+    weakTopics.sort((a, b) => a.accuracy - b.accuracy);
 
     return res.status(200).json({
       success: true,
-      weakTopics,
+      weakTopics: weakTopics.slice(0, 6),
       overallDiagnosticScore
     });
   } catch (error) {

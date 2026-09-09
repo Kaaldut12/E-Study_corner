@@ -1,12 +1,10 @@
 // frontend/src/pages/Auth/ResetPassword.jsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useAuth } from '../../contexts/AuthContext';
+import { requestPasswordReset, confirmResetPassword } from '../../services/authService';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
-  const { apiUrl } = useAuth();
 
   const [step, setStep] = useState(1); // Step 1: Request OTP, Step 2: Confirm OTP & New Password
   const [email, setEmail] = useState('');
@@ -26,7 +24,7 @@ const ResetPassword = () => {
     setMessage('');
 
     try {
-      const res = await axios.post(`${apiUrl}/auth/reset-password`, { email });
+      const res = await requestPasswordReset(email);
       if (res.data.success) {
         setMessage(res.data.message || `Password reset OTP sent to ${email}`);
         setStep(2);
@@ -34,7 +32,7 @@ const ResetPassword = () => {
         setErrorMsg(res.data.message || 'Unable to request password reset.');
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Failed to send OTP. Please check your email and try again.');
+      setErrorMsg(err.parsedMessage || err.response?.data?.message || 'Failed to send OTP. Please check your email and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -54,7 +52,7 @@ const ResetPassword = () => {
     setSubmitting(true);
 
     try {
-      const res = await axios.post(`${apiUrl}/auth/confirm-reset-password`, {
+      const res = await confirmResetPassword({
         email,
         resetCode,
         newPassword
@@ -69,7 +67,7 @@ const ResetPassword = () => {
         setErrorMsg(res.data.message || 'Invalid or expired OTP code.');
       }
     } catch (err) {
-      setErrorMsg(err.response?.data?.message || 'Failed to reset password. Please check the OTP code and try again.');
+      setErrorMsg(err.parsedMessage || err.response?.data?.message || 'Failed to reset password. Please check the OTP code and try again.');
     } finally {
       setSubmitting(false);
     }

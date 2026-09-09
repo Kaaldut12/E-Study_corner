@@ -10,4 +10,7 @@ const bookmarkSchema = new mongoose.Schema({
   url: { type: String, default: '' }
 }, { timestamps: true });
 
+bookmarkSchema.index({ studentId: 1 });
+bookmarkSchema.index({ studentId: 1, itemType: 1, itemId: 1 });
+
 export default mongoose.model('Bookmark', bookmarkSchema);

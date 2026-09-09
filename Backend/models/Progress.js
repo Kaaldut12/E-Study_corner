@@ -14,6 +14,7 @@ const progressSchema = new mongoose.Schema({
   lastActiveAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
+progressSchema.index({ studentId: 1 });
 progressSchema.index({ studentId: 1, courseId: 1 }, { unique: true });
 
 export default mongoose.model('Progress', progressSchema);

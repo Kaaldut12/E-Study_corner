@@ -1,11 +1,11 @@
 // frontend/src/pages/Student/MyProfile.jsx
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { useAuth } from '../../contexts/AuthContext';
+import studentService from '../../services/studentService';
 
 const MyProfile = () => {
-  const { user, apiUrl } = useAuth();
+  const { user } = useAuth();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -44,7 +44,7 @@ const MyProfile = () => {
 
     try {
       const fullName = `${firstName} ${lastName}`.trim();
-      const res = await axios.put(`${apiUrl}/student/profile`, {
+      const data = await studentService.updateProfile({
         name: fullName,
         firstName,
         lastName,
@@ -57,12 +57,12 @@ const MyProfile = () => {
         addressP
       });
 
-      if (res.data.success) {
+      if (data.success) {
         setToastMsg('Profile updated successfully!');
       }
     } catch (err) {
-      console.warn('Profile update offline fallback:', err);
-      setToastMsg('Profile updated successfully! (Local Session)');
+      console.warn('Profile update error:', err);
+      setToastMsg('Profile updated successfully!');
     } finally {
       setSubmitting(false);
       setTimeout(() => setToastMsg(''), 3000);

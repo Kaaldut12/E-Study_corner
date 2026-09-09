@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api from '../../services/api';
+import publicService from '../../services/publicService';
 
 const NotificationMarquee = () => {
   const [notifications, setNotifications] = useState([]);
@@ -8,9 +8,9 @@ const NotificationMarquee = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await api.get('/public/notifications');
-        if (res.data.success) {
-          setNotifications(res.data.notifications || []);
+        const res = await publicService.getNotifications();
+        if (res.success) {
+          setNotifications(res.notifications || []);
         }
       } catch (err) {
         console.warn('Marquee notifications fetch error:', err);

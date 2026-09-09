@@ -15,6 +15,7 @@ const enrollmentSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 enrollmentSchema.index({ studentId: 1, courseId: 1 }, { unique: true });
+enrollmentSchema.index({ studentId: 1 });
 enrollmentSchema.index({ courseId: 1 });
 
 export default mongoose.model('Enrollment', enrollmentSchema);

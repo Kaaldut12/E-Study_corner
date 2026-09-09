@@ -2,10 +2,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import adminService from '../../services/adminService';
 
 const PlatformAnalytics = () => {
-  const { apiUrl } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview'); // overview, academics, doubts, exams, helpdesk
@@ -27,11 +26,7 @@ const PlatformAnalytics = () => {
 
   const fetchAnalytics = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/admin/analytics`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const resData = await res.json();
+      const resData = await adminService.getAnalytics();
       if (resData.success) {
         setData(resData.analytics);
       }
@@ -40,7 +35,7 @@ const PlatformAnalytics = () => {
     } finally {
       setLoading(false);
     }
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
     fetchAnalytics();
@@ -50,15 +45,7 @@ const PlatformAnalytics = () => {
   const handleTriggerResync = async () => {
     setResyncing(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/admin/action/resync`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      const resData = await res.json();
+      const resData = await adminService.triggerResync();
       if (resData.success) {
         setResyncResult(resData.audit);
         setShowResyncModal(true);
@@ -77,16 +64,7 @@ const PlatformAnalytics = () => {
     if (!broadcastMessage.trim()) return;
     setBroadcasting(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/admin/notifications`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ Noti_Message: broadcastMessage.trim() })
-      });
-      const resData = await res.json();
+      const resData = await adminService.createNotification({ Noti_Message: broadcastMessage.trim() });
       if (resData.success) {
         setBroadcastSuccess('Announcement successfully broadcast to platform!');
         setBroadcastMessage('');
@@ -108,16 +86,7 @@ const PlatformAnalytics = () => {
     if (!doubtReply.trim() || !selectedDoubt) return;
     setSubmittingReply(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/admin/questions/${selectedDoubt.id}/reply`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ replyText: doubtReply.trim() })
-      });
-      const resData = await res.json();
+      const resData = await adminService.replyQuestion(selectedDoubt.id, doubtReply.trim());
       if (resData.success) {
         setActionSuccess('Question resolved with administrative answer!');
         setDoubtReply('');

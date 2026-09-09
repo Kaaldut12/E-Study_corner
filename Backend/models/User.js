@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
   resetExpires: { type: Number, default: null }
 }, { timestamps: true });
 
+userSchema.index({ role: 1 });
+userSchema.index({ status: 1 });
+userSchema.index({ role: 1, status: 1 });
+
 // Auto-encrypt password with bcrypt before saving if not already hashed
 userSchema.pre('save', function (next) {
   if (this.isModified('password') && !isBcryptHash(this.password)) {

@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import api from '../../services/api';
+import adminService from '../../services/adminService';
 import { useAuth } from '../../contexts/AuthContext';
 
 const AdminDashboard = () => {
@@ -32,9 +32,9 @@ const AdminDashboard = () => {
 
   const fetchAdminData = useCallback(async () => {
     try {
-      const res = await api.get('/admin/dashboard');
-      if (res.data.success) {
-        setData(res.data);
+      const res = await adminService.getDashboard();
+      if (res.success) {
+        setData(res);
       }
     } catch (err) {
       console.warn('Admin dashboard fetch error:', err);
@@ -61,13 +61,13 @@ const AdminDashboard = () => {
   const handleToggleUserStatus = async (targetUser) => {
     const nextStatus = targetUser.status === 'suspended' ? 'active' : 'suspended';
     try {
-      const res = await api.put(`/admin/users/${targetUser.id}/status`, { status: nextStatus });
-      if (res.data.success) {
+      const res = await adminService.toggleUserStatus(targetUser.id, nextStatus);
+      if (res.success) {
         showToast(`User ${targetUser.name} status updated to ${nextStatus}!`);
         fetchAdminData();
       }
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed updating user status', true);
+      showToast(err.parsedMessage || err.message || 'Failed updating user status', true);
     }
   };
 
@@ -77,15 +77,15 @@ const AdminDashboard = () => {
     if (!broadcastMsg.trim()) return;
     setBroadcasting(true);
     try {
-      const res = await api.post('/admin/notifications', { Noti_Message: broadcastMsg.trim() });
-      if (res.data.success) {
+      const res = await adminService.createNotification({ Noti_Message: broadcastMsg.trim() });
+      if (res.success) {
         showToast('Campus announcement broadcasted successfully!');
         setBroadcastMsg('');
         setShowBroadcastModal(false);
         fetchAdminData();
       }
     } catch (err) {
-      showToast(err.response?.data?.message || 'Broadcast failed', true);
+      showToast(err.parsedMessage || err.message || 'Broadcast failed', true);
     } finally {
       setBroadcasting(false);
     }
@@ -97,18 +97,18 @@ const AdminDashboard = () => {
     if (!selectedTicket) return;
     setSubmittingTicket(true);
     try {
-      const res = await api.put(`/admin/messages/${selectedTicket.id}`, {
+      const res = await adminService.replyMessage(selectedTicket.id, {
         status: ticketStatus,
         adminReply: ticketReply.trim()
       });
-      if (res.data.success) {
+      if (res.success) {
         showToast(`Ticket #${selectedTicket.id} updated to ${ticketStatus}!`);
         setSelectedTicket(null);
         setTicketReply('');
         fetchAdminData();
       }
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed updating ticket', true);
+      showToast(err.parsedMessage || err.message || 'Failed updating ticket', true);
     } finally {
       setSubmittingTicket(false);
     }
@@ -120,17 +120,15 @@ const AdminDashboard = () => {
     if (!selectedQuestion || !questionReply.trim()) return;
     setSubmittingQuestion(true);
     try {
-      const res = await api.put(`/admin/questions/${selectedQuestion.id}/reply`, {
-        replyText: questionReply.trim()
-      });
-      if (res.data.success) {
+      const res = await adminService.replyQuestion(selectedQuestion.id, questionReply.trim());
+      if (res.success) {
         showToast('Administrative resolution dispatched to student!');
         setSelectedQuestion(null);
         setQuestionReply('');
         fetchAdminData();
       }
     } catch (err) {
-      showToast(err.response?.data?.message || 'Failed replying to doubt', true);
+      showToast(err.parsedMessage || err.message || 'Failed replying to doubt', true);
     } finally {
       setSubmittingQuestion(false);
     }
@@ -140,9 +138,9 @@ const AdminDashboard = () => {
   const handleTriggerResync = async () => {
     setResyncing(true);
     try {
-      const res = await api.post('/admin/action/resync');
-      if (res.data.success) {
-        setResyncAudit(res.data.audit);
+      const res = await adminService.triggerResync();
+      if (res.success) {
+        setResyncAudit(res.audit);
         setShowResyncModal(true);
         showToast('Database collections synchronized & audited successfully!');
         fetchAdminData();

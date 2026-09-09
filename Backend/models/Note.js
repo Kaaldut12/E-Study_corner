@@ -16,4 +16,7 @@ const noteSchema = new mongoose.Schema({
   color: { type: String, default: '#ffffff' }
 }, { timestamps: true });
 
+noteSchema.index({ studentId: 1 });
+noteSchema.index({ studentId: 1, isArchived: 1 });
+
 export default mongoose.model('Note', noteSchema);

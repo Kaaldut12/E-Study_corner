@@ -21,5 +21,7 @@ const submissionSchema = new mongoose.Schema({
 
 submissionSchema.index({ assignmentId: 1, studentId: 1 });
 submissionSchema.index({ studentId: 1 });
+submissionSchema.index({ assignmentId: 1 });
+submissionSchema.index({ status: 1 });
 
 export default mongoose.model('Submission', submissionSchema);

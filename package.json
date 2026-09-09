@@ -1,23 +1,13 @@
 {
-  "name": "e-study-corner-monorepo",
+  "name": "e-study-corner",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "Backend",
-    "Frontend"
-  ],
   "scripts": {
-    "build": "cd Frontend && npm run build",
-    "lint": "cd Frontend && npm run lint",
-    "seed": "cd Backend && npm run seed"
-  },
-  "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
-    "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.9.5",
-    "nodemailer": "^10.0.1"
+    "dev:backend": "npm --prefix Backend run dev",
+    "dev:frontend": "npm --prefix Frontend run dev",
+    "build": "npm --prefix Frontend run build",
+    "lint": "npm --prefix Frontend run lint",
+    "test": "npm --prefix Backend test",
+    "seed": "npm --prefix Backend run seed"
   }
 }

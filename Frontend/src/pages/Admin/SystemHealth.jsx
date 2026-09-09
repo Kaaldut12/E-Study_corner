@@ -1,10 +1,9 @@
 // frontend/src/pages/Admin/SystemHealth.jsx
 import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import adminService from '../../services/adminService';
 
 const SystemHealth = () => {
-  const { apiUrl } = useAuth();
   const [healthData, setHealthData] = useState(null);
   const [metricsData, setMetricsData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,8 +14,7 @@ const SystemHealth = () => {
     setRefreshing(true);
     const startPing = Date.now();
     try {
-      const res = await fetch(`${apiUrl}/system/health`);
-      const data = await res.json();
+      const data = await adminService.getSystemHealth();
       const endPing = Date.now();
       setPingLatency(endPing - startPing);
 
@@ -25,15 +23,13 @@ const SystemHealth = () => {
       }
 
       // Fetch admin metrics if authenticated
-      const token = localStorage.getItem('token');
-      if (token) {
-        const metricsRes = await fetch(`${apiUrl}/system/metrics`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const mData = await metricsRes.json();
+      try {
+        const mData = await adminService.getSystemMetrics();
         if (mData.success) {
           setMetricsData(mData.metrics);
         }
+      } catch (mErr) {
+        console.warn('Metrics fetch warning:', mErr);
       }
     } catch (err) {
       console.warn('Error fetching system health:', err);
@@ -41,7 +37,7 @@ const SystemHealth = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
     fetchSystemStatus();

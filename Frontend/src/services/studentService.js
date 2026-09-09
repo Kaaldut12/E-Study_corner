@@ -51,9 +51,12 @@ export const studentService = {
   // --- STUDY MATERIALS & UTILITIES ---
   getStudyMaterials: () => api.get('/student/study-material').then(res => res.data),
   getFeedback: () => api.get('/student/feedback').then(res => res.data),
+  getProfile: () => api.get('/student/profile').then(res => res.data),
   updateProfile: (profileData) => api.put('/student/profile', profileData).then(res => res.data),
-  changePassword: (currentPassword, newPassword) =>
-    api.post('/student/change-password', { currentPassword, newPassword }).then(res => res.data),
+  changePassword: (payload) => {
+    const body = typeof payload === 'string' ? { currentPassword: payload } : payload;
+    return api.post('/student/change-password', body).then(res => res.data);
+  },
   contactAdmin: (payload) => api.post('/student/contact-admin', payload).then(res => res.data),
   searchAll: (query) => api.get(`/student/search?q=${encodeURIComponent(query)}`).then(res => res.data)
 };

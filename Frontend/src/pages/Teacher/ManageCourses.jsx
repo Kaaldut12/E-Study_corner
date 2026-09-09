@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import api from '../../services/api';
+import teacherService from '../../services/teacherService';
 
 const ManageCourses = () => {
   const [courses, setCourses] = useState([]);
@@ -11,9 +11,9 @@ const ManageCourses = () => {
   useEffect(() => {
     const fetchTeacherCourses = async () => {
       try {
-        const res = await api.get('/teacher/courses');
-        if (res.data.success) {
-          setCourses(res.data.courses || []);
+        const res = await teacherService.getCourses();
+        if (res.success) {
+          setCourses(res.courses || []);
         }
       } catch (err) {
         console.warn('Error fetching teacher courses:', err);

@@ -10,17 +10,27 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const isRunningInTestRunner = Boolean(process.env.NODE_TEST_CONTEXT || process.argv.some(arg => arg.includes('test')));
+const NODE_ENV = isRunningInTestRunner ? 'test' : (process.env.NODE_ENV || 'development');
+process.env.NODE_ENV = NODE_ENV;
 const isProduction = NODE_ENV === 'production';
 const isVercel = Boolean(process.env.VERCEL || process.env.VERCEL_ENV);
 
 // Explicit environment requirements: both JWT_SECRET and MONGODB_URI are strictly required
 if (!process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET is required. Please set JWT_SECRET in your .env file or hosting environment variables.');
+  if (NODE_ENV === 'test') {
+    process.env.JWT_SECRET = 'test-jwt-secret-for-automated-tests-minimum-32-chars-long';
+  } else {
+    throw new Error('JWT_SECRET is required. Please set JWT_SECRET in your .env file or hosting environment variables.');
+  }
 }
 
 if (!process.env.MONGODB_URI) {
-  throw new Error('MONGODB_URI is required. Please set MONGODB_URI in your .env file or hosting environment variables.');
+  if (NODE_ENV === 'test') {
+    process.env.MONGODB_URI = 'mongodb://127.0.0.1:27017/test-e-study';
+  } else {
+    throw new Error('MONGODB_URI is required. Please set MONGODB_URI in your .env file or hosting environment variables.');
+  }
 }
 
 export const PORT = process.env.PORT || 3001;

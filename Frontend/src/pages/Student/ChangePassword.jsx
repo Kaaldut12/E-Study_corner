@@ -1,11 +1,9 @@
 // frontend/src/pages/Student/ChangePassword.jsx
 import { useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import studentService from '../../services/studentService';
 
 const ChangePassword = () => {
-  const { apiUrl } = useAuth();
   const [pass, setPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [confPass, setConfPass] = useState('');
@@ -27,26 +25,22 @@ const ChangePassword = () => {
     setSubmitting(true);
 
     try {
-      const res = await axios.post(`${apiUrl}/student/change-password`, {
+      const data = await studentService.changePassword({
         Pass: pass,
         NewPass: newPass,
         ConfPass: confPass
       });
 
-      if (res.data.success) {
+      if (data.success) {
         setToastMsg('Password updated successfully!');
         setPass('');
         setNewPass('');
         setConfPass('');
       } else {
-        setErrorMsg(res.data.message || 'Unable to update password.');
+        setErrorMsg(data.message || 'Unable to update password.');
       }
     } catch (err) {
-      console.warn('Change password offline fallback:', err);
-      setToastMsg('Password updated successfully! (Local Session)');
-      setPass('');
-      setNewPass('');
-      setConfPass('');
+      setErrorMsg(err.parsedMessage || err.message || 'Unable to update password.');
     } finally {
       setSubmitting(false);
       setTimeout(() => setToastMsg(''), 3000);

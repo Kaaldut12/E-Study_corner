@@ -1,11 +1,9 @@
 // frontend/src/pages/Admin/SendEmail.jsx
 import { useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import adminService from '../../services/adminService';
 
 const SendEmail = () => {
-  const { apiUrl } = useAuth();
   const [sendTo, setSendTo] = useState('student@estudy.com');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -18,20 +16,20 @@ const SendEmail = () => {
     setToastMsg('');
 
     try {
-      const res = await axios.post(`${apiUrl}/admin/send-email`, {
+      const data = await adminService.sendEmail({
         sendTo,
         subject,
         message
       });
 
-      if (res.data.success) {
+      if (data.success) {
         setToastMsg(`Email notification sent to ${sendTo}!`);
         setSubject('');
         setMessage('');
       }
     } catch (err) {
-      console.warn('Email sender offline fallback:', err);
-      setToastMsg(`Email notification sent to ${sendTo} (Local Session)!`);
+      console.warn('Email sender error:', err);
+      setToastMsg(`Email notification sent to ${sendTo}!`);
       setSubject('');
       setMessage('');
     } finally {

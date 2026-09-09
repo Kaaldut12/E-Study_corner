@@ -32,6 +32,14 @@ export const hashPassword = (password) => {
 };
 
 /**
+ * Compute SHA-256 hash of OTP code for secure storage
+ */
+export const hashOTP = (otp) => {
+  if (!otp) return '';
+  return crypto.createHash('sha256').update(String(otp).trim()).digest('hex');
+};
+
+/**
  * Verify plaintext password against stored hash (supports bcrypt, legacy scrypt, and plain upgrade)
  */
 export const verifyPassword = (password, storedPassword) => {

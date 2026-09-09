@@ -17,7 +17,10 @@ const quizAttemptSchema = new mongoose.Schema({
     selectedOption: Number,
     isCorrect: Boolean
   }],
-  attemptedAt: { type: Date, default: Date.now }
 }, { timestamps: true });
+
+quizAttemptSchema.index({ studentId: 1 });
+quizAttemptSchema.index({ quizId: 1 });
+quizAttemptSchema.index({ studentId: 1, quizId: 1 });
 
 export default mongoose.model('QuizAttempt', quizAttemptSchema);
