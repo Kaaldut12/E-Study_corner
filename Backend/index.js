@@ -112,7 +112,13 @@ app.get('/', (req, res) => {
 
 // Health check endpoint
 app.get(['/health', '/api/health'], (req, res) => {
-  res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
+  const uri = MONGODB_URI || '';
+  const sanitizedUri = uri.replace(/\/\/[^@]+@/, '//***:***@');
+  res.json({
+    status: 'Server is running',
+    timestamp: new Date().toISOString(),
+    databaseHost: sanitizedUri
+  });
 });
 
 // API Routes - Mounted with both /api/* and root /* prefix for backward compatibility
