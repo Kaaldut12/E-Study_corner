@@ -1,26 +1,23 @@
 // frontend/src/pages/Student/Courses.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const Courses = () => {
-  const { apiUrl } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCourse, setSelectedCourse] = useState(null);
+  const [courseLessons, setCourseLessons] = useState([]);
+  const [loadingLessons, setLoadingLessons] = useState(false);
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${apiUrl}/student/courses`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setCourses(data.courses);
+        const res = await api.get('/student/courses');
+        if (res.data.success) {
+          setCourses(res.data.courses);
         }
       } catch (err) {
         console.warn('Failed fetching courses:', err);
@@ -30,14 +27,30 @@ const Courses = () => {
     };
 
     fetchCourses();
-  }, [apiUrl]);
+  }, []);
 
-  const subjects = ['All', ...new Set(courses.map(c => c.subject))];
+  const openCourseModal = async (course) => {
+    setSelectedCourse(course);
+    setLoadingLessons(true);
+    setCourseLessons([]);
+    try {
+      const res = await api.get(`/student/courses/${course.id}`);
+      if (res.data.success && res.data.lessons) {
+        setCourseLessons(res.data.lessons);
+      }
+    } catch (err) {
+      console.warn('Error fetching course lessons:', err);
+    } finally {
+      setLoadingLessons(false);
+    }
+  };
+
+  const subjects = ['All', ...new Set(courses.map(c => c.subject).filter(Boolean))];
 
   const filteredCourses = courses.filter(c => {
     const matchesSubject = selectedSubject === 'All' || c.subject === selectedSubject;
-    const matchesSearch = c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          c.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (c.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (c.description || '').toLowerCase().includes(searchQuery.toLowerCase());
     return matchesSubject && matchesSearch;
   });
 
@@ -47,10 +60,10 @@ const Courses = () => {
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-6 rounded-3xl border border-slate-800">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">V1 Foundation</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Curriculum Catalog</span>
             <h1 className="text-2xl font-black text-white">Course Catalog & Learning Paths</h1>
             <p className="text-xs text-slate-400 mt-1">
-              Explore structured academic, degree & technical courses with module lessons and progress tracking.
+              Explore structured academic, degree & technical courses with real syllabus modules and progress tracking.
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -72,7 +85,7 @@ const Courses = () => {
               onClick={() => setSelectedSubject(sub)}
               className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 selectedSubject === sub
-                  ? 'bg-linear-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-600/30'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30'
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-850'
               }`}
             >
@@ -143,14 +156,14 @@ const Courses = () => {
                     </div>
                     <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                       <div
-                        className="bg-linear-to-r from-indigo-500 to-purple-500 h-full transition-all duration-500"
+                        className="bg-indigo-600 h-full transition-all duration-500"
                         style={{ width: `${course.progressPercentage || 0}%` }}
                       ></div>
                     </div>
                   </div>
 
                   <button
-                    onClick={() => setSelectedCourse(course)}
+                    onClick={() => openCourseModal(course)}
                     className="w-full py-2.5 px-4 bg-slate-850 hover:bg-indigo-600 text-slate-200 hover:text-white text-xs font-bold rounded-xl border border-slate-750 transition-all flex items-center justify-center gap-2"
                   >
                     <span>View Course Modules</span>
@@ -183,35 +196,50 @@ const Courses = () => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Course Modules & Lessons</h4>
-                <div className="space-y-2">
-                  <div className="p-4 rounded-2xl bg-slate-850 border border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs font-bold">1</div>
-                      <div>
-                        <h5 className="text-xs font-bold text-white">Module 1: Foundations & Architecture</h5>
-                        <p className="text-[10px] text-slate-400">Arrays, Pointers, Memory allocation</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded font-semibold">Completed</span>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-slate-850 border border-slate-800 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold">2</div>
-                      <div>
-                        <h5 className="text-xs font-bold text-white">Module 2: Linked Data Structures</h5>
-                        <p className="text-[10px] text-slate-400">Singly & Doubly Linked Lists</p>
-                      </div>
-                    </div>
-                    <span className="text-[10px] px-2 py-1 bg-indigo-500/20 text-indigo-400 rounded font-semibold">In Progress</span>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Course Modules & Lessons</h4>
+                  <span className="text-xs text-slate-400">{courseLessons.length} lessons loaded</span>
                 </div>
+
+                {loadingLessons ? (
+                  <div className="flex justify-center py-8">
+                    <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : courseLessons.length === 0 ? (
+                  <div className="p-6 rounded-2xl bg-slate-850 border border-slate-800 text-center text-xs text-slate-400">
+                    No lessons published for this course yet. Check back soon.
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {courseLessons.map((lesson, idx) => (
+                      <div
+                        key={lesson.id || idx}
+                        className="p-4 rounded-2xl bg-slate-850 border border-slate-800 flex items-start justify-between gap-3"
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                            {lesson.lessonOrder || idx + 1}
+                          </div>
+                          <div>
+                            <h5 className="text-xs font-bold text-white">{lesson.title}</h5>
+                            <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-2">{lesson.summary || lesson.content}</p>
+                            {lesson.durationMinutes && (
+                              <span className="text-[10px] text-indigo-400 mt-1 inline-block">⏱️ {lesson.durationMinutes} mins</span>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-[10px] px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded font-semibold whitespace-nowrap">
+                          {lesson.status || 'Active'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <button
                 onClick={() => setSelectedCourse(null)}
-                className="w-full py-3 bg-linear-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30"
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition"
               >
                 Close Course Overview
               </button>

@@ -1,11 +1,9 @@
 // frontend/src/pages/Student/DownStudyMaterial.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const DownStudyMaterial = () => {
-  const { apiUrl } = useAuth();
   const [materials, setMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,48 +12,19 @@ const DownStudyMaterial = () => {
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/student/study-material`);
+        const res = await api.get('/student/study-material');
         if (res.data.success) {
-          setMaterials(res.data.materials);
+          setMaterials(res.data.materials || []);
         }
       } catch (err) {
         console.warn('Study material fetch error:', err);
-        setMaterials([
-          {
-            id: 'mat_1',
-            subject: 'Computer Science',
-            title: 'Data Structures & Algorithms Complete Notes',
-            description: 'Comprehensive study notes covering Arrays, Linked Lists, Stacks, Queues, Binary Search Trees, and Graphs.',
-            fileName: 'DSA_Complete_Notes.pdf',
-            fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            uploadDt: '2026-09-02T10:00:00.000Z'
-          },
-          {
-            id: 'mat_2',
-            subject: 'Computer Science',
-            title: 'MERN Stack Web Development Lab Guide',
-            description: 'Step by step guide for building REST APIs with Express, Node.js, MongoDB and React Frontend.',
-            fileName: 'MERN_Web_Dev_Guide.pdf',
-            fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            uploadDt: '2026-09-04T15:20:00.000Z'
-          },
-          {
-            id: 'mat_3',
-            subject: 'Mathematics',
-            title: 'Applied Mathematics III Solved Papers',
-            description: 'Previous 5 years solved question papers for Applied Mathematics & Core Engineering Subjects.',
-            fileName: 'Applied_Maths_III_Solved.pdf',
-            fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            uploadDt: '2026-09-05T09:00:00.000Z'
-          }
-        ]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchMaterials();
-  }, [apiUrl]);
+  }, []);
 
   const filteredMaterials = materials.filter((mat) => {
     const matchesSubject = selectedSubject === 'All' || mat.subject === selectedSubject;
@@ -88,7 +57,7 @@ const DownStudyMaterial = () => {
 
         {/* Subject Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {['All', 'Computer Science', 'Mathematics', 'Physics', 'Electrical'].map((sub) => (
+          {['All', ...new Set(materials.map(m => m.subject).filter(Boolean))].map((sub) => (
             <button
               key={sub}
               onClick={() => setSelectedSubject(sub)}

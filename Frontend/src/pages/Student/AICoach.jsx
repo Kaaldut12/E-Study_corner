@@ -1,10 +1,9 @@
 // frontend/src/pages/Student/AICoach.jsx
 import { useState } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const AICoach = () => {
-  const { apiUrl } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState([
     {
@@ -37,16 +36,8 @@ const AICoach = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/student/ai-coach`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ prompt: queryText })
-      });
-      const data = await res.json();
+      const res = await api.post('/student/ai-coach', { prompt: queryText });
+      const data = res.data;
 
       if (data.success) {
         const aiResponse = data.response;

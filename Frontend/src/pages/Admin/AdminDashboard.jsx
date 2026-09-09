@@ -1,53 +1,31 @@
 // frontend/src/pages/Admin/AdminDashboard.jsx
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
 const AdminDashboard = () => {
-  const { user, apiUrl } = useAuth();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/admin/dashboard`);
+        const res = await api.get('/admin/dashboard');
         if (res.data.success) {
           setData(res.data);
         }
       } catch (err) {
         console.warn('Admin dashboard fetch error:', err);
-        setData({
-          stats: {
-            totalUsers: 5,
-            studentCount: 2,
-            teacherCount: 2,
-            adminCount: 1,
-            totalAssignments: 3,
-            totalSubmissions: 2,
-            pendingSupportMessages: 1,
-            totalFeedback: 1
-          },
-          recentUsers: [
-            { id: 'user_student_1', name: 'Alex Johnson', email: 'student@estudy.com', role: 'student', status: 'active' },
-            { id: 'user_student_2', name: 'Sophia Chen', email: 'sophia@estudy.com', role: 'student', status: 'active' },
-            { id: 'user_teacher_1', name: 'Dr. Robert Miller', email: 'teacher@estudy.com', role: 'teacher', status: 'active' },
-            { id: 'user_admin_1', name: 'System Admin', email: 'admin@estudy.com', role: 'admin', status: 'active' }
-          ],
-          recentSupportMessages: [
-            { id: 'msg_1', userName: 'Alex Johnson', userRole: 'student', subject: 'Issue submitting large PDF files', status: 'pending' },
-            { id: 'msg_2', userName: 'Dr. Robert Miller', userRole: 'teacher', subject: 'Request for CS Course Roster Export', status: 'resolved' }
-          ]
-        });
       } finally {
         setLoading(false);
       }
     };
 
     fetchAdminData();
-  }, [apiUrl]);
+  }, []);
 
   if (loading) {
     return (

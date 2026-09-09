@@ -1,11 +1,9 @@
 // frontend/src/pages/Admin/ViewMessages.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const ViewMessages = () => {
-  const { apiUrl } = useAuth();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,48 +14,22 @@ const ViewMessages = () => {
   const [submitting, setSubmitting] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const res = await axios.get(`${apiUrl}/admin/messages`);
-        if (res.data.success) {
-          setMessages(res.data.messages);
-        }
-      } catch (err) {
-        console.warn('Admin messages fetch error:', err);
-        setMessages([
-          {
-            id: 'msg_1',
-            userId: 'user_student_1',
-            userName: 'Alex Johnson',
-            userRole: 'student',
-            subject: 'Issue submitting large PDF files',
-            category: 'Technical Support',
-            message: 'Hello, when I try to attach a PDF larger than 5MB, the form gets stuck loading. Is there a size limit?',
-            status: 'pending',
-            createdAt: '2026-09-06T14:10:00.000Z',
-            adminReply: ''
-          },
-          {
-            id: 'msg_2',
-            userId: 'user_teacher_1',
-            userName: 'Dr. Robert Miller',
-            userRole: 'teacher',
-            subject: 'Request for CS Course Roster Export',
-            category: 'Feature Request',
-            message: 'Could we get a direct CSV download option for students enrolled in Data Structures 3rd semester?',
-            status: 'resolved',
-            createdAt: '2026-09-07T09:30:00.000Z',
-            adminReply: 'Roster export feature has been planned for the upcoming V5 update. Thank you.'
-          }
-        ]);
-      } finally {
-        setLoading(false);
+  const fetchMessages = async () => {
+    try {
+      const res = await api.get('/admin/messages');
+      if (res.data.success) {
+        setMessages(res.data.messages || []);
       }
-    };
+    } catch (err) {
+      console.warn('Admin messages fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchMessages();
-  }, [apiUrl]);
+  }, []);
 
   const openReplyModal = (msg) => {
     setSelectedMsg(msg);
@@ -71,30 +43,20 @@ const ViewMessages = () => {
     setSubmitting(true);
 
     try {
-      const res = await axios.put(`${apiUrl}/admin/messages/${selectedMsg.id}`, {
+      const res = await api.put(`/admin/messages/${selectedMsg.id}`, {
         status: statusInput,
         adminReply: replyText
       });
 
       if (res.data.success) {
         setMessages((prev) =>
-          prev.map((m) => (m.id === selectedMsg.id ? res.data.ticket : m))
+          prev.map((m) => (m.id === selectedMsg.id ? (res.data.ticket || { ...m, status: statusInput, adminReply: replyText }) : m))
         );
         setToastMsg(`Responded to ${selectedMsg.userName}'s ticket.`);
         setSelectedMsg(null);
       }
     } catch (err) {
-      console.warn('API error, saving reply locally:', err);
-      const updatedLocal = {
-        ...selectedMsg,
-        status: statusInput,
-        adminReply: replyText
-      };
-      setMessages((prev) =>
-        prev.map((m) => (m.id === selectedMsg.id ? updatedLocal : m))
-      );
-      setToastMsg(`Updated ticket (Local Session).`);
-      setSelectedMsg(null);
+      setToastMsg(err.response?.data?.message || 'Error updating ticket.');
     } finally {
       setSubmitting(false);
       setTimeout(() => setToastMsg(''), 3000);

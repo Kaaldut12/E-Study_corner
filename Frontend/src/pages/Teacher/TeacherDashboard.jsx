@@ -1,58 +1,34 @@
 // frontend/src/pages/Teacher/TeacherDashboard.jsx
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const TeacherDashboard = () => {
-  const { user, apiUrl } = useAuth();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/teacher/dashboard`);
+        const res = await api.get('/teacher/dashboard');
         if (res.data.success) {
           setData(res.data);
         }
       } catch (err) {
         console.warn('Teacher dashboard fetch error:', err);
-        // Fallback
         setData({
           stats: {
-            totalAssignments: 2,
-            totalSubmissions: 2,
-            pendingGradingCount: 1,
-            gradedCount: 1,
-            totalStudents: 2
+            totalAssignments: 0,
+            totalSubmissions: 0,
+            pendingGradingCount: 0,
+            gradedCount: 0,
+            totalStudents: 0
           },
-          recentAssignments: [
-            {
-              id: 'asg_1',
-              title: 'Data Structures & Algorithms - Binary Trees Implementation',
-              subject: 'Computer Science',
-              dueDate: '2026-09-15T23:59:59.000Z',
-              totalPoints: 100
-            },
-            {
-              id: 'asg_3',
-              title: 'Linear Algebra - Matrix Transformations',
-              subject: 'Mathematics',
-              dueDate: '2026-09-10T23:59:59.000Z',
-              totalPoints: 75
-            }
-          ],
-          pendingGradingSubmissions: [
-            {
-              id: 'sub_2',
-              assignmentId: 'asg_1',
-              studentName: 'Alex Johnson',
-              submittedAt: '2026-09-07T11:00:00.000Z',
-              submissionText: 'Implemented BinarySearchTree class with delete node rebalancing logic.'
-            }
-          ]
+          recentAssignments: [],
+          pendingGradingSubmissions: []
         });
       } finally {
         setLoading(false);
@@ -60,7 +36,7 @@ const TeacherDashboard = () => {
     };
 
     fetchDashboard();
-  }, [apiUrl]);
+  }, []);
 
   if (loading) {
     return (
@@ -76,29 +52,26 @@ const TeacherDashboard = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Welcome Header */}
-        <div className="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-brand">
-          <div className="absolute right-0 top-0 w-72 h-72 rounded-full blur-3xl pointer-events-none" style={{background:'var(--brand-glow)'}}></div>
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Instructor Portal</span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-                Welcome back, {user?.name || 'Instructor'} 🎓
-              </h1>
-              <p className="text-slate-400 text-sm mt-1">
-                Manage your coursework assignments, grade student submissions, and monitor class performance.
-              </p>
-            </div>
-
-            <Link
-              to="/teacher/create-assignment"
-              className="py-3 px-5 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition flex items-center justify-center gap-2 shrink-0"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-              </svg>
-              <span>Create New Assignment</span>
-            </Link>
+        <div className="glass-panel p-6 sm:p-7 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">Instructor Portal</span>
+            <h1 className="text-2xl font-bold text-white mt-1">
+              Welcome back, {user?.name || 'Instructor'} 👋
+            </h1>
+            <p className="text-slate-400 text-xs sm:text-sm mt-1">
+              Manage coursework assignments, review submissions, and evaluate students.
+            </p>
           </div>
+
+          <Link
+            to="/teacher/create-assignment"
+            className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-2 shrink-0"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Create Assignment</span>
+          </Link>
         </div>
 
         {/* Stats Grid */}

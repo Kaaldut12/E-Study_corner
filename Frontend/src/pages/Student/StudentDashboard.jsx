@@ -1,62 +1,33 @@
-// frontend/src/pages/Student/StudentDashboard.jsx
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const StudentDashboard = () => {
-  const { user, apiUrl } = useAuth();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/student/dashboard`);
+        const res = await api.get('/student/dashboard');
         if (res.data.success) {
           setData(res.data);
         }
       } catch (err) {
         console.warn('Dashboard fetch error:', err);
-        // Fallback mockup data if offline
         setData({
           stats: {
-            totalAssigned: 3,
-            pendingCount: 2,
-            submittedCount: 1,
-            gradedCount: 1,
-            averageGradePercentage: 96
+            totalAssigned: 0,
+            pendingCount: 0,
+            submittedCount: 0,
+            gradedCount: 0,
+            averageGradePercentage: 0
           },
-          upcomingAssignments: [
-            {
-              id: 'asg_1',
-              title: 'Data Structures & Algorithms - Binary Trees',
-              subject: 'Computer Science',
-              dueDate: '2026-09-15T23:59:59.000Z',
-              teacherName: 'Dr. Robert Miller',
-              totalPoints: 100
-            },
-            {
-              id: 'asg_2',
-              title: 'Quantum Physics - Wave Particle Duality Paper',
-              subject: 'Physics',
-              dueDate: '2026-09-20T23:59:59.000Z',
-              teacherName: 'Prof. Elena Rostova',
-              totalPoints: 50
-            }
-          ],
-          recentFeedback: [
-            {
-              id: 'sub_1',
-              assignmentId: 'asg_3',
-              assignmentTitle: 'Linear Algebra - Matrix Transformations',
-              grade: 72,
-              totalPoints: 75,
-              feedback: 'Excellent work Alex! Your matrix rotation handled edge cases correctly.',
-              gradedBy: 'Dr. Robert Miller'
-            }
-          ]
+          upcomingAssignments: [],
+          recentFeedback: []
         });
       } finally {
         setLoading(false);
@@ -64,7 +35,7 @@ const StudentDashboard = () => {
     };
 
     fetchDashboard();
-  }, [apiUrl]);
+  }, []);
 
   if (loading) {
     return (
@@ -80,17 +51,23 @@ const StudentDashboard = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Welcome Header Banner */}
-        <div className="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-brand">
-          <div className="absolute right-0 top-0 w-72 h-72 rounded-full blur-3xl pointer-events-none" style={{background:'var(--brand-glow)'}}></div>
-          <div className="relative z-10">
-            <span className="text-xs font-bold uppercase tracking-wider t-brand">Student Portal</span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+        <div className="glass-panel p-6 sm:p-7 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">Student Portal</span>
+            <h1 className="text-2xl font-bold text-white mt-1">
               Welcome back, {user?.name || 'Student'} 👋
             </h1>
-            <p className="text-slate-400 text-sm mt-1 max-w-xl">
-              Track your active coursework, submit assignments on time, and view feedback from your instructors.
+            <p className="text-slate-400 text-xs sm:text-sm mt-1 max-w-xl">
+              Track your coursework, submit assignments on time, and review teacher feedback.
             </p>
           </div>
+
+          <Link
+            to="/student/assignments"
+            className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow transition flex items-center justify-center gap-1.5 shrink-0"
+          >
+            <span>View Assignments →</span>
+          </Link>
         </div>
 
         {/* Overview Metric Cards */}

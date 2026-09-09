@@ -1,31 +1,24 @@
-// frontend/src/components/common/NotificationMarquee.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 
 const NotificationMarquee = () => {
   const [notifications, setNotifications] = useState([]);
   const [isPaused, setIsPaused] = useState(false);
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const res = await axios.get(`${API_URL}/public/notifications`);
+        const res = await api.get('/public/notifications');
         if (res.data.success) {
-          setNotifications(res.data.notifications);
+          setNotifications(res.data.notifications || []);
         }
       } catch (err) {
-        console.warn('Marquee notifications fetch offline fallback:', err);
-        setNotifications([
-          { id: '1', notiMessage: '📢 Welcome to E-Study Corner (Smart Learning Pathashala) - Academic Session 2024-25!' },
-          { id: '2', notiMessage: '📝 Major Project & Semester submissions are now active for all student departments.' },
-          { id: '3', notiMessage: '📚 100+ Free Course Notes and Study Materials uploaded for all engineering & degree streams.' }
-        ]);
+        console.warn('Marquee notifications fetch error:', err);
       }
     };
 
     fetchNotifications();
-  }, [API_URL]);
+  }, []);
 
   if (notifications.length === 0) return null;
 

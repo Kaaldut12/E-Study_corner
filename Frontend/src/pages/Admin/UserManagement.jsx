@@ -1,11 +1,11 @@
 // frontend/src/pages/Admin/UserManagement.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
 const UserManagement = () => {
-  const { user: currentUser, apiUrl } = useAuth();
+  const { user: currentUser } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState('all');
@@ -15,44 +15,35 @@ const UserManagement = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('password123');
+  const [password, setPassword] = useState('Admin@123');
   const [role, setRole] = useState('student');
   const [department, setDepartment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await axios.get(`${apiUrl}/admin/users`);
-        if (res.data.success) {
-          setUsers(res.data.users);
-        }
-      } catch (err) {
-        console.warn('Fetch users error:', err);
-        // Fallback
-        setUsers([
-          { id: 'user_superadmin_1', name: 'Super Administrator', email: 'superadmin@estudy.com', role: 'superadmin', department: 'Administration', status: 'active' },
-          { id: 'user_admin_1', name: 'System Administrator', email: 'admin@estudy.com', role: 'admin', department: 'Operations', status: 'active' },
-          { id: 'user_teacher_1', name: 'Faculty Lecturer', email: 'teacher@estudy.com', role: 'teacher', department: 'Computer Science', status: 'active' },
-          { id: 'user_teacher_2', name: 'Associate Professor', email: 'faculty@estudy.com', role: 'teacher', department: 'Physics', status: 'active' },
-          { id: 'user_student_1', name: 'Student Scholar', email: 'student@estudy.com', role: 'student', gradeLevel: 'Grade 11', status: 'active' },
-          { id: 'user_student_2', name: 'Senior Scholar', email: 'scholar@estudy.com', role: 'student', gradeLevel: 'Grade 12', status: 'active' }
-        ]);
-      } finally {
-        setLoading(false);
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get('/admin/users');
+      if (res.data.success) {
+        setUsers(res.data.users || []);
       }
-    };
+    } catch (err) {
+      console.warn('Fetch users error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUsers();
-  }, [apiUrl]);
+  }, []);
 
   const handleAddUser = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
     try {
-      const res = await axios.post(`${apiUrl}/admin/users`, {
+      const res = await api.post('/admin/users', {
         name,
         email,
         password,
@@ -68,19 +59,7 @@ const UserManagement = () => {
         resetForm();
       }
     } catch (err) {
-      console.warn('API create user error, saving locally:', err);
-      const newUser = {
-        id: `user_${Date.now()}`,
-        name,
-        email,
-        role,
-        department: department || 'General',
-        status: 'active'
-      };
-      setUsers((prev) => [...prev, newUser]);
-      setToastMsg(`User ${name} created (Local Session)!`);
-      setShowAddModal(false);
-      resetForm();
+      setToastMsg(err.response?.data?.message || 'Error creating user.');
     } finally {
       setSubmitting(false);
       setTimeout(() => setToastMsg(''), 3000);
@@ -102,12 +81,11 @@ const UserManagement = () => {
     if (!window.confirm(`Are you sure you want to delete user "${userName}"?`)) return;
 
     try {
-      await axios.delete(`${apiUrl}/admin/users/${id}`);
+      await api.delete(`/admin/users/${id}`);
       setUsers((prev) => prev.filter((u) => u.id !== id));
       setToastMsg(`Deleted ${userName}.`);
-    } catch {
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-      setToastMsg(`Deleted ${userName} (Local Session).`);
+    } catch (err) {
+      setToastMsg(err.response?.data?.message || `Failed to delete ${userName}.`);
     } finally {
       setTimeout(() => setToastMsg(''), 3000);
     }

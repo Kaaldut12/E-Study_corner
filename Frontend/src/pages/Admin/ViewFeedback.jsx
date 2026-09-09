@@ -1,40 +1,28 @@
 // frontend/src/pages/Admin/ViewFeedback.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const ViewFeedback = () => {
-  const { apiUrl } = useAuth();
   const [feedbackList, setFeedbackList] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFeedback = async () => {
       try {
-        const res = await axios.get(`${apiUrl}/admin/feedback`);
+        const res = await api.get('/admin/feedback');
         if (res.data.success) {
-          setFeedbackList(res.data.feedbackList);
+          setFeedbackList(res.data.feedbackList || []);
         }
       } catch (err) {
         console.warn('Admin feedback fetch error:', err);
-        setFeedbackList([
-          {
-            id: 'fb_1',
-            studentName: 'Alex Johnson',
-            assignmentTitle: 'Linear Algebra - Matrix Transformations',
-            rating: 5,
-            comment: 'The assignment instructions were very clear and the resource link really helped with visual intuition.',
-            createdAt: '2026-09-06T12:00:00.000Z'
-          }
-        ]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchFeedback();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <SidebarLayout>
@@ -51,7 +39,7 @@ const ViewFeedback = () => {
             {feedbackList.map((fb) => (
               <div key={fb.id} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-sm text-white">{fb.studentName}</span>
+                  <span className="font-semibold text-sm text-white">{fb.userName || fb.studentName || 'Student'}</span>
                   <div className="flex items-center text-amber-400 text-sm">
                     {Array.from({ length: fb.rating || 5 }).map((_, i) => (
                       <span key={i}>★</span>
@@ -59,10 +47,10 @@ const ViewFeedback = () => {
                   </div>
                 </div>
 
-                <div className="text-xs text-indigo-400 font-medium">{fb.assignmentTitle}</div>
+                <div className="text-xs text-indigo-400 font-medium">{fb.category || fb.assignmentTitle || 'Platform Feedback'}</div>
 
                 <p className="text-xs text-slate-300 italic bg-slate-900/80 p-3 rounded-xl border border-slate-800">
-                  "{fb.comment}"
+                  "{fb.feedbackText || fb.comment}"
                 </p>
 
                 <div className="text-xs text-slate-500 text-right">

@@ -1,10 +1,9 @@
 // frontend/src/pages/Student/Quizzes.jsx
 import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const Quizzes = () => {
-  const { apiUrl } = useAuth();
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeQuiz, setActiveQuiz] = useState(null);
@@ -15,20 +14,16 @@ const Quizzes = () => {
 
   const fetchQuizzes = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/student/quizzes`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setQuizzes(data.quizzes);
+      const res = await api.get('/student/quizzes');
+      if (res.data.success) {
+        setQuizzes(res.data.quizzes || []);
       }
     } catch (err) {
       console.warn('Error fetching quizzes:', err);
     } finally {
       setLoading(false);
     }
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
     fetchQuizzes();
@@ -38,31 +33,22 @@ const Quizzes = () => {
     if (!activeQuiz) return;
 
     try {
-      const token = localStorage.getItem('token');
       const initialTime = (activeQuiz.timeLimitMinutes || 15) * 60;
       const timeTakenSeconds = initialTime - timeLeft;
 
-      const res = await fetch(`${apiUrl}/student/quizzes/submit`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          quizId: activeQuiz.id,
-          userAnswers,
-          timeTakenSeconds
-        })
+      const res = await api.post('/student/quizzes/submit', {
+        quizId: activeQuiz.id,
+        userAnswers,
+        timeTakenSeconds
       });
-      const data = await res.json();
-      if (data.success) {
-        setResult(data.attempt);
+      if (res.data.success) {
+        setResult(res.data.attempt);
         fetchQuizzes();
       }
     } catch (err) {
       console.error('Error submitting quiz:', err);
     }
-  }, [activeQuiz, apiUrl, fetchQuizzes, timeLeft, userAnswers]);
+  }, [activeQuiz, fetchQuizzes, timeLeft, userAnswers]);
 
   const handleAutoSubmit = useCallback(() => {
     submitQuiz();
@@ -87,17 +73,13 @@ const Quizzes = () => {
   const startQuiz = async (quiz) => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/student/quizzes/${quiz.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setActiveQuiz(data.quiz);
-        setQuestions(data.questions);
+      const res = await api.get(`/student/quizzes/${quiz.id}`);
+      if (res.data.success) {
+        setActiveQuiz(res.data.quiz);
+        setQuestions(res.data.questions || []);
         setUserAnswers({});
         setResult(null);
-        setTimeLeft((data.quiz.timeLimitMinutes || 15) * 60);
+        setTimeLeft((res.data.quiz.timeLimitMinutes || 15) * 60);
       }
     } catch (err) {
       console.warn('Error starting quiz:', err);

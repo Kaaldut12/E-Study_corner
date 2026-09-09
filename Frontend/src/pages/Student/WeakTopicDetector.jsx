@@ -2,10 +2,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const WeakTopicDetector = () => {
-  const { apiUrl } = useAuth();
   const [topics, setTopics] = useState([]);
   const [diagnosticScore, setDiagnosticScore] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -13,14 +12,10 @@ const WeakTopicDetector = () => {
   useEffect(() => {
     const fetchWeakTopics = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${apiUrl}/student/weak-topics`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setTopics(data.weakTopics);
-          setDiagnosticScore(data.overallDiagnosticScore || 68);
+        const res = await api.get('/student/weak-topics');
+        if (res.data.success) {
+          setTopics(res.data.weakTopics || []);
+          setDiagnosticScore(res.data.overallDiagnosticScore || 75);
         }
       } catch (err) {
         console.warn('Error fetching weak topic analysis:', err);
@@ -30,7 +25,7 @@ const WeakTopicDetector = () => {
     };
 
     fetchWeakTopics();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <SidebarLayout>

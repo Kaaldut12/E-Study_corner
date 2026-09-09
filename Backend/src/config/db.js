@@ -64,32 +64,35 @@ export const connectDB = async () => {
 
 const seedInitialData = async () => {
   try {
-    for (const user of seedUsers) {
-      await User.updateOne(
-        { email: user.email },
-        { $setOnInsert: user },
-        { upsert: true }
-      );
-    }
-    if ((await Course.countDocuments()) === 0) await Course.insertMany(seedCourses);
-    if ((await Lesson.countDocuments()) === 0) await Lesson.insertMany(seedLessons);
-    if ((await Quiz.countDocuments()) === 0) await Quiz.insertMany(seedQuizzes);
-    if ((await Question.countDocuments()) === 0) await Question.insertMany(seedQuestions);
-    if ((await QuizAttempt.countDocuments()) === 0) await QuizAttempt.insertMany(seedQuizAttempts);
-    if ((await Note.countDocuments()) === 0) await Note.insertMany(seedNotes);
-    if ((await Bookmark.countDocuments()) === 0) await Bookmark.insertMany(seedBookmarks);
-    if ((await Progress.countDocuments()) === 0) await Progress.insertMany(seedProgress);
-    if ((await Notification.countDocuments()) === 0) await Notification.insertMany(seedNotifications);
-    if ((await Enquiry.countDocuments()) === 0) await Enquiry.insertMany(seedEnquiries);
-    if ((await StudyMaterial.countDocuments()) === 0) await StudyMaterial.insertMany(seedStudyMaterials);
-    if ((await Assignment.countDocuments()) === 0) await Assignment.insertMany(seedAssignments);
-    if ((await Submission.countDocuments()) === 0) await Submission.insertMany(seedSubmissions);
-    if ((await SupportMessage.countDocuments()) === 0) await SupportMessage.insertMany(seedSupportMessages);
-    if ((await Feedback.countDocuments()) === 0) await Feedback.insertMany(seedFeedback);
+    const collections = [
+      [User, seedUsers],
+      [Course, seedCourses],
+      [Lesson, seedLessons],
+      [Quiz, seedQuizzes],
+      [Question, seedQuestions],
+      [QuizAttempt, seedQuizAttempts],
+      [Note, seedNotes],
+      [Bookmark, seedBookmarks],
+      [Progress, seedProgress],
+      [Notification, seedNotifications],
+      [Enquiry, seedEnquiries],
+      [StudyMaterial, seedStudyMaterials],
+      [Assignment, seedAssignments],
+      [Submission, seedSubmissions],
+      [SupportMessage, seedSupportMessages],
+      [Feedback, seedFeedback]
+    ];
 
-    console.log('🌱 Verified and auto-seeded initial E-Study Corner collections.');
+    for (const [Model, documents] of collections) {
+      for (const doc of documents) {
+        const filter = doc.id ? { id: doc.id } : { email: doc.email };
+        await Model.updateOne(filter, { $set: doc }, { upsert: true });
+      }
+    }
+
+    console.log('🌱 Successfully verified and synchronized actual database collections.');
   } catch (err) {
-    console.warn('Seeding warning:', err.message);
+    console.warn('Database synchronization warning:', err.message);
   }
 };
 

@@ -1,10 +1,9 @@
 // frontend/src/pages/Teacher/ManageStudents.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const ManageStudents = () => {
-  const { apiUrl } = useAuth();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -12,13 +11,9 @@ const ManageStudents = () => {
   useEffect(() => {
     const fetchTeacherStudents = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${apiUrl}/teacher/students`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setStudents(data.students);
+        const res = await api.get('/teacher/students');
+        if (res.data.success) {
+          setStudents(res.data.students || []);
         }
       } catch (err) {
         console.warn('Error fetching teacher student roster:', err);
@@ -28,7 +23,7 @@ const ManageStudents = () => {
     };
 
     fetchTeacherStudents();
-  }, [apiUrl]);
+  }, []);
 
   const filtered = students.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||

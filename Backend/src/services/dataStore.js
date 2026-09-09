@@ -459,11 +459,52 @@ export const dataStore = {
     if (isDBConnected()) return await Question.find({ quizId }).lean();
     return questions.filter(q => q.quizId === quizId);
   },
+  saveQuizAttempt: async (attemptData) => {
+    if (isDBConnected()) {
+      const doc = await QuizAttempt.create(attemptData);
+      return doc.toObject();
+    }
+    quizAttempts.unshift(attemptData);
+    return attemptData;
+  },
+  getQuizAttempts: async (studentId) => {
+    if (isDBConnected()) {
+      return await QuizAttempt.find({ studentId }).sort({ attemptedAt: -1 }).lean();
+    }
+    return quizAttempts.filter(a => a.studentId === studentId);
+  },
 
   // --- NOTES ---
   getStudentNotes: async (studentId) => {
     if (isDBConnected()) return await Note.find({ studentId }).sort({ isPinned: -1, updatedAt: -1 }).lean();
     return notes.filter(n => n.studentId === studentId);
+  },
+  createNote: async (noteData) => {
+    if (isDBConnected()) {
+      const doc = await Note.create(noteData);
+      return doc.toObject();
+    }
+    notes.unshift(noteData);
+    return noteData;
+  },
+  updateNote: async (noteId, updates) => {
+    if (isDBConnected()) {
+      return await Note.findOneAndUpdate({ id: noteId }, { $set: updates }, { new: true }).lean();
+    }
+    const idx = notes.findIndex(n => n.id === noteId);
+    if (idx !== -1) {
+      notes[idx] = { ...notes[idx], ...updates };
+      return notes[idx];
+    }
+    return null;
+  },
+  deleteNote: async (noteId) => {
+    if (isDBConnected()) {
+      await Note.deleteOne({ id: noteId });
+      return true;
+    }
+    notes = notes.filter(n => n.id !== noteId);
+    return true;
   },
 
   // --- BOOKMARKS ---
@@ -471,10 +512,68 @@ export const dataStore = {
     if (isDBConnected()) return await Bookmark.find({ studentId }).lean();
     return bookmarks.filter(b => b.studentId === studentId);
   },
+  toggleBookmark: async (studentId, itemType, itemId, title, url) => {
+    if (isDBConnected()) {
+      const existing = await Bookmark.findOne({ studentId, itemId });
+      if (existing) {
+        await Bookmark.deleteOne({ _id: existing._id });
+        return { action: 'removed', bookmarked: false };
+      }
+      const doc = await Bookmark.create({
+        id: `bm_${Date.now()}`,
+        studentId,
+        itemType,
+        itemId,
+        title,
+        url: url || ''
+      });
+      return { action: 'added', bookmarked: true, bookmark: doc.toObject() };
+    }
+    const existingIdx = bookmarks.findIndex(b => b.studentId === studentId && b.itemId === itemId);
+    if (existingIdx !== -1) {
+      bookmarks.splice(existingIdx, 1);
+      return { action: 'removed', bookmarked: false };
+    }
+    const bm = {
+      id: `bm_${Date.now()}`,
+      studentId,
+      itemType,
+      itemId,
+      title,
+      url: url || ''
+    };
+    bookmarks.unshift(bm);
+    return { action: 'added', bookmarked: true, bookmark: bm };
+  },
+  deleteBookmark: async (studentId, bookmarkId) => {
+    if (isDBConnected()) {
+      await Bookmark.deleteOne({ studentId, id: bookmarkId });
+      return true;
+    }
+    bookmarks = bookmarks.filter(b => !(b.studentId === studentId && b.id === bookmarkId));
+    return true;
+  },
 
   // --- PROGRESS ---
   getStudentProgress: async (studentId) => {
     if (isDBConnected()) return await Progress.find({ studentId }).lean();
     return progressList.filter(p => p.studentId === studentId);
+  },
+  updateStudentProgress: async (studentId, courseId, updates) => {
+    if (isDBConnected()) {
+      return await Progress.findOneAndUpdate(
+        { studentId, courseId },
+        { $set: updates },
+        { new: true, upsert: true }
+      ).lean();
+    }
+    const idx = progressList.findIndex(p => p.studentId === studentId && p.courseId === courseId);
+    if (idx !== -1) {
+      progressList[idx] = { ...progressList[idx], ...updates };
+      return progressList[idx];
+    }
+    const newProg = { id: `prog_${Date.now()}`, studentId, courseId, ...updates };
+    progressList.push(newProg);
+    return newProg;
   }
 };

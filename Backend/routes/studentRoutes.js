@@ -21,6 +21,7 @@ import {
   submitQuizAttempt,
   getStudentBookmarks,
   toggleBookmark,
+  deleteBookmark,
   getStudentProgressStats,
   getStudentNotifications,
   askAICoach,
@@ -60,6 +61,7 @@ router.get('/quizzes/:quizId', getQuizQuestions);
 router.post('/quizzes/submit', submitQuizAttempt);
 router.get('/bookmarks', getStudentBookmarks);
 router.post('/bookmarks/toggle', toggleBookmark);
+router.delete('/bookmarks/:bookmarkId', deleteBookmark);
 router.get('/progress', getStudentProgressStats);
 router.get('/notifications', getStudentNotifications);
 

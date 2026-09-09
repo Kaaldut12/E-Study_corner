@@ -2,102 +2,87 @@
 @import "tailwindcss";
 
 /* ============================================================
-   THEME SYSTEM — CSS Custom Properties
-   All color-dependent utilities use these vars.
-   Switching [data-theme] on <html> changes everything.
+   THEME SYSTEM — Clean & Modern
    ============================================================ */
 
 :root {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color-scheme: dark;
 
-  /* === INDIGO (Default) === */
+  /* === INDIGO (Clean Default) === */
   --brand-1: #4f46e5;
-  --brand-2: #7c3aed;
-  --brand-3: #9333ea;
+  --brand-2: #6366f1;
+  --brand-3: #818cf8;
   --brand-t1: #818cf8;
-  --brand-t2: #c084fc;
-  --brand-glow: rgba(99, 102, 241, 0.35);
-  --brand-border: rgba(129, 140, 248, 0.25);
-  --brand-bg: rgba(79, 70, 229, 0.12);
-  --brand-bg-hover: rgba(79, 70, 229, 0.2);
+  --brand-t2: #a5b4fc;
+  --brand-glow: rgba(99, 102, 241, 0.15);
+  --brand-border: #334155;
+  --brand-bg: rgba(79, 70, 229, 0.1);
+  --brand-bg-hover: rgba(79, 70, 229, 0.16);
 }
 
 [data-theme="emerald"] {
   --brand-1: #059669;
-  --brand-2: #0d9488;
-  --brand-3: #0284c7;
+  --brand-2: #10b981;
+  --brand-3: #34d399;
   --brand-t1: #34d399;
-  --brand-t2: #38bdf8;
-  --brand-glow: rgba(16, 185, 129, 0.35);
-  --brand-border: rgba(52, 211, 153, 0.25);
-  --brand-bg: rgba(5, 150, 105, 0.12);
-  --brand-bg-hover: rgba(5, 150, 105, 0.2);
+  --brand-t2: #6ee7b7;
+  --brand-glow: rgba(16, 185, 129, 0.15);
+  --brand-border: #334155;
+  --brand-bg: rgba(5, 150, 105, 0.1);
+  --brand-bg-hover: rgba(5, 150, 105, 0.16);
 }
 
 [data-theme="amber"] {
   --brand-1: #d97706;
-  --brand-2: #ea580c;
-  --brand-3: #dc2626;
+  --brand-2: #f59e0b;
+  --brand-3: #fbbf24;
   --brand-t1: #fbbf24;
-  --brand-t2: #f97316;
-  --brand-glow: rgba(245, 158, 11, 0.35);
-  --brand-border: rgba(251, 191, 36, 0.25);
-  --brand-bg: rgba(217, 119, 6, 0.12);
-  --brand-bg-hover: rgba(217, 119, 6, 0.2);
+  --brand-t2: #fcd34d;
+  --brand-glow: rgba(245, 158, 11, 0.15);
+  --brand-border: #334155;
+  --brand-bg: rgba(217, 119, 6, 0.1);
+  --brand-bg-hover: rgba(217, 119, 6, 0.16);
 }
 
 [data-theme="rose"] {
   --brand-1: #e11d48;
-  --brand-2: #c026d3;
-  --brand-3: #7c3aed;
+  --brand-2: #f43f5e;
+  --brand-3: #fb7185;
   --brand-t1: #fb7185;
-  --brand-t2: #e879f9;
-  --brand-glow: rgba(225, 29, 72, 0.35);
-  --brand-border: rgba(251, 113, 133, 0.25);
-  --brand-bg: rgba(225, 29, 72, 0.12);
-  --brand-bg-hover: rgba(225, 29, 72, 0.2);
+  --brand-t2: #fda4af;
+  --brand-glow: rgba(225, 29, 72, 0.15);
+  --brand-border: #334155;
+  --brand-bg: rgba(225, 29, 72, 0.1);
+  --brand-bg-hover: rgba(225, 29, 72, 0.16);
 }
 
 /* ============================================================
-   SEMANTIC THEME UTILITY CLASSES
-   Use these everywhere instead of hardcoded indigo/purple classes.
-   They automatically update when theme changes.
+   SEMANTIC UTILITIES
    ============================================================ */
 
-/* Text */
 .t-brand { color: var(--brand-t1); }
 .t-brand-2 { color: var(--brand-t2); }
 
-/* Gradient text */
 .t-brand-grad {
-  background: linear-gradient(135deg, var(--brand-t1), var(--brand-t2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #f8fafc;
 }
 
-/* Background gradient (buttons, badges) */
 .bg-brand {
-  background: linear-gradient(135deg, var(--brand-1), var(--brand-2), var(--brand-3));
+  background-color: var(--brand-1);
 }
 .bg-brand:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 8px 20px -4px var(--brand-glow);
+  background-color: var(--brand-2);
 }
 
-/* Subtle tinted background */
 .bg-brand-subtle { background: var(--brand-bg); }
 .bg-brand-subtle-hover:hover { background: var(--brand-bg-hover); }
 
-/* Border */
 .border-brand { border-color: var(--brand-border) !important; }
 .border-brand-solid { border-color: var(--brand-t1); }
 
-/* Glow shadow */
-.shadow-brand { box-shadow: 0 10px 25px -5px var(--brand-glow); }
+.shadow-brand { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); }
 
-/* Badge — combines bg + text + border */
 .badge-brand {
   background: var(--brand-bg);
   color: var(--brand-t1);
@@ -114,131 +99,57 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background-color: #030712;
-  color: #f8fafc;
+  background-color: #0b0f19;
+  color: #f1f5f9;
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', sans-serif;
-  letter-spacing: -0.02em;
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.015em;
+  font-weight: 700;
 }
 
 /* ============================================================
-   PAGE ANIMATIONS
+   SUBTLE ANIMATIONS
    ============================================================ */
 
 @keyframes page-enter {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slide-in-right {
-  from { opacity: 0; transform: translateX(16px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-12px); }
-}
-
-@keyframes float-reverse {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(12px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50%       { opacity: 0.7; transform: scale(1.06); }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes marquee {
-  0%   { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-/* Page-level entrance — wrap each page's root div with this */
 .page-animate {
-  animation: page-enter 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: page-enter 0.25s ease-out both;
 }
 
-/* Staggered children — apply nth-child delays in JSX via style */
 .animate-slide-up {
-  animation: slide-up 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: page-enter 0.25s ease-out both;
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease both;
+  animation: page-enter 0.2s ease-out both;
 }
-
-.animate-scale-in {
-  animation: scale-in 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-.animate-float-slow   { animation: float-slow 7s ease-in-out infinite; }
-.animate-float-reverse{ animation: float-reverse 9s ease-in-out infinite; }
-.animate-pulse-glow   { animation: pulse-glow 4s ease-in-out infinite; }
-
-.animate-marquee {
-  display: inline-block;
-  animation: marquee 80s linear infinite;
-}
-.animate-marquee:hover,
-.animate-marquee.paused {
-  animation-play-state: paused;
-}
-
-/* Stagger utility delays */
-.delay-75  { animation-delay: 75ms; }
-.delay-150 { animation-delay: 150ms; }
-.delay-225 { animation-delay: 225ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-375 { animation-delay: 375ms; }
-.delay-450 { animation-delay: 450ms; }
 
 /* ============================================================
-   GLASSMORPHISM CARDS
+   CLEAN & CALM CARDS (Replacing loud glassmorphism)
    ============================================================ */
 
 .glass-panel {
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  box-shadow: 0 8px 32px -8px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .glass-panel-hover {
-  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1), border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .glass-panel-hover:hover {
-  transform: translateY(-3px);
-  background: rgba(15, 23, 42, 0.8);
-  border-color: var(--brand-border);
-  box-shadow: 0 16px 40px -8px var(--brand-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  border-color: #334155;
+  background-color: #131d33;
 }
 
 .glass-card-accent {
@@ -251,67 +162,38 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   top: 0; left: 0; right: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--brand-1), var(--brand-2), var(--brand-3));
-  opacity: 0.85;
+  background: var(--brand-1);
 }
 
-/* ============================================================
-   LEGACY GRADIENT UTILITIES  (keep for backward compat)
-   ============================================================ */
-
+/* Clean solid gradient utilities */
 .gradient-text-indigo,
 .gradient-text-primary {
-  background: linear-gradient(135deg, var(--brand-t1), var(--brand-t2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #818cf8;
 }
 
 .gradient-bg-primary {
-  background: linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 50%, var(--brand-3) 100%);
-  transition: filter 0.25s ease, box-shadow 0.25s ease;
+  background-color: #4f46e5;
+  color: #ffffff;
+  transition: background-color 0.2s ease;
 }
 .gradient-bg-primary:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 10px 25px -5px var(--brand-glow);
+  background-color: #4338ca;
 }
 
-.gradient-text-emerald {
-  background: linear-gradient(135deg, #34d399, #38bdf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.gradient-text-amber {
-  background: linear-gradient(135deg, #fbbf24, #f97316);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Shimmer button */
 .btn-shimmer {
-  background-size: 200% 100%;
-  background-image: linear-gradient(
-    110deg,
-    var(--brand-1) 0%,
-    var(--brand-2) 45%,
-    var(--brand-t2) 50%,
-    var(--brand-2) 55%,
-    var(--brand-1) 100%
-  );
-  animation: shimmer 5s linear infinite;
+  background-color: #4f46e5;
+  color: #ffffff;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.btn-shimmer:hover {
+  background-color: #4338ca;
 }
 
-/* ============================================================
-   SELECTION & SCROLLBAR
-   ============================================================ */
-
-::selection { background: var(--brand-bg-hover); color: #fff; }
+/* Scrollbar */
+::selection { background: rgba(99, 102, 241, 0.3); color: #fff; }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #030712; }
+::-webkit-scrollbar-track { background: #0b0f19; }
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 3px;

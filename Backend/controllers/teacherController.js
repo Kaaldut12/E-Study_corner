@@ -19,6 +19,18 @@ export const getTeacherDashboard = async (req, res) => {
     const allUsers = await dataStore.getUsers();
     const totalStudents = allUsers.filter(u => u.role === 'student').length;
 
+    const enrichedPending = teacherSubmissions
+      .filter(s => s.status === 'submitted')
+      .slice(0, 5)
+      .map(sub => {
+        const asg = allAssignments.find(a => a.id === sub.assignmentId);
+        return {
+          ...sub,
+          assignmentTitle: asg ? asg.title : 'Coursework Task',
+          subject: asg ? asg.subject : 'Coursework'
+        };
+      });
+
     return res.status(200).json({
       success: true,
       stats: {
@@ -29,7 +41,7 @@ export const getTeacherDashboard = async (req, res) => {
         totalStudents
       },
       recentAssignments: teacherAssignments.slice(-4).reverse(),
-      pendingGradingSubmissions: teacherSubmissions.filter(s => s.status === 'submitted').slice(0, 5)
+      pendingGradingSubmissions: enrichedPending
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

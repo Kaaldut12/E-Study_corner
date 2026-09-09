@@ -1,23 +1,18 @@
 // frontend/src/pages/Student/AIRecommendations.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const AIRecommendations = () => {
-  const { apiUrl } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRecommendations = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${apiUrl}/student/recommendations`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const resData = await res.json();
-        if (resData.success) {
-          setData(resData.recommendations);
+        const res = await api.get('/student/recommendations');
+        if (res.data.success) {
+          setData(res.data.recommendations);
         }
       } catch (err) {
         console.warn('Error fetching AI recommendations:', err);
@@ -27,7 +22,7 @@ const AIRecommendations = () => {
     };
 
     fetchRecommendations();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <SidebarLayout>

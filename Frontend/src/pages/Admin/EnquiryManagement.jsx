@@ -1,46 +1,39 @@
 // frontend/src/pages/Admin/EnquiryManagement.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const EnquiryManagement = () => {
-  const { apiUrl } = useAuth();
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toastMsg, setToastMsg] = useState('');
 
-  useEffect(() => {
-    const fetchEnquiries = async () => {
-      try {
-        const res = await axios.get(`${apiUrl}/admin/enquiries`);
-        if (res.data.success) {
-          setEnquiries(res.data.enquiries);
-        }
-      } catch (err) {
-        console.warn('Enquiries fetch offline fallback:', err);
-        setEnquiries([
-          { id: 'enq_1', enquiryId: 1, name: 'Student Applicant A', email: 'applicant1@nitas.edu', mobileNo: '9123456789', message: 'I want to inquire about the online lecture schedules for the Computer Science & Engineering course.', enquiryDt: '2026-09-06T10:15:00.000Z' },
-          { id: 'enq_2', enquiryId: 2, name: 'Student Applicant B', email: 'applicant2@nitas.edu', mobileNo: '9988776655', message: 'Where can we download the Data Structures lab manual PDF?', enquiryDt: '2026-09-07T11:40:00.000Z' }
-        ]);
-      } finally {
-        setLoading(false);
+  const fetchEnquiries = async () => {
+    try {
+      const res = await api.get('/admin/enquiries');
+      if (res.data.success) {
+        setEnquiries(res.data.enquiries || []);
       }
-    };
+    } catch (err) {
+      console.warn('Enquiries fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchEnquiries();
-  }, [apiUrl]);
+  }, []);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this enquiry entry?')) return;
 
     try {
-      await axios.delete(`${apiUrl}/admin/enquiries/${id}`);
+      await api.delete(`/admin/enquiries/${id}`);
       setEnquiries((prev) => prev.filter((e) => e.id !== id));
       setToastMsg('Enquiry deleted successfully.');
-    } catch {
-      setEnquiries((prev) => prev.filter((e) => e.id !== id));
-      setToastMsg('Enquiry deleted (Local Session).');
+    } catch (err) {
+      setToastMsg(err.response?.data?.message || 'Failed to delete enquiry.');
     } finally {
       setTimeout(() => setToastMsg(''), 3000);
     }

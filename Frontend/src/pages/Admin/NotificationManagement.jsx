@@ -1,37 +1,31 @@
 // frontend/src/pages/Admin/NotificationManagement.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const NotificationManagement = () => {
-  const { apiUrl } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [notiMessage, setNotiMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await axios.get(`${apiUrl}/admin/notifications`);
-        if (res.data.success) {
-          setNotifications(res.data.notifications);
-        }
-      } catch (err) {
-        console.warn('Notifications fetch offline fallback:', err);
-        setNotifications([
-          { id: 'noti_1', notificationId: 101, notiMessage: '📢 Welcome to E-Study Corner (Smart Learning Pathashala) - Academic session open for all courses!', notiDt: '2026-09-01T10:00:00.000Z' },
-          { id: 'noti_2', notificationId: 102, notiMessage: '📝 Final Year Major Project & Thesis submissions are now open for all departments.', notiDt: '2026-09-03T12:00:00.000Z' }
-        ]);
-      } finally {
-        setLoading(false);
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get('/admin/notifications');
+      if (res.data.success) {
+        setNotifications(res.data.notifications || []);
       }
-    };
+    } catch (err) {
+      console.warn('Notifications fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchNotifications();
-  }, [apiUrl]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +33,7 @@ const NotificationManagement = () => {
     setToastMsg('');
 
     try {
-      const res = await axios.post(`${apiUrl}/admin/notifications`, {
+      const res = await api.post('/admin/notifications', {
         Noti_Message: notiMessage
       });
 
@@ -49,16 +43,7 @@ const NotificationManagement = () => {
         setNotiMessage('');
       }
     } catch (err) {
-      console.warn('Publish notification offline fallback:', err);
-      const newNoti = {
-        id: `noti_${Date.now()}`,
-        notificationId: notifications.length + 101,
-        notiMessage,
-        notiDt: new Date().toISOString()
-      };
-      setNotifications((prev) => [newNoti, ...prev]);
-      setToastMsg('Notification published (Local Session)!');
-      setNotiMessage('');
+      setToastMsg(err.response?.data?.message || 'Failed to publish notification.');
     } finally {
       setSubmitting(false);
       setTimeout(() => setToastMsg(''), 3000);
@@ -69,12 +54,11 @@ const NotificationManagement = () => {
     if (!window.confirm('Delete this broadcast notification?')) return;
 
     try {
-      await axios.delete(`${apiUrl}/admin/notifications/${id}`);
+      await api.delete(`/admin/notifications/${id}`);
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       setToastMsg('Notification deleted successfully.');
-    } catch {
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-      setToastMsg('Notification deleted (Local Session).');
+    } catch (err) {
+      setToastMsg(err.response?.data?.message || 'Failed to delete notification.');
     } finally {
       setTimeout(() => setToastMsg(''), 3000);
     }

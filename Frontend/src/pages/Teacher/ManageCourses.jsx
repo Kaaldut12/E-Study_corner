@@ -2,23 +2,18 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const ManageCourses = () => {
-  const { apiUrl } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTeacherCourses = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${apiUrl}/teacher/courses`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setCourses(data.courses);
+        const res = await api.get('/teacher/courses');
+        if (res.data.success) {
+          setCourses(res.data.courses || []);
         }
       } catch (err) {
         console.warn('Error fetching teacher courses:', err);
@@ -28,7 +23,7 @@ const ManageCourses = () => {
     };
 
     fetchTeacherCourses();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <SidebarLayout>

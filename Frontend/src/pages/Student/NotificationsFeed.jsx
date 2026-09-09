@@ -1,23 +1,18 @@
 // frontend/src/pages/Student/NotificationsFeed.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const NotificationsFeed = () => {
-  const { apiUrl } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${apiUrl}/student/notifications`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setNotifications(data.notifications);
+        const res = await api.get('/student/notifications');
+        if (res.data.success) {
+          setNotifications(res.data.notifications || []);
         }
       } catch (err) {
         console.warn('Error fetching notifications:', err);
@@ -27,7 +22,7 @@ const NotificationsFeed = () => {
     };
 
     fetchNotifications();
-  }, [apiUrl]);
+  }, []);
 
   return (
     <SidebarLayout>

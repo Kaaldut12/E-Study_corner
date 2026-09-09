@@ -1,36 +1,37 @@
 // frontend/src/pages/Student/Bookmarks.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const Bookmarks = () => {
-  const { apiUrl } = useAuth();
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchBookmarks = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const res = await fetch(`${apiUrl}/student/bookmarks`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setBookmarks(data.bookmarks);
-        }
-      } catch (err) {
-        console.warn('Error fetching bookmarks:', err);
-      } finally {
-        setLoading(false);
+  const fetchBookmarks = async () => {
+    try {
+      const res = await api.get('/student/bookmarks');
+      if (res.data.success) {
+        setBookmarks(res.data.bookmarks || []);
       }
-    };
+    } catch (err) {
+      console.warn('Error fetching bookmarks:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchBookmarks();
-  }, [apiUrl]);
+  }, []);
 
-  const removeBookmark = (id) => {
-    setBookmarks(bookmarks.filter(b => b.id !== id));
+  const removeBookmark = async (id) => {
+    setBookmarks(prev => prev.filter(b => b.id !== id));
+    try {
+      await api.delete(`/student/bookmarks/${id}`);
+    } catch (err) {
+      console.warn('Failed to delete bookmark from database:', err);
+      fetchBookmarks();
+    }
   };
 
   return (

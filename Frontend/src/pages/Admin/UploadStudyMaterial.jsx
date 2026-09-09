@@ -1,11 +1,9 @@
 // frontend/src/pages/Admin/UploadStudyMaterial.jsx
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import api from '../../services/api';
 
 const UploadStudyMaterial = () => {
-  const { apiUrl } = useAuth();
   const [materials, setMaterials] = useState([]);
   const [subject, setSubject] = useState('Computer Science');
   const [title, setTitle] = useState('');
@@ -17,26 +15,22 @@ const UploadStudyMaterial = () => {
   const [submitting, setSubmitting] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
 
-  useEffect(() => {
-    const fetchMaterials = async () => {
-      try {
-        const res = await axios.get(`${apiUrl}/student/study-material`);
-        if (res.data.success) {
-          setMaterials(res.data.materials);
-        }
-      } catch (err) {
-        console.warn('Study material fetch fallback:', err);
-        setMaterials([
-          { id: 'mat_1', subject: 'Computer Science', title: 'Data Structures Complete Notes', fileName: 'DSA_Notes.pdf', uploadDt: '2026-09-02T10:00:00.000Z' },
-          { id: 'mat_2', subject: 'Computer Science', title: 'MERN Stack Web Dev Guide', fileName: 'MERN_Guide.pdf', uploadDt: '2026-09-04T15:20:00.000Z' }
-        ]);
-      } finally {
-        setLoading(false);
+  const fetchMaterials = async () => {
+    try {
+      const res = await api.get('/student/study-material');
+      if (res.data.success) {
+        setMaterials(res.data.materials || []);
       }
-    };
+    } catch (err) {
+      console.warn('Study material fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchMaterials();
-  }, [apiUrl]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,7 +38,7 @@ const UploadStudyMaterial = () => {
     setToastMsg('');
 
     try {
-      const res = await axios.post(`${apiUrl}/admin/study-material`, {
+      const res = await api.post('/admin/study-material', {
         Subject: subject,
         Title: title,
         Description: description,
@@ -61,21 +55,7 @@ const UploadStudyMaterial = () => {
         setFileUrl('');
       }
     } catch (err) {
-      console.warn('Study material upload offline fallback:', err);
-      const newMat = {
-        id: `mat_${Date.now()}`,
-        subject,
-        title,
-        description,
-        fileName: fileName || 'Course_Notes.pdf',
-        uploadDt: new Date().toISOString()
-      };
-      setMaterials((prev) => [newMat, ...prev]);
-      setToastMsg('Study material uploaded (Local Session)!');
-      setTitle('');
-      setDescription('');
-      setFileName('');
-      setFileUrl('');
+      setToastMsg(err.response?.data?.message || 'Failed to upload study material.');
     } finally {
       setSubmitting(false);
       setTimeout(() => setToastMsg(''), 3000);
@@ -86,12 +66,11 @@ const UploadStudyMaterial = () => {
     if (!window.confirm('Delete this study material entry?')) return;
 
     try {
-      await axios.delete(`${apiUrl}/admin/study-material/${id}`);
+      await api.delete(`/admin/study-material/${id}`);
       setMaterials((prev) => prev.filter((m) => m.id !== id));
       setToastMsg('Study material deleted.');
-    } catch {
-      setMaterials((prev) => prev.filter((m) => m.id !== id));
-      setToastMsg('Study material deleted (Local Session).');
+    } catch (err) {
+      setToastMsg(err.response?.data?.message || 'Failed to delete study material.');
     } finally {
       setTimeout(() => setToastMsg(''), 3000);
     }
