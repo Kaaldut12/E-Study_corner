@@ -69,7 +69,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Database connection middleware: ensures MongoDB connection is ready in serverless environments before running queries
+// Database connection middleware: ensures MongoDB connection is attempted before routes execute
 app.use(async (req, res, next) => {
   if (req.path === '/' || req.path === '/health' || req.path === '/api/health') {
     return next();
@@ -77,15 +77,10 @@ app.use(async (req, res, next) => {
 
   try {
     await connectDB();
-    next();
   } catch (err) {
-    console.error('Database connection error in request middleware:', err.message);
-    return res.status(500).json({
-      success: false,
-      message: `Database connection unavailable: ${err.message}`,
-      code: 'DATABASE_UNAVAILABLE'
-    });
+    console.warn('[Database Connection Notice]:', err.message);
   }
+  next();
 });
 
 // ==================== Routes ====================
