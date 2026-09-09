@@ -18,7 +18,10 @@ import {
   deleteEnquiry,
   uploadStudyMaterial,
   deleteStudyMaterial,
-  sendEmailBroadcast
+  sendEmailBroadcast,
+  toggleUserStatus,
+  triggerDatabaseResync,
+  adminReplyStudentQuestion
 } from '../controllers/adminController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -33,10 +36,13 @@ router.get('/permissions', getSystemPermissions);
 router.get('/users', getAllUsers);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);
+router.put('/users/:id/status', toggleUserStatus);
 router.delete('/users/:id', deleteUser);
 router.get('/feedback', getFeedbackList);
 router.get('/messages', getSupportMessages);
 router.put('/messages/:id', updateMessageStatus);
+router.put('/questions/:id/reply', adminReplyStudentQuestion);
+router.post('/action/resync', triggerDatabaseResync);
 
 // Notification Management (Tbl_Notification)
 router.get('/notifications', getAdminNotifications);
@@ -55,4 +61,5 @@ router.delete('/study-material/:id', deleteStudyMaterial);
 router.post('/send-email', sendEmailBroadcast);
 
 export default router;
+
 

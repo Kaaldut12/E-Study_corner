@@ -692,5 +692,71 @@ export const dataStore = {
       return teacherQuestions[idx];
     }
     return null;
+  },
+  adminReplyTeacherQuestion: async (id, replyText, adminName = 'Platform Administrator') => {
+    const updates = {
+      teacherReply: `[Admin Resolution - ${adminName}]: ${replyText}`,
+      status: 'answered',
+      repliedAt: new Date()
+    };
+    if (isDBConnected()) {
+      return await TeacherQuestion.findOneAndUpdate(
+        { id },
+        { $set: updates },
+        { new: true }
+      ).lean();
+    }
+    const idx = teacherQuestions.findIndex(q => q.id === id);
+    if (idx !== -1) {
+      teacherQuestions[idx] = { ...teacherQuestions[idx], ...updates };
+      return teacherQuestions[idx];
+    }
+    return null;
+  },
+  getAllTeacherQuestions: async () => {
+    if (isDBConnected()) {
+      return await TeacherQuestion.find().sort({ createdAt: -1 }).lean();
+    }
+    return teacherQuestions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+  getAllQuizAttempts: async () => {
+    if (isDBConnected()) {
+      return await QuizAttempt.find().sort({ attemptedAt: -1 }).lean();
+    }
+    return quizAttempts;
+  },
+  getAllQuestions: async () => {
+    if (isDBConnected()) {
+      return await Question.find().lean();
+    }
+    return questions;
+  },
+  getAllLessons: async () => {
+    if (isDBConnected()) {
+      return await Lesson.find().lean();
+    }
+    return lessons;
+  },
+  getAllNotes: async () => {
+    if (isDBConnected()) {
+      return await Note.find().lean();
+    }
+    return notes;
+  },
+  getAllBookmarks: async () => {
+    if (isDBConnected()) {
+      return await Bookmark.find().lean();
+    }
+    return bookmarks;
+  },
+  getAllProgress: async () => {
+    if (isDBConnected()) {
+      return await Progress.find().lean();
+    }
+    return progressList;
+  },
+  toggleUserStatus: async (id, status) => {
+    return await dataStore.updateUser(id, { status });
   }
 };
+
