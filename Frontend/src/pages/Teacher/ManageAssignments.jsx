@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 import downloadFile from '../../utils/fileDownload';
 
@@ -167,9 +168,7 @@ const ManageAssignments = () => {
 
         {/* Assignments List */}
         {loading ? (
-          <div className="flex justify-center py-16">
-            <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+          <SkeletonCardList count={4} cols={2} />
         ) : filteredAssignments.length === 0 ? (
           <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-4xl">📝</div>

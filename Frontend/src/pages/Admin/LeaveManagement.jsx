@@ -1,6 +1,7 @@
 // frontend/src/pages/Admin/LeaveManagement.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 
 const LeaveManagement = () => {
@@ -181,10 +182,7 @@ const LeaveManagement = () => {
 
         {/* Leave Requests Grid */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-3">
-            <div className="w-9 h-9 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-            <p className="text-slate-400 text-xs">Loading Campus Leave Applications...</p>
-          </div>
+          <SkeletonCardList count={4} cols={2} />
         ) : filteredLeaves.length === 0 ? (
           <div className="glass-panel p-16 rounded-3xl text-center space-y-3">
             <span className="text-5xl">📋</span>

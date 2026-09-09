@@ -1,6 +1,7 @@
 // frontend/src/pages/Teacher/TeacherQuestions.jsx
 import { useEffect, useState } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 
 const TeacherQuestions = () => {
@@ -190,10 +191,7 @@ const TeacherQuestions = () => {
 
         {/* Questions Feed */}
         {loading ? (
-          <div className="py-20 text-center text-slate-400 space-y-2">
-            <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-xs text-slate-400">Loading student questions...</p>
-          </div>
+          <SkeletonCardList count={4} cols={1} />
         ) : filteredQuestions.length > 0 ? (
           <div className="space-y-4">
             {filteredQuestions.map((q) => {

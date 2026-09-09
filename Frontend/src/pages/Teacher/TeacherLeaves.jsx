@@ -1,6 +1,7 @@
 // frontend/src/pages/Teacher/TeacherLeaves.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 
 const LEAVE_TYPES = [
@@ -289,10 +290,7 @@ const TeacherLeaves = () => {
               <h2 className="text-base font-bold text-white font-display">My Submitted Leaves ({myLeaves.length})</h2>
 
               {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 space-y-3">
-                  <div className="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-                  <p className="text-slate-400 text-xs">Loading Faculty Leaves...</p>
-                </div>
+                <SkeletonCardList count={3} cols={1} />
               ) : myLeaves.length === 0 ? (
                 <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-2">
                   <span className="text-5xl">🏖️</span>
@@ -446,7 +444,9 @@ const TeacherLeaves = () => {
               </div>
 
               {/* Student Leaves List */}
-              {filteredStudentLeaves.length === 0 ? (
+              {loading ? (
+                <SkeletonCardList count={4} cols={2} />
+              ) : filteredStudentLeaves.length === 0 ? (
                 <div className="glass-panel p-12 rounded-3xl text-center space-y-2">
                   <span className="text-5xl">🎓</span>
                   <h3 className="text-base font-bold text-white font-display">No student leave requests found</h3>

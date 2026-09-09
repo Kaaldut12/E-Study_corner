@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonTable } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -354,14 +355,12 @@ const UserManagement = () => {
         </div>
 
         {/* Directory Table */}
-        <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-          {loading ? (
-            <div className="py-16 text-center text-slate-400 space-y-2">
-              <div className="text-2xl animate-bounce">⚡</div>
-              <div className="text-sm font-medium">Loading user directory from database...</div>
-            </div>
-          ) : filteredUsers.length > 0 ? (
-            <div className="overflow-x-auto">
+        {loading ? (
+          <SkeletonTable rows={7} cols={5} />
+        ) : (
+          <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+            {filteredUsers.length > 0 ? (
+              <div className="overflow-x-auto">
               <table className="w-full text-left text-sm text-slate-300">
                 <thead className="bg-slate-900/90 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
                   <tr>
@@ -531,6 +530,7 @@ const UserManagement = () => {
             </div>
           )}
         </div>
+        )}
 
         {/* Quick Permissions Inspector Modal */}
         {viewingPermsUser && (

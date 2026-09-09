@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonTable, SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 import downloadFile from '../../utils/fileDownload';
 import { useAuth } from '../../contexts/AuthContext';
@@ -311,10 +312,7 @@ const ManageStudents = () => {
 
         {/* Student Roster Table */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-3">
-            <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-            <p className="text-slate-400 text-xs">Loading Student Roster...</p>
-          </div>
+          <SkeletonTable rows={6} cols={5} />
         ) : filtered.length === 0 ? (
           <div className="glass-panel p-16 rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-5xl">🎓</div>
@@ -421,9 +419,8 @@ const ManageStudents = () => {
               </div>
 
               {detailsLoading ? (
-                <div className="py-20 flex flex-col items-center justify-center space-y-3">
-                  <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-                  <p className="text-slate-400 text-xs">Loading Student Activities & Records...</p>
+                <div className="py-4 space-y-4">
+                  <SkeletonCardList count={3} cols={1} />
                 </div>
               ) : (
                 <div className="space-y-6">

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 import downloadFile from '../../utils/fileDownload';
 
@@ -221,9 +222,7 @@ const ViewSubmissions = () => {
 
         {/* Submissions List */}
         {loading ? (
-          <div className="flex justify-center py-16">
-            <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+          <SkeletonCardList count={3} cols={1} />
         ) : filteredSubmissions.length > 0 ? (
           <div className="grid grid-cols-1 gap-5">
             {filteredSubmissions.map((sub) => {

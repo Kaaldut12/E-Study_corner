@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import AttendanceWidget from '../../components/common/AttendanceWidget';
+import { SkeletonDashboard } from '../../components/common/SkeletonLoader';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 
@@ -41,10 +42,7 @@ const StudentDashboard = () => {
   if (loading) {
     return (
       <SidebarLayout>
-        <div className="py-24 flex flex-col items-center justify-center text-center space-y-3">
-          <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm font-medium">Loading Student Dashboard...</p>
-        </div>
+        <SkeletonDashboard role="student" />
       </SidebarLayout>
     );
   }

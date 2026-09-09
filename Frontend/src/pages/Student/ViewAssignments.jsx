@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
 import downloadFile from '../../utils/fileDownload';
 
@@ -184,10 +185,7 @@ const ViewAssignments = () => {
 
         {/* Assignment Cards Grid */}
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 space-y-3">
-            <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
-            <p className="text-slate-400 text-xs">Loading Coursework Assignments...</p>
-          </div>
+          <SkeletonCardList count={4} cols={2} />
         ) : filteredAssignments.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredAssignments.map((asg) => (

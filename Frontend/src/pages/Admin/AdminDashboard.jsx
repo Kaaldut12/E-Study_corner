@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { SkeletonDashboard } from '../../components/common/SkeletonLoader';
 import adminService from '../../services/adminService';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -155,7 +156,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <SidebarLayout>
-        <div className="py-20 text-center text-slate-400">Loading System Operations Dashboard...</div>
+        <SkeletonDashboard role="admin" />
       </SidebarLayout>
     );
   }
