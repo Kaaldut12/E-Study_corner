@@ -16,6 +16,7 @@ import Assignment from '../../models/Assignment.js';
 import Submission from '../../models/Submission.js';
 import SupportMessage from '../../models/SupportMessage.js';
 import Feedback from '../../models/Feedback.js';
+import TeacherQuestion from '../../models/TeacherQuestion.js';
 import { hashPassword, verifyPassword } from '../utils/password.js';
 import { getDefaultPermissions } from '../constants/permissions.js';
 import {
@@ -34,7 +35,8 @@ import {
   seedAssignments,
   seedSubmissions,
   seedSupportMessages,
-  seedFeedback
+  seedFeedback,
+  seedTeacherQuestions
 } from '../../seed.js';
 
 // Initial Memory Store Seed Fallback
@@ -54,6 +56,7 @@ let assignments = [...seedAssignments];
 let submissions = [...seedSubmissions];
 let supportMessages = [...seedSupportMessages];
 let platformFeedback = [...seedFeedback];
+let teacherQuestions = [...seedTeacherQuestions];
 
 const isDBConnected = () => mongoose.connection.readyState === 1;
 
@@ -220,10 +223,14 @@ export const dataStore = {
     return notifications;
   },
   createNotification: async (notiMessage) => {
+    const text = typeof notiMessage === 'object' && notiMessage !== null
+      ? (notiMessage.notiMessage || notiMessage.message || JSON.stringify(notiMessage))
+      : String(notiMessage);
+
     const payload = {
       id: `noti_${Date.now()}`,
       notificationId: notifications.length + 101,
-      notiMessage,
+      notiMessage: text,
       notiDt: new Date()
     };
     if (isDBConnected()) {
@@ -618,5 +625,72 @@ export const dataStore = {
     const newProg = { id: `prog_${Date.now()}`, studentId, courseId, ...updates };
     progressList.push(newProg);
     return newProg;
+  },
+
+  // --- TEACHER QUESTIONS & DIRECT STUDENT-TEACHER Q&A ---
+  getTeachersList: async () => {
+    let list;
+    if (isDBConnected()) {
+      list = await User.find({ role: { $in: ['teacher', 'superadmin'] } }).lean();
+    } else {
+      list = users.filter(u => u.role === 'teacher' || u.role === 'superadmin');
+    }
+    return list.map(t => ({
+      id: t.id,
+      name: t.name,
+      email: t.email,
+      department: t.department || 'Academic Faculty',
+      subject: t.subject || 'Coursework Instructor',
+      userpic: t.userpic || 'default.jpg'
+    }));
+  },
+  getTeacherQuestionsForStudent: async (studentId) => {
+    if (isDBConnected()) {
+      return await TeacherQuestion.find({ studentId }).sort({ createdAt: -1 }).lean();
+    }
+    return teacherQuestions.filter(q => q.studentId === studentId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+  getTeacherQuestionsForTeacher: async (teacherId) => {
+    if (isDBConnected()) {
+      return await TeacherQuestion.find({ teacherId }).sort({ createdAt: -1 }).lean();
+    }
+    return teacherQuestions.filter(q => q.teacherId === teacherId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  },
+  createTeacherQuestion: async (data) => {
+    const newId = `tq_${Date.now()}`;
+    const payload = {
+      id: newId,
+      status: 'pending',
+      teacherReply: '',
+      repliedAt: null,
+      createdAt: new Date(),
+      ...data
+    };
+    if (isDBConnected()) {
+      const doc = await TeacherQuestion.create(payload);
+      return doc.toObject();
+    }
+    teacherQuestions.unshift(payload);
+    return payload;
+  },
+  replyTeacherQuestion: async (id, replyText, teacherId) => {
+    const updates = {
+      teacherReply: replyText,
+      status: 'answered',
+      repliedAt: new Date()
+    };
+    if (isDBConnected()) {
+      return await TeacherQuestion.findOneAndUpdate(
+        { id, ...(teacherId ? { teacherId } : {}) },
+        { $set: updates },
+        { new: true }
+      ).lean();
+    }
+    const idx = teacherQuestions.findIndex(q => q.id === id && (!teacherId || q.teacherId === teacherId));
+    if (idx !== -1) {
+      teacherQuestions[idx] = { ...teacherQuestions[idx], ...updates };
+      return teacherQuestions[idx];
+    }
+    return null;
   }
 };

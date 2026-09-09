@@ -274,3 +274,58 @@ export const getTeacherStudents = async (req, res) => {
   }
 };
 
+// ==================== STUDENT QUESTIONS & DOUBTS ====================
+
+export const getTeacherQuestions = async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const isSuperAdmin = req.user.role === 'superadmin';
+    const questions = isSuperAdmin
+      ? await dataStore.getTeacherQuestionsForTeacher('')
+      : await dataStore.getTeacherQuestionsForTeacher(teacherId);
+
+    return res.status(200).json({
+      success: true,
+      questions
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const replyTeacherQuestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { replyText } = req.body;
+    const teacherId = req.user.role === 'superadmin' ? undefined : req.user.id;
+    const teacherName = req.user.name || 'Instructor';
+
+    if (!replyText || !replyText.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Reply text cannot be empty.'
+      });
+    }
+
+    const updated = await dataStore.replyTeacherQuestion(id, replyText.trim(), teacherId);
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: 'Question not found or you are not authorized to reply to this question.'
+      });
+    }
+
+    if (dataStore.createNotification) {
+      await dataStore.createNotification(`Instructor ${teacherName} replied to your question: "${updated.title.slice(0, 45)}"`);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Reply sent successfully to student!',
+      question: updated
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+

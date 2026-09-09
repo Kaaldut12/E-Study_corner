@@ -9,7 +9,9 @@ import {
   gradeSubmission,
   getTeacherCourses,
   createTeacherCourse,
-  getTeacherStudents
+  getTeacherStudents,
+  getTeacherQuestions,
+  replyTeacherQuestion
 } from '../controllers/teacherController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -25,6 +27,10 @@ router.post('/assignments', createAssignment);
 router.delete('/assignments/:id', deleteAssignment);
 router.get('/submissions/:assignmentId', getSubmissionsForAssignment);
 router.post('/grade-submission', gradeSubmission);
+
+// Student Doubts & Q&A
+router.get('/questions', getTeacherQuestions);
+router.post('/questions/:id/reply', replyTeacherQuestion);
 
 // V4 Course Creator Routes
 router.get('/courses', getTeacherCourses);

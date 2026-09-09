@@ -203,29 +203,39 @@ const ViewAssignments = () => {
                     <span>Max Points: <strong className="text-indigo-400 font-mono">{asg.totalPoints || 100} pts</strong></span>
                   </div>
 
-                  <div className="flex items-center justify-between gap-2 pt-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
                     <span className="text-[11px] text-slate-400">
                       Due: <strong className="text-amber-400">{new Date(asg.dueDate).toLocaleDateString()}</strong>
                     </span>
 
-                    <Link
-                      to={`/student/submit/${asg.id}`}
-                      className={`py-2 px-4 text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5 ${
-                        asg.status === 'graded'
-                          ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                          : asg.status === 'submitted'
-                          ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
-                          : 'bg-linear-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white'
-                      }`}
-                    >
-                      {asg.status === 'graded' ? (
-                        <span>View Evaluation & Work →</span>
-                      ) : asg.status === 'submitted' ? (
-                        <span>Review / Update Work →</span>
-                      ) : (
-                        <span>Upload & Submit Work →</span>
-                      )}
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        to={`/student/questions?teacherId=${asg.teacherId || ''}&assignmentId=${asg.id}&assignmentTitle=${encodeURIComponent(asg.title)}&subject=${encodeURIComponent(asg.subject || '')}`}
+                        className="py-2 px-3 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-xl text-xs font-semibold transition flex items-center gap-1"
+                        title="Directly ask instructor a doubt regarding this coursework"
+                      >
+                        <span>💬 Ask Teacher</span>
+                      </Link>
+
+                      <Link
+                        to={`/student/submit/${asg.id}`}
+                        className={`py-2 px-4 text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5 ${
+                          asg.status === 'graded'
+                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                            : asg.status === 'submitted'
+                            ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                            : 'bg-linear-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white'
+                        }`}
+                      >
+                        {asg.status === 'graded' ? (
+                          <span>View Evaluation & Work →</span>
+                        ) : asg.status === 'submitted' ? (
+                          <span>Review / Update Work →</span>
+                        ) : (
+                          <span>Upload & Submit Work →</span>
+                        )}
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>

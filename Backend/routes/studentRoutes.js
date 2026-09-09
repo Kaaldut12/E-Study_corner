@@ -26,7 +26,10 @@ import {
   getStudentNotifications,
   askAICoach,
   getAIRecommendations,
-  getWeakTopicAnalysis
+  getWeakTopicAnalysis,
+  getAvailableTeachers,
+  getStudentQuestions,
+  askTeacherQuestion
 } from '../controllers/studentControllers.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -40,6 +43,11 @@ router.get('/assignments', getStudentAssignments);
 router.post('/submit', submitAssignment);
 router.get('/feedback', getStudentFeedback);
 router.post('/contact-admin', sendContactMessage);
+
+// Direct Student-Teacher Q&A & Doubts
+router.get('/teachers', getAvailableTeachers);
+router.get('/questions', getStudentQuestions);
+router.post('/questions', askTeacherQuestion);
 
 // Project Report Extensions
 router.get('/study-material', getStudyMaterials);

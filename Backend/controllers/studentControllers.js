@@ -760,5 +760,79 @@ export const getWeakTopicAnalysis = async (req, res) => {
   }
 };
 
+// ==================== DIRECT TEACHER Q&A & DOUBTS ====================
+
+export const getAvailableTeachers = async (req, res) => {
+  try {
+    const teachers = await dataStore.getTeachersList();
+    return res.status(200).json({
+      success: true,
+      teachers
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getStudentQuestions = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const questions = await dataStore.getTeacherQuestionsForStudent(studentId);
+    return res.status(200).json({
+      success: true,
+      questions
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const askTeacherQuestion = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const studentName = req.user.name || 'Student Scholar';
+    const studentEmail = req.user.email || '';
+    const { teacherId, teacherName, assignmentId, assignmentTitle, subject, title, question } = req.body;
+
+    if (!teacherId || !title || !question) {
+      return res.status(400).json({
+        success: false,
+        message: 'Teacher selection, question title, and question body are required.'
+      });
+    }
+
+    let resolvedTeacherName = teacherName;
+    if (!resolvedTeacherName) {
+      const teacherUser = await dataStore.getUserById(teacherId);
+      resolvedTeacherName = teacherUser ? teacherUser.name : 'Faculty Instructor';
+    }
+
+    const newQuestion = await dataStore.createTeacherQuestion({
+      studentId,
+      studentName,
+      studentEmail,
+      teacherId,
+      teacherName: resolvedTeacherName,
+      assignmentId: assignmentId || '',
+      assignmentTitle: assignmentTitle || '',
+      subject: subject || 'Academic Doubt',
+      title: title.trim(),
+      question: question.trim()
+    });
+
+    if (dataStore.createNotification) {
+      await dataStore.createNotification(`New academic doubt from ${studentName}: "${title.slice(0, 45)}..."`);
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: `Your question has been sent directly to ${resolvedTeacherName}!`,
+      question: newQuestion
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 

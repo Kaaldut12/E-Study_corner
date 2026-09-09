@@ -20,6 +20,7 @@ import Assignment from './models/Assignment.js';
 import Submission from './models/Submission.js';
 import SupportMessage from './models/SupportMessage.js';
 import Feedback from './models/Feedback.js';
+import TeacherQuestion from './models/TeacherQuestion.js';
 
 import { DEFAULT_ROLE_PERMISSIONS } from './src/constants/permissions.js';
 
@@ -749,6 +750,43 @@ export const seedFeedback = [
   }
 ];
 
+export const seedTeacherQuestions = [
+  {
+    id: 'tq_1',
+    studentId: 'user_student_1',
+    studentName: process.env.SEED_STUDENT_NAME || 'Student Scholar',
+    studentEmail: 'student@estudy.com',
+    teacherId: 'user_teacher_1',
+    teacherName: process.env.SEED_TEACHER_NAME || 'Faculty Lecturer',
+    assignmentId: 'asg_1',
+    assignmentTitle: 'Data Structures & Algorithms - Binary Search Trees Implementation',
+    subject: 'Computer Science',
+    title: 'How should we handle memory deallocation in binary tree node deletion?',
+    question: 'In Assignment 1, when deleting a node with two children, should we replace it with the inorder successor or predecessor? Also, does it matter if we preserve the left or right subtree balance?',
+    status: 'answered',
+    teacherReply: 'Great question! Either inorder successor or predecessor is theoretically valid, but conventionally we use the in-order successor (the smallest node in the right subtree). Make sure to properly update the parent pointers when detaching the replacement node.',
+    repliedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+  },
+  {
+    id: 'tq_2',
+    studentId: 'user_student_2',
+    studentName: 'Priya Sharma',
+    studentEmail: 'priya@estudy.com',
+    teacherId: 'user_teacher_1',
+    teacherName: process.env.SEED_TEACHER_NAME || 'Faculty Lecturer',
+    assignmentId: 'asg_2',
+    assignmentTitle: 'Operating Systems - Process Scheduling Simulator',
+    subject: 'Operating Systems',
+    title: 'Clarification on Round Robin time quantum edge case',
+    question: 'If a process finishes its CPU burst at the exact same millisecond that its time quantum expires, should it be placed in the termination queue before or after a newly arriving process enters the ready queue?',
+    status: 'pending',
+    teacherReply: '',
+    repliedAt: null,
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
+  }
+];
+
 const seedCollections = [
   [User, seedUsers],
   [Course, seedCourses],
@@ -765,7 +803,8 @@ const seedCollections = [
   [Assignment, seedAssignments],
   [Submission, seedSubmissions],
   [SupportMessage, seedSupportMessages],
-  [Feedback, seedFeedback]
+  [Feedback, seedFeedback],
+  [TeacherQuestion, seedTeacherQuestions]
 ];
 
 export const seedDatabase = async () => {

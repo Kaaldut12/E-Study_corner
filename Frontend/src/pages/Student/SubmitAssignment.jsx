@@ -203,9 +203,17 @@ const SubmitAssignment = () => {
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-400 pt-2 border-t border-slate-800">
             <span>Instructor: <strong className="text-slate-200">{assignment.teacherName}</strong></span>
-            <span>
-              Due Date: <strong className="text-amber-400">{new Date(assignment.dueDate).toLocaleString()}</strong>
-            </span>
+            <div className="flex items-center gap-3">
+              <Link
+                to={`/student/questions?teacherId=${assignment.teacherId || ''}&assignmentId=${assignment.id}&assignmentTitle=${encodeURIComponent(assignment.title)}&subject=${encodeURIComponent(assignment.subject || '')}`}
+                className="text-indigo-400 hover:text-indigo-300 font-bold inline-flex items-center gap-1 transition"
+              >
+                <span>💬 Ask Instructor Doubt</span>
+              </Link>
+              <span>
+                Due Date: <strong className="text-amber-400">{new Date(assignment.dueDate).toLocaleString()}</strong>
+              </span>
+            </div>
           </div>
 
           {/* Reference Link / Attachment if provided by teacher */}

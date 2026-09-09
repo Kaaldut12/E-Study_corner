@@ -30,6 +30,7 @@ import NotificationsFeed from './pages/Student/NotificationsFeed';
 import AICoach from './pages/Student/AICoach';
 import AIRecommendations from './pages/Student/AIRecommendations';
 import WeakTopicDetector from './pages/Student/WeakTopicDetector';
+import StudentQuestions from './pages/Student/StudentQuestions';
 
 // Teacher Pages
 import TeacherDashboard from './pages/Teacher/TeacherDashboard';
@@ -39,6 +40,7 @@ import ManageCourses from './pages/Teacher/ManageCourses';
 import CreateCourse from './pages/Teacher/CreateCourse';
 import ManageStudents from './pages/Teacher/ManageStudents';
 import ManageAssignments from './pages/Teacher/ManageAssignments';
+import TeacherQuestions from './pages/Teacher/TeacherQuestions';
 
 // Admin Pages
 import AdminDashboard from './pages/Admin/AdminDashboard';
@@ -88,6 +90,7 @@ function App() {
                   <Route path="/search" element={<GlobalSearch />} />
                   <Route path="/assignments" element={<ViewAssignments />} />
                   <Route path="/submit/:assignmentId" element={<SubmitAssignment />} />
+                  <Route path="/questions" element={<StudentQuestions />} />
                   <Route path="/study-material" element={<DownStudyMaterial />} />
                   <Route path="/feedback" element={<StudentFeedback />} />
                   <Route path="/profile" element={<MyProfile />} />
@@ -112,6 +115,7 @@ function App() {
                   <Route path="/assignments" element={<ManageAssignments />} />
                   <Route path="/create-assignment" element={<CreateAssignment />} />
                   <Route path="/submissions/:assignmentId" element={<ViewSubmissions />} />
+                  <Route path="/questions" element={<TeacherQuestions />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </ProtectedRoute>
