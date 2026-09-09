@@ -32,20 +32,13 @@ app.use(securityHeaders);
 app.use(apiRateLimiter);
 app.use(sanitizeInput);
 
-// CORS configuration - strictly allows configured frontend origins and verified environments
+// CORS configuration - strictly allows only configured origins in ALLOWED_ORIGINS
 app.use(cors({
   origin: (requestOrigin, callback) => {
     // Allow non-browser or same-origin requests without origin header (e.g. mobile apps, curl, server-to-server)
     if (!requestOrigin) return callback(null, true);
 
-    const isAllowed = ALLOWED_ORIGINS.includes(requestOrigin) ||
-      requestOrigin.endsWith('.vercel.app') ||
-      (process.env.NODE_ENV !== 'production' && (
-        requestOrigin.startsWith('http://localhost:') ||
-        requestOrigin.startsWith('http://127.0.0.1:')
-      ));
-
-    if (isAllowed) {
+    if (ALLOWED_ORIGINS.includes(requestOrigin)) {
       return callback(null, true);
     }
 
@@ -75,7 +68,14 @@ app.use(async (req, res, next) => {
   try {
     await connectDB();
   } catch (err) {
-    console.warn('[Database Connection Notice]:', err.message);
+    if (process.env.DATA_STORE_MODE !== 'memory') {
+      return res.status(503).json({
+        success: false,
+        message: 'Database service is currently unavailable. Please try again later.',
+        code: 'DATABASE_UNAVAILABLE'
+      });
+    }
+    console.warn('[Database Connection Notice]: Running with DATA_STORE_MODE=memory fallback');
   }
   next();
 });

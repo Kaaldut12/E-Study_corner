@@ -370,12 +370,14 @@ export const completeLesson = async (req, res) => {
       });
     }
 
-    // 5. Complete lesson and recalculate progress based on actual course lessons
+    // 5. Complete lesson via service-level verification and recalculate progress
     const result = await dataStore.completeStudentLesson(studentId, studentName, courseId, lessonId);
-    if (!result) {
-      return res.status(403).json({
+    if (!result || !result.success) {
+      const statusCode = result?.code === 'NOT_ENROLLED' ? 403 :
+        (result?.code === 'COURSE_NOT_FOUND' || result?.code === 'LESSON_NOT_FOUND') ? 404 : 400;
+      return res.status(statusCode).json({
         success: false,
-        message: 'You must enroll in this course first.'
+        message: result?.message || 'Unable to complete lesson.'
       });
     }
 
@@ -562,7 +564,7 @@ export const getQuizQuestions = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Quiz not found' });
     }
 
-    // Enrollment check: verify student is enrolled in the course that this quiz belongs to
+    // 1. Enrollment check: verify student is enrolled in the course that this quiz belongs to
     if (quiz.courseId) {
       const enrollment = await dataStore.getEnrollment(studentId, quiz.courseId);
       if (!enrollment) {
@@ -571,6 +573,16 @@ export const getQuizQuestions = async (req, res) => {
           message: 'You must be enrolled in this course to access this quiz.'
         });
       }
+    }
+
+    // 2. Attempt limit check: enforce maxAttempts (default 3)
+    const maxAttempts = quiz.maxAttempts || 3;
+    const previousAttempts = await dataStore.getQuizAttemptsForStudentAndQuiz(studentId, quizId);
+    if (previousAttempts && previousAttempts.length >= maxAttempts) {
+      return res.status(403).json({
+        success: false,
+        message: `Maximum attempts (${maxAttempts}) reached for this quiz.`
+      });
     }
 
     // Record server-side start time for elapsed time verification
@@ -583,6 +595,8 @@ export const getQuizQuestions = async (req, res) => {
     return res.status(200).json({
       success: true,
       quiz,
+      attemptNumber: (previousAttempts?.length || 0) + 1,
+      maxAttempts,
       questions: sanitizedQuestions
     });
   } catch (error) {
@@ -594,7 +608,7 @@ export const submitQuizAttempt = async (req, res) => {
   try {
     const studentId = req.user.id;
     const studentName = req.user.name;
-    const { quizId, userAnswers, timeTakenSeconds } = req.body;
+    const { quizId, userAnswers } = req.body;
 
     const quizzes = await dataStore.getQuizzes();
     const quiz = quizzes.find(q => q.id === quizId);
@@ -602,7 +616,7 @@ export const submitQuizAttempt = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Quiz not found' });
     }
 
-    // Enrollment check: verify student is enrolled in the course that this quiz belongs to
+    // 1. Enrollment check: verify student is enrolled in the course that this quiz belongs to
     if (quiz.courseId) {
       const enrollment = await dataStore.getEnrollment(studentId, quiz.courseId);
       if (!enrollment) {
@@ -613,15 +627,31 @@ export const submitQuizAttempt = async (req, res) => {
       }
     }
 
-    // Server-side timing calculation & verification
+    // 2. Attempt limit check: enforce maxAttempts (default 3)
+    const maxAttempts = quiz.maxAttempts || 3;
+    const previousAttempts = await dataStore.getQuizAttemptsForStudentAndQuiz(studentId, quizId);
+    if (previousAttempts && previousAttempts.length >= maxAttempts) {
+      return res.status(403).json({
+        success: false,
+        message: `Maximum attempts (${maxAttempts}) reached for this quiz.`
+      });
+    }
+
+    // 3. Server-side timing calculation: never trust client duration
     const quizSession = dataStore.getQuizSession(studentId, quizId);
-    let verifiedElapsedSeconds = typeof timeTakenSeconds === 'number' && timeTakenSeconds > 0 ? timeTakenSeconds : 180;
+    let verifiedElapsedSeconds = 180;
     if (quizSession && quizSession.startTime) {
       const serverElapsed = Math.round((Date.now() - quizSession.startTime) / 1000);
       if (serverElapsed > 0) {
         verifiedElapsedSeconds = serverElapsed;
       }
+    } else {
+      const maxAllowedSeconds = (quiz.timeLimitMinutes || 15) * 60;
+      verifiedElapsedSeconds = Math.min(180, maxAllowedSeconds);
     }
+
+    // Invalidate session immediately to prevent reuse
+    dataStore.clearQuizSession(studentId, quizId);
 
     const questions = await dataStore.getQuestionsForQuiz(quizId);
     let totalScore = 0;
@@ -660,8 +690,8 @@ export const submitQuizAttempt = async (req, res) => {
 
     const savedAttempt = await dataStore.saveQuizAttempt(attemptRecord);
 
-    // Sanitize student response: do not leak internal correctOptionIndex keys
-    const sanitizedStudentAnswers = processedAnswers.map(({ questionId, selectedOption, isCorrect, explanation }) => ({
+    // Return safe review DTO: do not leak correctOptionIndex
+    const safeReviewAnswers = processedAnswers.map(({ questionId, selectedOption, isCorrect, explanation }) => ({
       questionId,
       selectedOption,
       isCorrect,
@@ -672,9 +702,20 @@ export const submitQuizAttempt = async (req, res) => {
       success: true,
       message: passed ? 'Congratulations! You passed the quiz.' : 'Quiz completed. Keep practicing to improve your score!',
       attempt: {
-        ...savedAttempt,
+        id: savedAttempt.id || attemptRecord.id,
+        quizId,
+        quizTitle: quiz.title,
+        studentId,
+        studentName,
+        score: totalScore,
+        totalPoints: maxScore,
+        percentage,
+        passed,
         timeTakenSeconds: verifiedElapsedSeconds,
-        answers: sanitizedStudentAnswers
+        attemptNumber: (previousAttempts?.length || 0) + 1,
+        maxAttempts,
+        answers: safeReviewAnswers,
+        attemptedAt: attemptRecord.attemptedAt
       }
     });
   } catch (error) {

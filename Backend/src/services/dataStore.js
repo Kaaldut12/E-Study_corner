@@ -845,6 +845,18 @@ export const dataStore = {
     return memQuizAttempts.filter(a => a.studentId === studentId);
   },
 
+  getQuizAttemptsForStudentAndQuiz: async (studentId, quizId) => {
+    if (isDBConnected()) {
+      try {
+        const docs = await QuizAttempt.find({ studentId, quizId }).sort({ attemptedAt: -1 }).lean();
+        if (docs) return docs;
+      } catch (err) {
+        console.warn('[dataStore] DB getQuizAttemptsForStudentAndQuiz error:', err.message);
+      }
+    }
+    return memQuizAttempts.filter(a => a.studentId === studentId && a.quizId === quizId);
+  },
+
   // ==================== NOTES ====================
   getStudentNotes: async (studentId) => {
     if (isDBConnected()) {
@@ -1108,8 +1120,48 @@ export const dataStore = {
     return memQuizSessions.get(key) || null;
   },
 
+  clearQuizSession: (studentId, quizId) => {
+    const key = `${studentId}_${quizId}`;
+    memQuizSessions.delete(key);
+  },
+
   completeStudentLesson: async (studentId, studentName, courseId, lessonId) => {
-    // 1. Fetch active enrollment - do NOT auto-enroll!
+    // 1. Independent Service Verification: Course must exist
+    let course = null;
+    if (isDBConnected()) {
+      try {
+        course = await Course.findOne({ id: courseId }).lean();
+      } catch (err) {
+        console.warn('[dataStore] DB course lookup error:', err.message);
+      }
+    }
+    if (!course) {
+      course = memCourses.find(c => c.id === courseId);
+    }
+    if (!course) {
+      return { success: false, code: 'COURSE_NOT_FOUND', message: 'Course not found.' };
+    }
+
+    // 2. Independent Service Verification: Lesson must exist and belong to Course
+    let lesson = null;
+    if (isDBConnected()) {
+      try {
+        lesson = await Lesson.findOne({ id: lessonId }).lean();
+      } catch (err) {
+        console.warn('[dataStore] DB lesson lookup error:', err.message);
+      }
+    }
+    if (!lesson) {
+      lesson = memLessons.find(l => l.id === lessonId);
+    }
+    if (!lesson) {
+      return { success: false, code: 'LESSON_NOT_FOUND', message: 'Lesson not found.' };
+    }
+    if (lesson.courseId !== courseId) {
+      return { success: false, code: 'INVALID_COURSE_LESSON', message: 'Lesson does not belong to this course.' };
+    }
+
+    // 3. Independent Service Verification: Student must be actively enrolled (do NOT auto-enroll)
     let enrollment = null;
     if (isDBConnected()) {
       try {
@@ -1123,10 +1175,10 @@ export const dataStore = {
     }
 
     if (!enrollment) {
-      return null;
+      return { success: false, code: 'NOT_ENROLLED', message: 'You must enroll in this course first.' };
     }
 
-    // 2. Fetch actual course lessons from database to calculate accurate progress
+    // 4. Fetch actual course lessons from database to calculate accurate progress
     let courseLessons = [];
     if (isDBConnected()) {
       try {
@@ -1140,7 +1192,7 @@ export const dataStore = {
     }
     const totalCount = courseLessons.length > 0 ? courseLessons.length : 1;
 
-    // 3. Mark lesson complete and calculate progress percentage
+    // 5. Mark lesson complete and calculate progress percentage
     const currentCompleted = Array.isArray(enrollment.completedLessons) ? enrollment.completedLessons : [];
     const completedSet = new Set(currentCompleted);
     completedSet.add(lessonId);
@@ -1148,7 +1200,7 @@ export const dataStore = {
     const progressPercentage = Math.min(100, Math.round((completedArray.length / totalCount) * 100));
     const isFinished = progressPercentage >= 100;
 
-    // 4. Update in-memory cache
+    // 6. Update in-memory cache if active
     const memEnrollment = memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId);
     if (memEnrollment) {
       memEnrollment.completedLessons = completedArray;
@@ -1159,7 +1211,7 @@ export const dataStore = {
       }
     }
 
-    // 5. Update MongoDB Enrollment & Progress
+    // 7. Update MongoDB Enrollment & Progress
     if (isDBConnected()) {
       try {
         await Enrollment.updateOne(
