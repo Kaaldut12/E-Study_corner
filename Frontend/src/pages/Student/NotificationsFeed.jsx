@@ -1,31 +1,33 @@
 // frontend/src/pages/Student/NotificationsFeed.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const NotificationsFeed = () => {
+  const { apiUrl } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/notifications', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setNotifications(data.notifications);
+    const fetchNotifications = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/student/notifications`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setNotifications(data.notifications);
+        }
+      } catch (err) {
+        console.warn('Error fetching notifications:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching notifications:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchNotifications();
+  }, [apiUrl]);
 
   return (
     <SidebarLayout>
@@ -33,7 +35,7 @@ const NotificationsFeed = () => {
         {/* Header Banner */}
         <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-rose-400">V2 Learning System</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Academics & Feed</span>
             <h1 className="text-2xl font-black text-white">Notice Board & Campus Notifications</h1>
             <p className="text-xs text-slate-400 mt-1">
               Official announcements, examination schedules, workshop alerts, and project deadlines.

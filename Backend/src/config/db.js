@@ -36,6 +36,10 @@ import {
 } from '../../seed.js';
 
 export const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return;
+  }
+
   const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy_db';
 
   try {
@@ -60,7 +64,13 @@ export const connectDB = async () => {
 
 const seedInitialData = async () => {
   try {
-    if ((await User.countDocuments()) === 0) await User.insertMany(seedUsers);
+    for (const user of seedUsers) {
+      await User.updateOne(
+        { email: user.email },
+        { $setOnInsert: user },
+        { upsert: true }
+      );
+    }
     if ((await Course.countDocuments()) === 0) await Course.insertMany(seedCourses);
     if ((await Lesson.countDocuments()) === 0) await Lesson.insertMany(seedLessons);
     if ((await Quiz.countDocuments()) === 0) await Quiz.insertMany(seedQuizzes);

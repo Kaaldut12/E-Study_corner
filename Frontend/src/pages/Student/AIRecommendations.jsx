@@ -1,31 +1,33 @@
 // frontend/src/pages/Student/AIRecommendations.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const AIRecommendations = () => {
+  const { apiUrl } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchRecommendations();
-  }, []);
-
-  const fetchRecommendations = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/recommendations', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const resData = await res.json();
-      if (resData.success) {
-        setData(resData.recommendations);
+    const fetchRecommendations = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/student/recommendations`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const resData = await res.json();
+        if (resData.success) {
+          setData(resData.recommendations);
+        }
+      } catch (err) {
+        console.warn('Error fetching AI recommendations:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching AI recommendations:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchRecommendations();
+  }, [apiUrl]);
 
   return (
     <SidebarLayout>
@@ -33,7 +35,7 @@ const AIRecommendations = () => {
         {/* Header Banner */}
         <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-teal-400">V3 Advanced Learning</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-teal-400">AI Coach & Smart Learning</span>
             <h1 className="text-2xl font-black text-white flex items-center gap-2">
               <span>✨</span> Personalized AI Recommendations
             </h1>

@@ -17,47 +17,47 @@ const ViewMessages = () => {
   const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(`${apiUrl}/admin/messages`);
+        if (res.data.success) {
+          setMessages(res.data.messages);
+        }
+      } catch (err) {
+        console.warn('Admin messages fetch error:', err);
+        setMessages([
+          {
+            id: 'msg_1',
+            userId: 'user_student_1',
+            userName: 'Alex Johnson',
+            userRole: 'student',
+            subject: 'Issue submitting large PDF files',
+            category: 'Technical Support',
+            message: 'Hello, when I try to attach a PDF larger than 5MB, the form gets stuck loading. Is there a size limit?',
+            status: 'pending',
+            createdAt: '2026-09-06T14:10:00.000Z',
+            adminReply: ''
+          },
+          {
+            id: 'msg_2',
+            userId: 'user_teacher_1',
+            userName: 'Dr. Robert Miller',
+            userRole: 'teacher',
+            subject: 'Request for CS Course Roster Export',
+            category: 'Feature Request',
+            message: 'Could we get a direct CSV download option for students enrolled in Data Structures 3rd semester?',
+            status: 'resolved',
+            createdAt: '2026-09-07T09:30:00.000Z',
+            adminReply: 'Roster export feature has been planned for the upcoming V5 update. Thank you.'
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchMessages();
   }, [apiUrl]);
-
-  const fetchMessages = async () => {
-    try {
-      const res = await axios.get(`${apiUrl}/admin/messages`);
-      if (res.data.success) {
-        setMessages(res.data.messages);
-      }
-    } catch (err) {
-      console.warn('Admin messages fetch error:', err);
-      setMessages([
-        {
-          id: 'msg_1',
-          userId: 'user_student_1',
-          userName: 'Alex Johnson',
-          userRole: 'student',
-          subject: 'Issue submitting large PDF files',
-          category: 'Technical Support',
-          message: 'Hello, when I try to attach a PDF larger than 5MB, the form gets stuck loading. Is there a size limit?',
-          status: 'pending',
-          createdAt: '2026-09-06T14:10:00.000Z',
-          adminReply: ''
-        },
-        {
-          id: 'msg_2',
-          userId: 'user_teacher_1',
-          userName: 'Dr. Robert Miller',
-          userRole: 'teacher',
-          subject: 'Request for CS Course Roster Export',
-          category: 'Feature Request',
-          message: 'Could we get an export CSV button on the user management list for teachers to export student rosters?',
-          status: 'resolved',
-          createdAt: '2026-09-02T09:45:00.000Z',
-          adminReply: 'Hi Dr. Miller, we have added CSV export functionality to the admin roadmap. Thanks for your request!'
-        }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const openReplyModal = (msg) => {
     setSelectedMsg(msg);

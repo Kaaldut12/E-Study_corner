@@ -15,6 +15,7 @@ export const getAdminDashboard = async (req, res) => {
 
     const stats = {
       totalUsers: users.length,
+      superAdminCount: users.filter(u => u.role === 'superadmin').length,
       studentCount: users.filter(u => u.role === 'student').length,
       teacherCount: users.filter(u => u.role === 'teacher').length,
       adminCount: users.filter(u => u.role === 'admin').length,
@@ -63,6 +64,13 @@ export const createUser = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Name, email, password, and role are required.' });
     }
 
+    if (role === 'superadmin' && req.user?.role !== 'superadmin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Only a Super Admin can create another Super Admin account.'
+      });
+    }
+
     const existing = await dataStore.getUserByEmail(email);
     if (existing) {
       return res.status(400).json({ success: false, message: 'User with this email already exists.' });
@@ -73,11 +81,11 @@ export const createUser = async (req, res) => {
       email,
       password,
       role,
-      department: department || (role === 'teacher' ? 'Computer Science & Engineering' : 'General'),
+      department: department || (role === 'teacher' ? 'Computer Science & Engineering' : role === 'superadmin' ? 'Administration' : 'General'),
       subject: subject || (role === 'teacher' ? 'Computer Science' : ''),
       gradeLevel: gradeLevel || '3rd Year',
-      collegeName: collegeName || 'Government Polytechnic Aurai, Bhadohi',
-      course: course || 'Diploma in Computer Science & Engineering'
+      collegeName: collegeName || process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+      course: course || 'Computer Science & Engineering'
     });
 
     const { password: _, ...userNoPass } = newUser;
@@ -96,10 +104,19 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const updated = await dataStore.updateUser(id, updates);
-    if (!updated) {
+    const targetUser = await dataStore.getUserById(id);
+    if (!targetUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
+
+    if ((targetUser.role === 'superadmin' || updates.role === 'superadmin') && req.user?.role !== 'superadmin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Only a Super Admin can modify Super Admin accounts or permissions.'
+      });
+    }
+
+    const updated = await dataStore.updateUser(id, updates);
 
     const { password, ...userNoPass } = updated;
     return res.status(200).json({
@@ -115,6 +132,27 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const targetUser = await dataStore.getUserById(id);
+    if (!targetUser) {
+      return res.status(404).json({ success: false, message: 'User not found.' });
+    }
+
+    if (targetUser.role === 'superadmin') {
+      if (req.user?.role !== 'superadmin') {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied: Only a Super Admin can delete a Super Admin account.'
+        });
+      }
+      if (targetUser.email === (process.env.SEED_SUPERADMIN_EMAIL || 'superadmin@estudy.com')) {
+        return res.status(400).json({
+          success: false,
+          message: 'The primary platform Super Admin account cannot be deleted.'
+        });
+      }
+    }
+
     const success = await dataStore.deleteUser(id);
     if (success) {
       return res.status(200).json({ success: true, message: 'User deleted successfully.' });

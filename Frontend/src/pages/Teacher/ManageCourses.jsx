@@ -2,31 +2,33 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const ManageCourses = () => {
+  const { apiUrl } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTeacherCourses();
-  }, []);
-
-  const fetchTeacherCourses = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/teacher/courses', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setCourses(data.courses);
+    const fetchTeacherCourses = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/teacher/courses`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setCourses(data.courses);
+        }
+      } catch (err) {
+        console.warn('Error fetching teacher courses:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching teacher courses:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchTeacherCourses();
+  }, [apiUrl]);
 
   return (
     <SidebarLayout>

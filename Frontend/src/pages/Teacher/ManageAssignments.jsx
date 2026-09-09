@@ -12,21 +12,21 @@ const ManageAssignments = () => {
   const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
+    const fetchAssignments = async () => {
+      try {
+        const res = await axios.get(`${apiUrl}/teacher/assignments`);
+        if (res.data.success) {
+          setAssignments(res.data.assignments);
+        }
+      } catch (err) {
+        console.warn('Error fetching teacher assignments:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchAssignments();
   }, [apiUrl]);
-
-  const fetchAssignments = async () => {
-    try {
-      const res = await axios.get(`${apiUrl}/teacher/assignments`);
-      if (res.data.success) {
-        setAssignments(res.data.assignments);
-      }
-    } catch (err) {
-      console.warn('Error fetching teacher assignments:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDeleteAssignment = async (id, title) => {
     if (!window.confirm(`Are you sure you want to delete assignment "${title}"?`)) return;
@@ -35,7 +35,7 @@ const ManageAssignments = () => {
       await axios.delete(`${apiUrl}/teacher/assignments/${id}`);
       setAssignments((prev) => prev.filter((a) => a.id !== id));
       setToastMsg(`Assignment "${title}" deleted.`);
-    } catch (err) {
+    } catch {
       setAssignments((prev) => prev.filter((a) => a.id !== id));
       setToastMsg(`Assignment "${title}" deleted (Local Session).`);
     } finally {

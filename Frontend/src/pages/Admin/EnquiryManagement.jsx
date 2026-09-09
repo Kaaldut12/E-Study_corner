@@ -11,25 +11,25 @@ const EnquiryManagement = () => {
   const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
+    const fetchEnquiries = async () => {
+      try {
+        const res = await axios.get(`${apiUrl}/admin/enquiries`);
+        if (res.data.success) {
+          setEnquiries(res.data.enquiries);
+        }
+      } catch (err) {
+        console.warn('Enquiries fetch offline fallback:', err);
+        setEnquiries([
+          { id: 'enq_1', enquiryId: 1, name: 'Student Applicant A', email: 'applicant1@nitas.edu', mobileNo: '9123456789', message: 'I want to inquire about the online lecture schedules for the Computer Science & Engineering course.', enquiryDt: '2026-09-06T10:15:00.000Z' },
+          { id: 'enq_2', enquiryId: 2, name: 'Student Applicant B', email: 'applicant2@nitas.edu', mobileNo: '9988776655', message: 'Where can we download the Data Structures lab manual PDF?', enquiryDt: '2026-09-07T11:40:00.000Z' }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchEnquiries();
   }, [apiUrl]);
-
-  const fetchEnquiries = async () => {
-    try {
-      const res = await axios.get(`${apiUrl}/admin/enquiries`);
-      if (res.data.success) {
-        setEnquiries(res.data.enquiries);
-      }
-    } catch (err) {
-      console.warn('Enquiries fetch offline fallback:', err);
-      setEnquiries([
-        { id: 'enq_1', enquiryId: 1, name: 'Mayank Singh', email: 'mayank@polytechnic.ac.in', mobileNo: '9123456789', message: 'I want to inquire about the online lecture schedules for 3rd Year CS Diploma.', enquiryDt: '2026-09-06T10:15:00.000Z' },
-        { id: 'enq_2', enquiryId: 2, name: 'Abhay Patel', email: 'abhay@polytechnic.ac.in', mobileNo: '9988776655', message: 'Where can we download the Data Structures lab manual PDF?', enquiryDt: '2026-09-07T11:40:00.000Z' }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this enquiry entry?')) return;
@@ -38,7 +38,7 @@ const EnquiryManagement = () => {
       await axios.delete(`${apiUrl}/admin/enquiries/${id}`);
       setEnquiries((prev) => prev.filter((e) => e.id !== id));
       setToastMsg('Enquiry deleted successfully.');
-    } catch (err) {
+    } catch {
       setEnquiries((prev) => prev.filter((e) => e.id !== id));
       setToastMsg('Enquiry deleted (Local Session).');
     } finally {

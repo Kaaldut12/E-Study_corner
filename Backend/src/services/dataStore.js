@@ -16,6 +16,7 @@ import Assignment from '../../models/Assignment.js';
 import Submission from '../../models/Submission.js';
 import SupportMessage from '../../models/SupportMessage.js';
 import Feedback from '../../models/Feedback.js';
+import { hashPassword, verifyPassword } from '../utils/password.js';
 import {
   seedUsers,
   seedCourses,
@@ -75,10 +76,11 @@ export const dataStore = {
       id: newId,
       status: 'active',
       joinedAt: new Date(),
-      collegeName: userData.collegeName || 'Government Polytechnic Aurai, Bhadohi',
-      course: userData.course || 'Diploma in Computer Science & Engineering',
+      collegeName: userData.collegeName || process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+      course: userData.course || 'Computer Science & Engineering',
       courseYear: userData.courseYear || '1st Year',
-      ...userData
+      ...userData,
+      password: hashPassword(userData.password)
     };
 
     if (isDBConnected()) {
@@ -133,10 +135,10 @@ export const dataStore = {
     if (isDBConnected()) {
       await User.updateOne(
         { email: email.toLowerCase() },
-        { $set: { password: newPassword, resetCode: null, resetExpires: null } }
+        { $set: { password: hashPassword(newPassword), resetCode: null, resetExpires: null } }
       );
     } else {
-      user.password = newPassword;
+      user.password = hashPassword(newPassword);
       user.resetCode = null;
       user.resetExpires = null;
     }
@@ -149,12 +151,12 @@ export const dataStore = {
       : users.find(u => u.id === id);
 
     if (!user) return { success: false, message: 'User not found' };
-    if (user.password !== currentPass) return { success: false, message: 'Current password is incorrect' };
+    if (!verifyPassword(currentPass, user.password)) return { success: false, message: 'Current password is incorrect' };
 
     if (isDBConnected()) {
-      await User.updateOne({ id }, { $set: { password: newPass } });
+      await User.updateOne({ id }, { $set: { password: hashPassword(newPass) } });
     } else {
-      user.password = newPass;
+      user.password = hashPassword(newPass);
     }
 
     return { success: true, message: 'Password updated successfully' };

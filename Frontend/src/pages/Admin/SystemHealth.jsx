@@ -1,23 +1,21 @@
 // frontend/src/pages/Admin/SystemHealth.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const SystemHealth = () => {
+  const { apiUrl } = useAuth();
   const [healthData, setHealthData] = useState(null);
   const [metricsData, setMetricsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [pingLatency, setPingLatency] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchSystemStatus();
-  }, []);
-
-  const fetchSystemStatus = async () => {
+  const fetchSystemStatus = useCallback(async () => {
     setRefreshing(true);
     const startPing = Date.now();
     try {
-      const res = await fetch('http://localhost:3001/api/system/health');
+      const res = await fetch(`${apiUrl}/system/health`);
       const data = await res.json();
       const endPing = Date.now();
       setPingLatency(endPing - startPing);
@@ -29,7 +27,7 @@ const SystemHealth = () => {
       // Fetch admin metrics if authenticated
       const token = localStorage.getItem('token');
       if (token) {
-        const metricsRes = await fetch('http://localhost:3001/api/system/metrics', {
+        const metricsRes = await fetch(`${apiUrl}/system/metrics`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const mData = await metricsRes.json();
@@ -38,12 +36,16 @@ const SystemHealth = () => {
         }
       }
     } catch (err) {
-      console.error('Error fetching system health:', err);
+      console.warn('Error fetching system health:', err);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [apiUrl]);
+
+  useEffect(() => {
+    fetchSystemStatus();
+  }, [fetchSystemStatus]);
 
   return (
     <SidebarLayout>

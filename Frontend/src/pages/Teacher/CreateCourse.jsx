@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const CreateCourse = () => {
   const navigate = useNavigate();
+  const { apiUrl } = useAuth();
   const [formData, setFormData] = useState({
     code: 'CS-401',
     title: '',
@@ -24,7 +26,7 @@ const CreateCourse = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/teacher/create-course', {
+      const res = await fetch(`${apiUrl}/teacher/create-course`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,7 +42,7 @@ const CreateCourse = () => {
       } else {
         setMessage({ type: 'error', text: data.message });
       }
-    } catch (err) {
+    } catch {
       setMessage({ type: 'error', text: 'Failed to create course. Try again.' });
     } finally {
       setLoading(false);
@@ -55,7 +57,7 @@ const CreateCourse = () => {
           <span className="text-xs font-bold uppercase tracking-wider text-purple-400">V4 Platform</span>
           <h1 className="text-2xl font-black text-white">Publish New Course & Learning Path</h1>
           <p className="text-xs text-slate-400 mt-1">
-            Create structured diploma courses with subject mapping, module breakdowns, and target student year levels.
+            Create structured academic courses with subject mapping, module breakdowns, and target student levels.
           </p>
         </div>
 

@@ -2,33 +2,35 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const WeakTopicDetector = () => {
+  const { apiUrl } = useAuth();
   const [topics, setTopics] = useState([]);
   const [diagnosticScore, setDiagnosticScore] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchWeakTopics();
-  }, []);
-
-  const fetchWeakTopics = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/weak-topics', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setTopics(data.weakTopics);
-        setDiagnosticScore(data.overallDiagnosticScore || 68);
+    const fetchWeakTopics = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/student/weak-topics`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setTopics(data.weakTopics);
+          setDiagnosticScore(data.overallDiagnosticScore || 68);
+        }
+      } catch (err) {
+        console.warn('Error fetching weak topic analysis:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching weak topic analysis:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchWeakTopics();
+  }, [apiUrl]);
 
   return (
     <SidebarLayout>

@@ -1,8 +1,10 @@
 // frontend/src/pages/Student/Quizzes.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Quizzes = () => {
+  const { apiUrl } = useAuth();
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeQuiz, setActiveQuiz] = useState(null);
@@ -11,30 +13,10 @@ const Quizzes = () => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [result, setResult] = useState(null);
 
-  useEffect(() => {
-    fetchQuizzes();
-  }, []);
-
-  // Timer countdown when active quiz is running
-  useEffect(() => {
-    if (!activeQuiz || result || timeLeft <= 0) return;
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          handleAutoSubmit();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [activeQuiz, result, timeLeft]);
-
-  const fetchQuizzes = async () => {
+  const fetchQuizzes = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/quizzes', {
+      const res = await fetch(`${apiUrl}/student/quizzes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -42,43 +24,17 @@ const Quizzes = () => {
         setQuizzes(data.quizzes);
       }
     } catch (err) {
-      console.error('Error fetching quizzes:', err);
+      console.warn('Error fetching quizzes:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [apiUrl]);
 
-  const startQuiz = async (quiz) => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:3001/api/student/quizzes/${quiz.id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setActiveQuiz(data.quiz);
-        setQuestions(data.questions);
-        setUserAnswers({});
-        setResult(null);
-        setTimeLeft((data.quiz.timeLimitMinutes || 15) * 60);
-      }
-    } catch (err) {
-      console.error('Error starting quiz:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    fetchQuizzes();
+  }, [fetchQuizzes]);
 
-  const handleOptionSelect = (questionId, optionIdx) => {
-    setUserAnswers(prev => ({ ...prev, [questionId]: optionIdx }));
-  };
-
-  const handleAutoSubmit = () => {
-    submitQuiz();
-  };
-
-  const submitQuiz = async () => {
+  const submitQuiz = useCallback(async () => {
     if (!activeQuiz) return;
 
     try {
@@ -86,7 +42,7 @@ const Quizzes = () => {
       const initialTime = (activeQuiz.timeLimitMinutes || 15) * 60;
       const timeTakenSeconds = initialTime - timeLeft;
 
-      const res = await fetch('http://localhost:3001/api/student/quizzes/submit', {
+      const res = await fetch(`${apiUrl}/student/quizzes/submit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,6 +62,52 @@ const Quizzes = () => {
     } catch (err) {
       console.error('Error submitting quiz:', err);
     }
+  }, [activeQuiz, apiUrl, fetchQuizzes, timeLeft, userAnswers]);
+
+  const handleAutoSubmit = useCallback(() => {
+    submitQuiz();
+  }, [submitQuiz]);
+
+  // Timer countdown when active quiz is running
+  useEffect(() => {
+    if (!activeQuiz || result || timeLeft <= 0) return;
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleAutoSubmit();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [activeQuiz, result, timeLeft, handleAutoSubmit]);
+
+  const startQuiz = async (quiz) => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${apiUrl}/student/quizzes/${quiz.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setActiveQuiz(data.quiz);
+        setQuestions(data.questions);
+        setUserAnswers({});
+        setResult(null);
+        setTimeLeft((data.quiz.timeLimitMinutes || 15) * 60);
+      }
+    } catch (err) {
+      console.warn('Error starting quiz:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOptionSelect = (questionId, optionIdx) => {
+    setUserAnswers(prev => ({ ...prev, [questionId]: optionIdx }));
   };
 
   const quitQuiz = () => {

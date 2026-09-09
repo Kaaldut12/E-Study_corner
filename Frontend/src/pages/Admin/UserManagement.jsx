@@ -5,7 +5,7 @@ import SidebarLayout from '../../components/common/SidebarLayout';
 import { useAuth } from '../../contexts/AuthContext';
 
 const UserManagement = () => {
-  const { apiUrl } = useAuth();
+  const { user: currentUser, apiUrl } = useAuth();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState('all');
@@ -22,29 +22,30 @@ const UserManagement = () => {
   const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get(`${apiUrl}/admin/users`);
+        if (res.data.success) {
+          setUsers(res.data.users);
+        }
+      } catch (err) {
+        console.warn('Fetch users error:', err);
+        // Fallback
+        setUsers([
+          { id: 'user_superadmin_1', name: 'Super Administrator', email: 'superadmin@estudy.com', role: 'superadmin', department: 'Administration', status: 'active' },
+          { id: 'user_admin_1', name: 'System Administrator', email: 'admin@estudy.com', role: 'admin', department: 'Operations', status: 'active' },
+          { id: 'user_teacher_1', name: 'Faculty Lecturer', email: 'teacher@estudy.com', role: 'teacher', department: 'Computer Science', status: 'active' },
+          { id: 'user_teacher_2', name: 'Associate Professor', email: 'faculty@estudy.com', role: 'teacher', department: 'Physics', status: 'active' },
+          { id: 'user_student_1', name: 'Student Scholar', email: 'student@estudy.com', role: 'student', gradeLevel: 'Grade 11', status: 'active' },
+          { id: 'user_student_2', name: 'Senior Scholar', email: 'scholar@estudy.com', role: 'student', gradeLevel: 'Grade 12', status: 'active' }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchUsers();
   }, [apiUrl]);
-
-  const fetchUsers = async () => {
-    try {
-      const res = await axios.get(`${apiUrl}/admin/users`);
-      if (res.data.success) {
-        setUsers(res.data.users);
-      }
-    } catch (err) {
-      console.warn('Fetch users error:', err);
-      // Fallback
-      setUsers([
-        { id: 'user_student_1', name: 'Alex Johnson', email: 'student@estudy.com', role: 'student', gradeLevel: 'Grade 11', status: 'active' },
-        { id: 'user_student_2', name: 'Sophia Chen', email: 'sophia@estudy.com', role: 'student', gradeLevel: 'Grade 12', status: 'active' },
-        { id: 'user_teacher_1', name: 'Dr. Robert Miller', email: 'teacher@estudy.com', role: 'teacher', department: 'Computer Science', status: 'active' },
-        { id: 'user_teacher_2', name: 'Prof. Elena Rostova', email: 'elena@estudy.com', role: 'teacher', department: 'Physics', status: 'active' },
-        { id: 'user_admin_1', name: 'System Admin', email: 'admin@estudy.com', role: 'admin', department: 'Operations', status: 'active' }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddUser = async (e) => {
     e.preventDefault();
@@ -86,14 +87,25 @@ const UserManagement = () => {
     }
   };
 
-  const handleDeleteUser = async (id, userName) => {
+  const handleDeleteUser = async (id, userName, userRole) => {
+    if (userRole === 'superadmin') {
+      if (currentUser?.role !== 'superadmin') {
+        setToastMsg('Access denied: Only a Super Admin can delete a Super Admin account.');
+        setTimeout(() => setToastMsg(''), 3000);
+        return;
+      }
+      setToastMsg('The primary Super Admin account is protected and cannot be deleted.');
+      setTimeout(() => setToastMsg(''), 3000);
+      return;
+    }
+
     if (!window.confirm(`Are you sure you want to delete user "${userName}"?`)) return;
 
     try {
       await axios.delete(`${apiUrl}/admin/users/${id}`);
       setUsers((prev) => prev.filter((u) => u.id !== id));
       setToastMsg(`Deleted ${userName}.`);
-    } catch (err) {
+    } catch {
       setUsers((prev) => prev.filter((u) => u.id !== id));
       setToastMsg(`Deleted ${userName} (Local Session).`);
     } finally {
@@ -159,17 +171,17 @@ const UserManagement = () => {
         {/* Filter and search bar */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2 overflow-x-auto">
-            {['all', 'student', 'teacher', 'admin'].map((r) => (
+            {['all', 'superadmin', 'admin', 'teacher', 'student'].map((r) => (
               <button
                 key={r}
                 onClick={() => setRoleFilter(r)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium capitalize transition ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium capitalize transition whitespace-nowrap ${
                   roleFilter === r
                     ? 'bg-indigo-600 text-white font-semibold'
                     : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
                 }`}
               >
-                {r}s ({users.filter((u) => r === 'all' || u.role === r).length})
+                {r === 'all' ? 'All Users' : r === 'superadmin' ? 'Super Admins' : `${r}s`} ({users.filter((u) => r === 'all' || u.role === r).length})
               </button>
             ))}
           </div>
@@ -214,13 +226,15 @@ const UserManagement = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-1 text-xs font-semibold rounded-full capitalize ${
-                          u.role === 'student'
+                          u.role === 'superadmin'
+                            ? 'bg-rose-500/15 text-rose-300 border border-rose-500/30 font-bold'
+                            : u.role === 'student'
                             ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                             : u.role === 'teacher'
                             ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
                             : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                         }`}>
-                          {u.role}
+                          {u.role === 'superadmin' ? '👑 Super Admin' : u.role}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-xs text-slate-400">
@@ -228,7 +242,7 @@ const UserManagement = () => {
                       </td>
                       <td className="px-6 py-4 text-right">
                         <button
-                          onClick={() => handleDeleteUser(u.id, u.name)}
+                          onClick={() => handleDeleteUser(u.id, u.name, u.role)}
                           className="px-3 py-1 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 text-xs font-semibold rounded-lg transition"
                         >
                           Delete
@@ -251,7 +265,7 @@ const UserManagement = () => {
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                   <h3 className="text-lg font-bold text-white">
-                    {role === 'teacher' ? '👨‍🏫 Provision New Teacher Account' : 'Add New Platform User'}
+                    {role === 'teacher' ? '👨‍🏫 Provision New Teacher Account' : role === 'superadmin' ? '👑 Provision Super Admin Account' : 'Add New Platform User'}
                   </h3>
                   <p className="text-[11px] text-purple-400 font-semibold">
                     🔒 Admin Privilege Required: Only System Administrators can add Teacher & Faculty accounts.
@@ -263,7 +277,7 @@ const UserManagement = () => {
               </div>
 
               {/* Role Toggle Selector */}
-              <div className="grid grid-cols-3 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs">
+              <div className={`grid ${currentUser?.role === 'superadmin' ? 'grid-cols-4' : 'grid-cols-3'} gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs`}>
                 <button
                   type="button"
                   onClick={() => setRole('teacher')}
@@ -297,6 +311,19 @@ const UserManagement = () => {
                 >
                   <span>⚙️ Admin</span>
                 </button>
+                {currentUser?.role === 'superadmin' && (
+                  <button
+                    type="button"
+                    onClick={() => setRole('superadmin')}
+                    className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                      role === 'superadmin'
+                        ? 'bg-rose-600 text-white shadow-md'
+                        : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    <span>👑 Super</span>
+                  </button>
+                )}
               </div>
 
               <form onSubmit={handleAddUser} className="space-y-4">
@@ -309,7 +336,7 @@ const UserManagement = () => {
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder={role === 'teacher' ? 'e.g. Er. Durgesh Nandani' : 'e.g. Sarah Williams'}
+                    placeholder={role === 'teacher' ? 'e.g. Dr. John Doe' : 'e.g. Student Scholar'}
                     className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>

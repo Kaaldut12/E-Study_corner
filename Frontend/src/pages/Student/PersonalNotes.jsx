@@ -1,8 +1,10 @@
 // frontend/src/pages/Student/PersonalNotes.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const PersonalNotes = () => {
+  const { apiUrl } = useAuth();
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -19,25 +21,25 @@ const PersonalNotes = () => {
   const [isPinned, setIsPinned] = useState(false);
 
   useEffect(() => {
-    fetchNotes();
-  }, []);
-
-  const fetchNotes = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/notes', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setNotes(data.notes);
+    const fetchNotes = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/student/notes`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setNotes(data.notes);
+        }
+      } catch (err) {
+        console.warn('Failed fetching notes:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Failed fetching notes:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchNotes();
+  }, [apiUrl]);
 
   const handleCreateOrUpdate = async (e) => {
     e.preventDefault();
@@ -55,8 +57,8 @@ const PersonalNotes = () => {
 
     try {
       const url = editingNote
-        ? `http://localhost:3001/api/student/notes/${editingNote.id}`
-        : 'http://localhost:3001/api/student/notes';
+        ? `${apiUrl}/student/notes/${editingNote.id}`
+        : `${apiUrl}/student/notes`;
       const method = editingNote ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -78,20 +80,20 @@ const PersonalNotes = () => {
         closeModal();
       }
     } catch (err) {
-      console.error('Error saving note:', err);
+      console.warn('Error saving note:', err);
     }
   };
 
   const handleDelete = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:3001/api/student/notes/${id}`, {
+      await fetch(`${apiUrl}/student/notes/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
       setNotes(notes.filter(n => n.id !== id));
     } catch (err) {
-      console.error('Error deleting note:', err);
+      console.warn('Error deleting note:', err);
     }
   };
 

@@ -46,7 +46,7 @@ export const sendPasswordResetEmail = async (toEmail, userName, resetCode) => {
     <div style="font-family: Arial, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 24px; border-radius: 16px;">
       <div style="text-align: center; margin-bottom: 24px;">
         <h2 style="color: #818cf8; margin: 0;">E-Study Corner</h2>
-        <p style="color: #94a3b8; font-size: 12px;">Government Polytechnic Aurai, Bhadohi</p>
+        <p style="color: #94a3b8; font-size: 12px;">${process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}</p>
       </div>
       <div style="background-color: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155;">
         <h3 style="color: #ffffff; margin-top: 0;">Password Reset Request</h3>
@@ -85,7 +85,7 @@ export const sendBroadcastEmail = async (toEmail, subject, messageText) => {
     <div style="font-family: Arial, sans-serif; background-color: #0f172a; color: #f8fafc; padding: 24px; border-radius: 16px;">
       <div style="text-align: center; margin-bottom: 20px;">
         <h2 style="color: #818cf8; margin: 0;">E-Study Corner Announcement</h2>
-        <p style="color: #94a3b8; font-size: 12px;">Government Polytechnic Aurai, Bhadohi</p>
+        <p style="color: #94a3b8; font-size: 12px;">${process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}</p>
       </div>
       <div style="background-color: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155;">
         <h3 style="color: #ffffff; margin-top: 0;">${subject}</h3>

@@ -76,8 +76,8 @@ const TeacherDashboard = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Welcome Header */}
-        <div className="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-indigo-500/20">
-          <div className="absolute right-0 top-0 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-brand">
+          <div className="absolute right-0 top-0 w-72 h-72 rounded-full blur-3xl pointer-events-none" style={{background:'var(--brand-glow)'}}></div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Instructor Portal</span>
@@ -103,13 +103,13 @@ const TeacherDashboard = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-75">
             <div className="text-slate-400 text-xs font-medium uppercase tracking-wider">Active Assignments</div>
             <div className="text-3xl font-extrabold text-white mt-2">{stats.totalAssignments || 0}</div>
-            <div className="text-xs text-indigo-400 mt-1 font-medium">Published coursework</div>
+            <div className="text-xs t-brand mt-1 font-medium">Published coursework</div>
           </div>
 
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-150">
             <div className="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
               <span>Pending Grading</span>
               <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
@@ -118,13 +118,13 @@ const TeacherDashboard = () => {
             <div className="text-xs text-slate-400 mt-1 font-medium">Submissions awaiting review</div>
           </div>
 
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-225">
             <div className="text-slate-400 text-xs font-medium uppercase tracking-wider">Graded Submissions</div>
             <div className="text-3xl font-extrabold text-emerald-400 mt-2">{stats.gradedCount || 0}</div>
             <div className="text-xs text-emerald-400 mt-1 font-medium">Evaluated & feedback sent</div>
           </div>
 
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-300">
             <div className="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Enrolled Students</div>
             <div className="text-3xl font-extrabold text-purple-400 mt-2">{stats.totalStudents || 0}</div>
             <div className="text-xs text-slate-400 mt-1 font-medium">Active roster</div>
@@ -193,7 +193,7 @@ const TeacherDashboard = () => {
                 {data.recentAssignments.map((asg) => (
                   <div key={asg.id} className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
                     <div>
-                      <span className="px-2 py-0.5 text-xs font-semibold rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-1 inline-block">
+                      <span className="px-2 py-0.5 text-xs font-semibold rounded badge-brand mb-1 inline-block">
                         {asg.subject}
                       </span>
                       <h3 className="font-semibold text-sm text-white">{asg.title}</h3>

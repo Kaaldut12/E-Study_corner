@@ -18,25 +18,25 @@ const UploadStudyMaterial = () => {
   const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
+    const fetchMaterials = async () => {
+      try {
+        const res = await axios.get(`${apiUrl}/student/study-material`);
+        if (res.data.success) {
+          setMaterials(res.data.materials);
+        }
+      } catch (err) {
+        console.warn('Study material fetch fallback:', err);
+        setMaterials([
+          { id: 'mat_1', subject: 'Computer Science', title: 'Data Structures Complete Notes', fileName: 'DSA_Notes.pdf', uploadDt: '2026-09-02T10:00:00.000Z' },
+          { id: 'mat_2', subject: 'Computer Science', title: 'MERN Stack Web Dev Guide', fileName: 'MERN_Guide.pdf', uploadDt: '2026-09-04T15:20:00.000Z' }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchMaterials();
   }, [apiUrl]);
-
-  const fetchMaterials = async () => {
-    try {
-      const res = await axios.get(`${apiUrl}/student/study-material`);
-      if (res.data.success) {
-        setMaterials(res.data.materials);
-      }
-    } catch (err) {
-      console.warn('Study material fetch fallback:', err);
-      setMaterials([
-        { id: 'mat_1', subject: 'Computer Science', title: 'Data Structures Complete Notes', fileName: 'DSA_Notes.pdf', uploadDt: '2026-09-02T10:00:00.000Z' },
-        { id: 'mat_2', subject: 'Computer Science', title: 'MERN Stack Web Dev Guide', fileName: 'MERN_Guide.pdf', uploadDt: '2026-09-04T15:20:00.000Z' }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -89,7 +89,7 @@ const UploadStudyMaterial = () => {
       await axios.delete(`${apiUrl}/admin/study-material/${id}`);
       setMaterials((prev) => prev.filter((m) => m.id !== id));
       setToastMsg('Study material deleted.');
-    } catch (err) {
+    } catch {
       setMaterials((prev) => prev.filter((m) => m.id !== id));
       setToastMsg('Study material deleted (Local Session).');
     } finally {

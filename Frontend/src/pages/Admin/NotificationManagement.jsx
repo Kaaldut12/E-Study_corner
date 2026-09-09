@@ -13,25 +13,25 @@ const NotificationManagement = () => {
   const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await axios.get(`${apiUrl}/admin/notifications`);
+        if (res.data.success) {
+          setNotifications(res.data.notifications);
+        }
+      } catch (err) {
+        console.warn('Notifications fetch offline fallback:', err);
+        setNotifications([
+          { id: 'noti_1', notificationId: 101, notiMessage: '📢 Welcome to E-Study Corner (Smart Learning Pathashala) - Academic session open for all courses!', notiDt: '2026-09-01T10:00:00.000Z' },
+          { id: 'noti_2', notificationId: 102, notiMessage: '📝 Final Year Major Project & Thesis submissions are now open for all departments.', notiDt: '2026-09-03T12:00:00.000Z' }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchNotifications();
   }, [apiUrl]);
-
-  const fetchNotifications = async () => {
-    try {
-      const res = await axios.get(`${apiUrl}/admin/notifications`);
-      if (res.data.success) {
-        setNotifications(res.data.notifications);
-      }
-    } catch (err) {
-      console.warn('Notifications fetch offline fallback:', err);
-      setNotifications([
-        { id: 'noti_1', notificationId: 101, notiMessage: '📢 Welcome to E-Study Corner (Smart Learning Pathashala) - Government Polytechnic Aurai session 2024!', notiDt: '2026-09-01T10:00:00.000Z' },
-        { id: 'noti_2', notificationId: 102, notiMessage: '📝 Final Year Major Project submissions for CS/IT Diploma are now open.', notiDt: '2026-09-03T12:00:00.000Z' }
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,7 +72,7 @@ const NotificationManagement = () => {
       await axios.delete(`${apiUrl}/admin/notifications/${id}`);
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       setToastMsg('Notification deleted successfully.');
-    } catch (err) {
+    } catch {
       setNotifications((prev) => prev.filter((n) => n.id !== id));
       setToastMsg('Notification deleted (Local Session).');
     } finally {

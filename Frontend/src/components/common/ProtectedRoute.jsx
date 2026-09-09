@@ -20,12 +20,18 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/login" replace />;
   }
 
+  // Super Admin has universal authorization across all portals
+  if (user.role === 'superadmin') {
+    return children;
+  }
+
   if (requiredRole && user.role !== requiredRole) {
     // Redirect user to their own portal dashboard if logged in under another role
     const roleRedirects = {
       student: '/student',
       teacher: '/teacher',
-      admin: '/admin'
+      admin: '/admin',
+      superadmin: '/admin'
     };
     return <Navigate to={roleRedirects[user.role] || '/login'} replace />;
   }

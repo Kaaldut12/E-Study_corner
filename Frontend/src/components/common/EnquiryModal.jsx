@@ -1,5 +1,5 @@
 // frontend/src/components/common/EnquiryModal.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const EnquiryModal = () => {
@@ -10,6 +10,13 @@ const EnquiryModal = () => {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+
+  // Listen to open-enquiry-modal custom event from navbar or any page element
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener('open-enquiry-modal', handleOpen);
+    return () => window.removeEventListener('open-enquiry-modal', handleOpen);
+  }, []);
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -69,7 +76,9 @@ const EnquiryModal = () => {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="text-lg font-bold text-white">Student Enquiry Form</h3>
-                <p className="text-xs text-slate-400">Government Polytechnic Aurai, Bhadohi</p>
+                <p className="text-xs text-slate-400">
+                  {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}
+                </p>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
@@ -93,7 +102,7 @@ const EnquiryModal = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Abhay Patel"
+                  placeholder="e.g. Student Name"
                   className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
@@ -105,7 +114,7 @@ const EnquiryModal = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="abhay@polytechnic.ac.in"
+                  placeholder="student@estudy.edu"
                   className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>

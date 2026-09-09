@@ -80,10 +80,10 @@ const StudentDashboard = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Welcome Header Banner */}
-        <div className="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-indigo-500/20">
-          <div className="absolute right-0 top-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="glass-panel p-6 sm:p-8 rounded-2xl relative overflow-hidden border border-brand">
+          <div className="absolute right-0 top-0 w-72 h-72 rounded-full blur-3xl pointer-events-none" style={{background:'var(--brand-glow)'}}></div>
           <div className="relative z-10">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Student Portal</span>
+            <span className="text-xs font-bold uppercase tracking-wider t-brand">Student Portal</span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
               Welcome back, {user?.name || 'Student'} 👋
             </h1>
@@ -95,7 +95,7 @@ const StudentDashboard = () => {
 
         {/* Overview Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-75">
             <div className="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
               <span>Pending Tasks</span>
               <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
@@ -104,16 +104,16 @@ const StudentDashboard = () => {
             <div className="text-xs text-amber-400 mt-1 font-medium">Assignments awaiting submission</div>
           </div>
 
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-150">
             <div className="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
               <span>Submitted</span>
-              <span className="w-2.5 h-2.5 rounded-full bg-indigo-400"></span>
+              <span className="w-2.5 h-2.5 rounded-full t-brand animate-pulse"></span>
             </div>
             <div className="text-3xl font-extrabold text-white mt-2">{stats.submittedCount || 0}</div>
-            <div className="text-xs text-indigo-400 mt-1 font-medium">Completed & turned in</div>
+            <div className="text-xs t-brand mt-1 font-medium">Completed & turned in</div>
           </div>
 
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-225">
             <div className="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
               <span>Graded</span>
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
@@ -122,12 +122,12 @@ const StudentDashboard = () => {
             <div className="text-xs text-emerald-400 mt-1 font-medium">Evaluated by teachers</div>
           </div>
 
-          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800">
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl border border-slate-800 animate-slide-up delay-300">
             <div className="flex items-center justify-between text-slate-400 text-xs font-medium uppercase tracking-wider">
               <span>Average Grade</span>
               <span className="text-purple-400 font-bold">★</span>
             </div>
-            <div className="text-3xl font-extrabold gradient-text-indigo mt-2">
+            <div className="text-3xl font-extrabold t-brand-grad mt-2">
               {stats.averageGradePercentage || 0}%
             </div>
             <div className="text-xs text-slate-400 mt-1 font-medium">Overall score accuracy</div>
@@ -145,7 +145,7 @@ const StudentDashboard = () => {
                 </svg>
                 Pending Assignments
               </h2>
-              <Link to="/student/assignments" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">
+              <Link to="/student/assignments" className="text-xs t-brand hover:opacity-80 font-medium">
                 View all →
               </Link>
             </div>
@@ -159,7 +159,7 @@ const StudentDashboard = () => {
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2 py-0.5 text-xs font-semibold rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        <span className="px-2 py-0.5 text-xs font-semibold rounded badge-brand">
                           {asg.subject}
                         </span>
                         <span className="text-xs text-slate-400">By {asg.teacherName}</span>
@@ -172,7 +172,7 @@ const StudentDashboard = () => {
 
                     <Link
                       to={`/student/submit/${asg.id}`}
-                      className="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-lg transition text-center flex-shrink-0"
+                      className="py-2 px-4 bg-brand text-white text-xs font-semibold rounded-lg transition text-center flex-shrink-0 shadow-brand"
                     >
                       Submit Now
                     </Link>
@@ -195,7 +195,7 @@ const StudentDashboard = () => {
                 </svg>
                 Recent Feedback
               </h2>
-              <Link to="/student/feedback" className="text-xs text-indigo-400 hover:text-indigo-300 font-medium">
+              <Link to="/student/feedback" className="text-xs t-brand hover:opacity-80 font-medium">
                 View history →
               </Link>
             </div>

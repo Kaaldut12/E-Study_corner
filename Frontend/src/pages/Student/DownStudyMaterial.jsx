@@ -43,7 +43,7 @@ const DownStudyMaterial = () => {
             id: 'mat_3',
             subject: 'Mathematics',
             title: 'Applied Mathematics III Solved Papers',
-            description: 'Previous 5 years solved question papers for Diploma 2nd Year Mathematics.',
+            description: 'Previous 5 years solved question papers for Applied Mathematics & Core Engineering Subjects.',
             fileName: 'Applied_Maths_III_Solved.pdf',
             fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
             uploadDt: '2026-09-05T09:00:00.000Z'

@@ -1,31 +1,33 @@
 // frontend/src/pages/Student/ProgressTracking.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const ProgressTracking = () => {
+  const { apiUrl } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProgress();
-  }, []);
-
-  const fetchProgress = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/progress', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const resData = await res.json();
-      if (resData.success) {
-        setData(resData);
+    const fetchProgress = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/student/progress`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const resData = await res.json();
+        if (resData.success) {
+          setData(resData);
+        }
+      } catch (err) {
+        console.warn('Error fetching progress stats:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching progress stats:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchProgress();
+  }, [apiUrl]);
 
   return (
     <SidebarLayout>

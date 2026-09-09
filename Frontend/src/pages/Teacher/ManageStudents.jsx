@@ -1,32 +1,34 @@
 // frontend/src/pages/Teacher/ManageStudents.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const ManageStudents = () => {
+  const { apiUrl } = useAuth();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetchTeacherStudents();
-  }, []);
-
-  const fetchTeacherStudents = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/teacher/students', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStudents(data.students);
+    const fetchTeacherStudents = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/teacher/students`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setStudents(data.students);
+        }
+      } catch (err) {
+        console.warn('Error fetching teacher student roster:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching teacher student roster:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchTeacherStudents();
+  }, [apiUrl]);
 
   const filtered = students.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -94,8 +96,8 @@ const ManageStudents = () => {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className="text-indigo-400 font-semibold block">{s.course || 'Diploma in CS & Engg'}</span>
-                        <span className="text-[10px] text-slate-400">{s.courseYear || '3rd Year'}</span>
+                        <span className="text-indigo-400 font-semibold block">{s.course || 'Computer Science & Engineering'}</span>
+                        <span className="text-[10px] text-slate-400">{s.courseYear || '1st Year'}</span>
                       </td>
                       <td className="p-4">
                         <span className="px-2.5 py-1 bg-slate-900 border border-slate-800 text-slate-200 font-bold rounded-lg">

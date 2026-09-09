@@ -15,6 +15,11 @@ const SubmitAssignment = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileName, setFileName] = useState('');
   const [fileSize, setFileSize] = useState('');
+  const [attachmentUrl, setAttachmentUrl] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -30,15 +35,6 @@ const SubmitAssignment = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  const handleAttachSampleDoc = (name, url) => {
-    setFileName(name);
-    setFileSize('1.45 MB');
-    setAttachmentUrl(url);
-  };
-  const [submitting, setSubmitting] = useState(false);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const fetchAssignmentDetails = async () => {
@@ -83,7 +79,7 @@ const SubmitAssignment = () => {
         assignmentId,
         submissionText,
         attachmentUrl,
-        fileName: fileName || (attachmentUrl ? 'Submitted_Assignment_Document.pdf' : ''),
+        fileName: fileName || (selectedFile ? selectedFile.name : '') || (attachmentUrl ? 'Submitted_Assignment_Document.pdf' : ''),
         fileSize: fileSize || '1.20 MB'
       });
 

@@ -4,13 +4,14 @@ import { dataStore } from '../src/services/dataStore.js';
 export const getTeacherDashboard = async (req, res) => {
   try {
     const teacherId = req.user.id;
+    const isSuperAdmin = req.user.role === 'superadmin';
     const allAssignments = await dataStore.getAssignments();
-    const teacherAssignments = allAssignments.filter(a => a.teacherId === teacherId);
+    const teacherAssignments = isSuperAdmin ? allAssignments : allAssignments.filter(a => a.teacherId === teacherId);
 
     const allSubmissions = await dataStore.getSubmissions();
-    const teacherSubmissions = allSubmissions.filter(s =>
-      teacherAssignments.some(a => a.id === s.assignmentId)
-    );
+    const teacherSubmissions = isSuperAdmin
+      ? allSubmissions
+      : allSubmissions.filter(s => teacherAssignments.some(a => a.id === s.assignmentId));
 
     const pendingGradingCount = teacherSubmissions.filter(s => s.status === 'submitted').length;
     const gradedCount = teacherSubmissions.filter(s => s.status === 'graded').length;
@@ -38,8 +39,9 @@ export const getTeacherDashboard = async (req, res) => {
 export const getTeacherAssignments = async (req, res) => {
   try {
     const teacherId = req.user.id;
+    const isSuperAdmin = req.user.role === 'superadmin';
     const allAssignments = await dataStore.getAssignments();
-    const teacherAssignments = allAssignments.filter(a => a.teacherId === teacherId);
+    const teacherAssignments = isSuperAdmin ? allAssignments : allAssignments.filter(a => a.teacherId === teacherId);
 
     const allSubmissions = await dataStore.getSubmissions();
     const assignmentsWithStats = teacherAssignments.map(asg => {
@@ -156,8 +158,9 @@ export const gradeSubmission = async (req, res) => {
 export const getTeacherCourses = async (req, res) => {
   try {
     const teacherId = req.user.id;
+    const isSuperAdmin = req.user.role === 'superadmin';
     const allCourses = await dataStore.getCourses();
-    const teacherCourses = allCourses.filter(c => c.teacherId === teacherId);
+    const teacherCourses = isSuperAdmin ? allCourses : allCourses.filter(c => c.teacherId === teacherId);
 
     return res.status(200).json({
       success: true,

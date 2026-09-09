@@ -31,9 +31,27 @@ app.use(securityHeaders);
 app.use(apiRateLimiter);
 app.use(sanitizeInput);
 
-// CORS configuration - allow frontend to communicate with backend
+// CORS configuration - allow explicitly configured frontend origins and Vercel deployments.
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (requestOrigin, callback) => {
+    if (!requestOrigin) return callback(null, true);
+
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(requestOrigin)) {
+      return callback(null, true);
+    }
+
+    // Allow Vercel preview and production deployments
+    if (requestOrigin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Origin is not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -87,13 +105,18 @@ app.use((err, req, res, next) => {
 
 // ==================== Server Start ====================
 
-app.listen(PORT, () => {
-  console.log(`
+// Only start standalone HTTP server if not running in serverless environment (e.g. Vercel)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`
 ╔══════════════════════════════════════╗
 ║  E-Study Corner Backend              ║
 ║  Server running on port ${PORT}      ║
-║  Environment: ${process.env.NODE_ENV}║
+║  Environment: ${process.env.NODE_ENV || 'development'}║
 ║  Timestamp: ${new Date().toISOString()}  ║
 ╚══════════════════════════════════════╝
-  `);
-});
+    `);
+  });
+}
+
+export default app;

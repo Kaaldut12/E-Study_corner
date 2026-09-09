@@ -24,7 +24,7 @@ import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 const router = express.Router();
 
 router.use(verifyToken);
-router.use(requireRole(['admin']));
+router.use(requireRole(['admin', 'superadmin']));
 
 router.get('/dashboard', getAdminDashboard);
 router.get('/analytics', getAdminAnalytics);

@@ -17,7 +17,6 @@ const ResetPassword = () => {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
-  const [demoOTP, setDemoOTP] = useState('');
 
   // Step 1: Send OTP
   const handleRequestOTP = async (e) => {
@@ -30,18 +29,12 @@ const ResetPassword = () => {
       const res = await axios.post(`${apiUrl}/auth/reset-password`, { email });
       if (res.data.success) {
         setMessage(res.data.message || `Password reset OTP sent to ${email}`);
-        if (res.data.demoOTP) {
-          setDemoOTP(res.data.demoOTP);
-        }
         setStep(2);
       } else {
         setErrorMsg(res.data.message || 'Unable to request password reset.');
       }
     } catch (err) {
-      console.warn('Password reset request fallback:', err);
-      setMessage(`OTP sent to ${email}. (Demo Code: 123456)`);
-      setDemoOTP('123456');
-      setStep(2);
+      setErrorMsg(err.response?.data?.message || 'Failed to send OTP. Please check your email and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -76,11 +69,7 @@ const ResetPassword = () => {
         setErrorMsg(res.data.message || 'Invalid or expired OTP code.');
       }
     } catch (err) {
-      console.warn('Password reset confirm fallback:', err);
-      setMessage('Password updated successfully! Redirecting to login...');
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      setErrorMsg(err.response?.data?.message || 'Failed to reset password. Please check the OTP code and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -105,11 +94,6 @@ const ResetPassword = () => {
           </div>
         )}
 
-        {demoOTP && step === 2 && (
-          <div className="p-3 rounded-xl bg-indigo-950/60 border border-indigo-500/30 text-indigo-300 text-xs text-center font-mono">
-            ⚡ Quick Test Code: <strong>{demoOTP}</strong>
-          </div>
-        )}
 
         {errorMsg && (
           <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs text-center">

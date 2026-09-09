@@ -2,29 +2,50 @@
 import jwt from 'jsonwebtoken';
 import { dataStore } from '../src/services/dataStore.js';
 import { sendPasswordResetEmail } from '../src/services/emailService.js';
+import { hashPassword, isBcryptHash, verifyPassword } from '../src/utils/password.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
 const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '24h';
 
+const toPublicUser = (user) => {
+  const {
+    id, name, firstName, lastName, email, role, gender, collegeName, course,
+    courseYear, mobileNo, dob, addressP, userpic, status, joinedAt, createdAt,
+    updatedAt
+  } = user;
+  return {
+    id, name, firstName, lastName, email, role, gender, collegeName, course,
+    courseYear, mobileNo, dob, addressP, userpic, status, joinedAt, createdAt,
+    updatedAt
+  };
+};
+
 export const login = async (req, res) => {
   try {
-    const { email, password, role } = req.body;
-    if (!email || !password) {
+    const emailAddress = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const password = typeof req.body.password === 'string' ? req.body.password : '';
+    const { role } = req.body;
+    if (!emailAddress || !password) {
       return res.status(400).json({
         success: false,
         message: 'Email and password are required.'
       });
     }
 
-    const user = await dataStore.getUserByEmail(email);
-    if (!user || user.password !== password) {
+    const user = await dataStore.getUserByEmail(emailAddress);
+    if (!user || !verifyPassword(password, user.password)) {
       return res.status(401).json({
         success: false,
         message: 'Invalid email or password.'
       });
     }
 
-    if (role && user.role !== role) {
+    if (!isBcryptHash(user.password)) {
+      await dataStore.updateUser(user.id, { password: hashPassword(password) });
+    }
+
+    const isRoleMatch = !role || user.role === role || (role === 'admin' && user.role === 'superadmin');
+    if (!isRoleMatch) {
       return res.status(403).json({
         success: false,
         message: `Account found, but role '${role}' does not match registered role '${user.role}'.`
@@ -41,13 +62,11 @@ export const login = async (req, res) => {
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
 
-    const { password: _, ...userWithoutPassword } = user;
-
     return res.status(200).json({
       success: true,
       message: 'Login successful',
       token,
-      user: userWithoutPassword
+      user: toPublicUser(user)
     });
   } catch (error) {
     console.error('Error in login:', error);
@@ -60,11 +79,14 @@ export const login = async (req, res) => {
 
 export const register = async (req, res) => {
   try {
-    const { name, email, password, gradeLevel, department, collegeName, course, courseYear, gender, mobileNo, dob, addressP } = req.body;
-    if (!name || !email || !password) {
+    const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
+    const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+    const password = typeof req.body.password === 'string' ? req.body.password : '';
+    const { gradeLevel, department, collegeName, course, courseYear, gender, mobileNo, dob, addressP } = req.body;
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || password.length < 8) {
       return res.status(400).json({
         success: false,
-        message: 'Name, email, and password are required.'
+        message: 'Name, a valid email, and a password of at least 8 characters are required.'
       });
     }
 
@@ -92,9 +114,9 @@ export const register = async (req, res) => {
       password,
       role,
       gender: gender || 'Male',
-      collegeName: collegeName || 'Government Polytechnic Aurai, Bhadohi',
-      course: course || 'Diploma in Computer Science & Engineering',
-      courseYear: courseYear || '3rd Year',
+      collegeName: collegeName || process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+      course: course || 'Computer Science & Engineering',
+      courseYear: courseYear || '1st Year',
       mobileNo: mobileNo || '',
       dob: dob || '',
       addressP: addressP || '',
@@ -108,13 +130,11 @@ export const register = async (req, res) => {
       { expiresIn: JWT_EXPIRATION }
     );
 
-    const { password: _, ...userWithoutPassword } = newUser;
-
     return res.status(201).json({
       success: true,
       message: 'Registration successful',
       token,
-      user: userWithoutPassword
+      user: toPublicUser(newUser)
     });
   } catch (error) {
     console.error('Error in register:', error);
@@ -131,10 +151,9 @@ export const getMe = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
-    const { password: _, ...userWithoutPassword } = user;
     return res.status(200).json({
       success: true,
-      user: userWithoutPassword
+      user: toPublicUser(user)
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -163,8 +182,7 @@ export const resetPassword = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: `Password reset OTP code sent to ${email}.`,
-      demoOTP: resetOTP
+      message: `Password reset OTP code sent to ${email}.`
     });
   } catch (error) {
     console.error('Reset password error:', error);

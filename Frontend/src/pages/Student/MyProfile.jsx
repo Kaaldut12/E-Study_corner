@@ -28,12 +28,12 @@ const MyProfile = () => {
       setLastName(user.lastName || parts.slice(1).join(' ') || '');
       setEmail(user.email || '');
       setGender(user.gender || 'Male');
-      setCollegeName(user.collegeName || 'Government Polytechnic Aurai, Bhadohi');
-      setCourse(user.course || 'Diploma in Computer Science & Engineering');
-      setCourseYear(user.courseYear || '3rd Year');
-      setMobileNo(user.mobileNo || '9876543210');
-      setDob(user.dob || '2004-05-15');
-      setAddressP(user.addressP || 'Station Road, Bhadohi, U.P.');
+      setCollegeName(user.collegeName || import.meta.env.VITE_COLLEGE_NAME || '');
+      setCourse(user.course || 'Computer Science & Engineering');
+      setCourseYear(user.courseYear || '1st Year');
+      setMobileNo(user.mobileNo || '');
+      setDob(user.dob || '');
+      setAddressP(user.addressP || '');
     }
   }, [user]);
 
@@ -142,7 +142,7 @@ const MyProfile = () => {
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1">College Name</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">College / Institution Name</label>
                 <input
                   type="text"
                   required
@@ -153,7 +153,7 @@ const MyProfile = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Course Branch</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Course / Degree / Program</label>
                 <input
                   type="text"
                   required
@@ -164,7 +164,7 @@ const MyProfile = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Course Year</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Year / Semester / Level</label>
                 <input
                   type="text"
                   required

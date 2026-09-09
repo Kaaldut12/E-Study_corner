@@ -1,8 +1,10 @@
 // frontend/src/pages/Student/Courses.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Courses = () => {
+  const { apiUrl } = useAuth();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubject, setSelectedSubject] = useState('All');
@@ -10,25 +12,25 @@ const Courses = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
 
   useEffect(() => {
-    fetchCourses();
-  }, []);
-
-  const fetchCourses = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/courses', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setCourses(data.courses);
+    const fetchCourses = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/student/courses`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setCourses(data.courses);
+        }
+      } catch (err) {
+        console.warn('Failed fetching courses:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Failed fetching courses:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchCourses();
+  }, [apiUrl]);
 
   const subjects = ['All', ...new Set(courses.map(c => c.subject))];
 
@@ -48,7 +50,7 @@ const Courses = () => {
             <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">V1 Foundation</span>
             <h1 className="text-2xl font-black text-white">Course Catalog & Learning Paths</h1>
             <p className="text-xs text-slate-400 mt-1">
-              Explore structured diploma & engineering courses with module lessons and progress tracking.
+              Explore structured academic, degree & technical courses with module lessons and progress tracking.
             </p>
           </div>
           <div className="flex items-center gap-3">

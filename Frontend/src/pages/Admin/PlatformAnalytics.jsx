@@ -1,31 +1,33 @@
 // frontend/src/pages/Admin/PlatformAnalytics.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const PlatformAnalytics = () => {
+  const { apiUrl } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  const fetchAnalytics = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/admin/analytics', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const resData = await res.json();
-      if (resData.success) {
-        setData(resData.analytics);
+    const fetchAnalytics = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/admin/analytics`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const resData = await res.json();
+        if (resData.success) {
+          setData(resData.analytics);
+        }
+      } catch (err) {
+        console.warn('Error fetching admin analytics:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching admin analytics:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchAnalytics();
+  }, [apiUrl]);
 
   return (
     <SidebarLayout>
@@ -74,7 +76,7 @@ const PlatformAnalytics = () => {
             <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
               <div>
                 <h3 className="text-base font-bold text-white">Department Enrollment Distribution</h3>
-                <p className="text-xs text-slate-400">Active student representation across polytechnic departments.</p>
+                <p className="text-xs text-slate-400">Active student representation across academic departments.</p>
               </div>
 
               <div className="space-y-4">

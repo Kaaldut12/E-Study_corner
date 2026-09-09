@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import NotificationMarquee from '../../components/common/NotificationMarquee';
 import EnquiryModal from '../../components/common/EnquiryModal';
+import PublicNavbar from '../../components/common/PublicNavbar';
 
 const QUOTES_CAROUSEL = [
   {
     tag: 'Smart Learning Pathashala',
-    title: 'Digital Portal for Computer Science & Engineering',
-    quote: 'Personalized e-learning platform designed to meet all academic requirements of Diploma students at a single venue.',
+    title: 'Digital Portal for Computer Science & Technical Education',
+    quote: 'Personalized e-learning platform designed to meet the academic and career requirements of students across all disciplines and degrees.',
     badgeColor: 'from-indigo-500/20 to-purple-500/20 text-indigo-300 border-indigo-500/30',
     bgGradient: 'from-indigo-950 via-slate-950 to-purple-950'
   },
@@ -47,7 +48,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white relative overflow-hidden">
+    <div id="top" className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white relative overflow-hidden">
       {/* Floating Ambient Glowing Blobs */}
       <div className="absolute top-20 left-10 w-96 h-96 bg-indigo-600/15 rounded-full blur-[120px] pointer-events-none animate-float-slow"></div>
       <div className="absolute top-96 right-10 w-96 h-96 bg-purple-600/15 rounded-full blur-[140px] pointer-events-none animate-float-reverse"></div>
@@ -56,37 +57,8 @@ const Home = () => {
       {/* Marquee Ticker */}
       <NotificationMarquee />
 
-      {/* Header Navigation */}
-      <header className="h-20 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30 shadow-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-black text-white text-2xl shadow-lg shadow-indigo-500/30 border border-white/20">
-            E
-          </div>
-          <div>
-            <span className="font-extrabold text-xl tracking-tight gradient-text-indigo block leading-tight">
-              E-Study Corner
-            </span>
-            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block">
-              Govt. Polytechnic Aurai, Bhadohi
-            </span>
-          </div>
-        </div>
-
-        <nav className="flex items-center gap-3 sm:gap-4">
-          <Link
-            to="/login"
-            className="py-2.5 px-5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/80 transition-all border border-transparent hover:border-slate-700"
-          >
-            Portal Login
-          </Link>
-          <Link
-            to="/register"
-            className="py-2.5 px-5 rounded-xl btn-shimmer text-white text-xs font-bold shadow-lg shadow-indigo-600/40 hover:scale-105 transition-all"
-          >
-            Student Registration
-          </Link>
-        </nav>
-      </header>
+      {/* Public Navbar (Handles both visitor without-login & logged-in states) */}
+      <PublicNavbar />
 
       {/* Hero Carousel Banner */}
       <section className="relative h-[460px] sm:h-[500px] overflow-hidden flex items-center justify-center border-b border-slate-800/80">
@@ -152,10 +124,10 @@ const Home = () => {
           </div>
           <div className="p-3 rounded-2xl bg-slate-900/40 border border-slate-800/60">
             <div className="text-2xl sm:text-3xl font-black gradient-text-amber">100%</div>
-            <div className="text-xs text-slate-400 font-medium">Free Diploma Access</div>
+            <div className="text-xs text-slate-400 font-medium">Free Student Access</div>
           </div>
           <div className="p-3 rounded-2xl bg-slate-900/40 border border-slate-800/60">
-            <div className="text-2xl sm:text-3xl font-black text-indigo-400">BTEUP</div>
+            <div className="text-2xl sm:text-3xl font-black text-indigo-400">All Streams</div>
             <div className="text-xs text-slate-400 font-medium">Accredited Syllabus</div>
           </div>
         </div>
@@ -164,7 +136,7 @@ const Home = () => {
       {/* Main Content Sections */}
       <section className="py-16 px-4 sm:px-8 max-w-7xl mx-auto space-y-16 w-full relative z-10">
         {/* Student Services Section */}
-        <div className="space-y-10">
+        <div id="services" className="space-y-10 scroll-mt-24">
           <div className="text-center space-y-3">
             <span className="px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-xs font-bold uppercase tracking-widest">
               Digital Learning Experience
@@ -185,7 +157,7 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors">Facilities of Online Classes</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Flexible online education enabling diploma students to complete coursework, labs, and projects seamlessly from any location.
+                Flexible online education enabling all students to complete coursework, labs, and projects seamlessly from any location.
               </p>
             </div>
 
@@ -195,7 +167,7 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors">Daily Live Classes</h3>
               <p className="text-xs text-slate-400 leading-relaxed">
-                Daily live interactive sessions, recorded lecture archives, and practical task guidance by experienced polytechnic lecturers.
+                Daily live interactive sessions, recorded lecture archives, and practical task guidance by experienced faculty and lecturers.
               </p>
             </div>
 
@@ -212,7 +184,7 @@ const Home = () => {
         </div>
 
         {/* Tabbed Learning Features Component */}
-        <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-8 shadow-2xl">
+        <div id="academics" className="glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-8 shadow-2xl scroll-mt-24">
           <div className="text-center space-y-2">
             <h3 className="text-2xl font-black text-white">
               Through Online <span className="gradient-text-emerald">Learning</span>
@@ -302,7 +274,7 @@ const Home = () => {
                   <span className="text-xl">📚</span>
                   <div>
                     <h4 className="font-bold text-white text-sm">100+ Free Courses Available</h4>
-                    <p className="text-slate-400 mt-0.5">Comprehensive diploma subject notes, syllabus topics, and reference PDFs.</p>
+                    <p className="text-slate-400 mt-0.5">Comprehensive subject notes, syllabus topics, reference PDFs, and technical tutorials.</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-900/90 border border-purple-500/20 space-y-2 flex items-start gap-3">
@@ -335,7 +307,7 @@ const Home = () => {
                   <span className="text-xl">📝</span>
                   <div>
                     <h4 className="font-bold text-white text-sm">Exam Solved Question Papers</h4>
-                    <p className="text-slate-400 mt-0.5">BTEUP previous years question paper archives with model answers.</p>
+                    <p className="text-slate-400 mt-0.5">Comprehensive previous years question paper archives with model solutions and answer rubrics.</p>
                   </div>
                 </div>
                 <div className="p-4 rounded-2xl bg-slate-900/90 border border-emerald-500/20 space-y-2 flex items-start gap-3">
@@ -358,7 +330,7 @@ const Home = () => {
         </div>
 
         {/* Project Introduction Card */}
-        <div className="glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-4 relative overflow-hidden">
+        <div id="about" className="glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-4 relative overflow-hidden scroll-mt-24">
           <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
           <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest block">Project Abstract</span>
           <h3 className="text-2xl sm:text-3xl font-black text-white">About E-Study Corner</h3>
@@ -366,7 +338,7 @@ const Home = () => {
             Professional education is rapidly evolving. Industry requirements demand students to possess real-world, practical skills. E-Study Corner acts as a bridge of communication amongst students across different branches and institutions.
           </p>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify">
-            Smart Learning Pathashala is a personalized web portal created to meet all academic requirements of diploma students at a single platform — providing anytime/anywhere access to online learning, assignments, performance evaluation, and technical study notes.
+            Smart Learning Pathashala is a personalized web portal created to meet all academic requirements of every student — providing anytime/anywhere access to online learning, assignments, performance evaluation, and comprehensive technical study notes.
           </p>
         </div>
       </section>
@@ -375,18 +347,18 @@ const Home = () => {
       <EnquiryModal />
 
       {/* Project Credits Footer */}
-      <footer className="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-10 px-4 sm:px-8 text-xs text-slate-400">
+      <footer id="contact" className="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-10 px-4 sm:px-8 text-xs text-slate-400 scroll-mt-24">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="space-y-1">
-            <div className="font-extrabold text-white text-sm">Government Polytechnic Aurai, Bhadohi (U.P.)</div>
-            <div className="text-slate-400">Department of Computer Science & Engineering · BTEUP Session June 2024</div>
-            <div className="text-[11px] text-slate-500">Affiliate to Board of Technical Education Uttar Pradesh, Lucknow</div>
+            <div className="font-extrabold text-white text-sm">{import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}</div>
+            <div className="text-slate-400">{import.meta.env.VITE_COLLEGE_DEPT || 'Department of Computer Science & Engineering'} · Academic Portal</div>
+            <div className="text-[11px] text-slate-500">Autonomous Institute & Higher Technical Education Center</div>
           </div>
 
           <div className="text-xs space-y-1 bg-slate-900/60 p-3.5 rounded-2xl border border-slate-800">
-            <div><strong className="text-indigo-400">Project Team:</strong> Mayank Singh, Abhay Patel, Rohit Kannaujiya</div>
-            <div><strong className="text-purple-400">Under Guidance of:</strong> Er. Durgesh Nandani (Lecturer)</div>
-            <div><strong className="text-emerald-400">HOD & Supervisor:</strong> Dr. Rajeev Kumar & Er. S.P. Srivastava</div>
+            <div><strong className="text-indigo-400">Project Team:</strong> {import.meta.env.VITE_PROJECT_TEAM || 'Computer Science & Engineering Student Team'}</div>
+            <div><strong className="text-purple-400">Under Guidance of:</strong> {import.meta.env.VITE_PROJECT_GUIDE || 'Department Faculty Lecturer'}</div>
+            <div><strong className="text-emerald-400">HOD & Supervisor:</strong> {import.meta.env.VITE_PROJECT_HOD || 'Head of Department & Academic Supervisor'}</div>
           </div>
 
           <div className="text-slate-500">

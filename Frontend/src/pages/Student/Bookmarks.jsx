@@ -1,31 +1,33 @@
 // frontend/src/pages/Student/Bookmarks.jsx
 import { useState, useEffect } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Bookmarks = () => {
+  const { apiUrl } = useAuth();
   const [bookmarks, setBookmarks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchBookmarks();
-  }, []);
-
-  const fetchBookmarks = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/bookmarks', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (data.success) {
-        setBookmarks(data.bookmarks);
+    const fetchBookmarks = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${apiUrl}/student/bookmarks`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setBookmarks(data.bookmarks);
+        }
+      } catch (err) {
+        console.warn('Error fetching bookmarks:', err);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Error fetching bookmarks:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchBookmarks();
+  }, [apiUrl]);
 
   const removeBookmark = (id) => {
     setBookmarks(bookmarks.filter(b => b.id !== id));
@@ -37,7 +39,7 @@ const Bookmarks = () => {
         {/* Header Banner */}
         <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">V2 Learning System</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Study Tools</span>
             <h1 className="text-2xl font-black text-white">Saved Bookmarks & Quick Links</h1>
             <p className="text-xs text-slate-400 mt-1">
               Quickly access saved courses, PDF study notes, quizzes, and personal reference items.

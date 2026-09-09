@@ -27,7 +27,19 @@ export const verifyToken = (req, res, next) => {
 
 export const requireRole = (allowedRoles) => {
   return (req, res, next) => {
-    if (!req.user || !allowedRoles.includes(req.user.role)) {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Access denied. User not authenticated.'
+      });
+    }
+
+    // Super Admin has universal access to manage all things across the platform
+    if (req.user.role === 'superadmin') {
+      return next();
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
       return res.status(403).json({
         success: false,
         message: 'Access forbidden: Insufficient role permissions.'

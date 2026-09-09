@@ -1,8 +1,10 @@
 // frontend/src/pages/Student/AICoach.jsx
 import { useState } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import { useAuth } from '../../contexts/AuthContext';
 
 const AICoach = () => {
+  const { apiUrl } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [messages, setMessages] = useState([
     {
@@ -16,7 +18,7 @@ const AICoach = () => {
   const samplePrompts = [
     'Explain Binary Search Tree deletion logic with code',
     'What is the difference between INNER JOIN and LEFT JOIN in SQL?',
-    'Create a 7-Day Exam Revision Schedule for 3rd Year Diploma',
+    'Create a 7-Day Comprehensive Exam Revision Schedule',
     'Analyze my weak areas based on recent quiz scores'
   ];
 
@@ -36,7 +38,7 @@ const AICoach = () => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:3001/api/student/ai-coach', {
+      const res = await fetch(`${apiUrl}/student/ai-coach`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

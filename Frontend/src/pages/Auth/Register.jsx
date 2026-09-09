@@ -1,7 +1,7 @@
 // frontend/src/pages/Auth/Register.jsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { register as registerRequest } from '../../services/authService';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,9 +11,9 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [gender, setGender] = useState('Male');
-  const [collegeName, setCollegeName] = useState('Government Polytechnic Aurai, Bhadohi');
-  const [course, setCourse] = useState('Diploma in Computer Science & Engineering');
-  const [courseYear, setCourseYear] = useState('3rd Year');
+  const [collegeName, setCollegeName] = useState(import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies');
+  const [course, setCourse] = useState('Computer Science & Engineering');
+  const [courseYear, setCourseYear] = useState('1st Year');
   const [mobileNo, setMobileNo] = useState('');
   const [dob, setDob] = useState('');
   const [addressP, setAddressP] = useState('');
@@ -21,8 +21,6 @@ const Register = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,7 +30,7 @@ const Register = () => {
 
     try {
       const fullName = `${firstName} ${lastName}`.trim();
-      const res = await axios.post(`${API_URL}/auth/register`, {
+      const res = await registerRequest({
         name: fullName,
         email,
         password,
@@ -74,7 +72,7 @@ const Register = () => {
           </div>
           <h1 className="text-2xl font-bold text-white">Student Registration Portal</h1>
           <p className="text-xs text-slate-400 mt-1">
-            Government Polytechnic Aurai, Bhadohi · BTEUP Student Registration
+            {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'} · Academic Student Registration
           </p>
         </div>
 
@@ -83,7 +81,7 @@ const Register = () => {
           <span className="text-base">🎓</span>
           <div>
             <strong className="font-bold text-white block">Student Direct Registration</strong>
-            <span>Public registration is reserved exclusively for Polytechnic Students. Faculty and Teacher accounts are created directly by Institutional Administrators.</span>
+            <span>Public registration is open to all enrolled students. Faculty and Teacher accounts are created directly by Institutional Administrators.</span>
           </div>
         </div>
 
@@ -108,7 +106,7 @@ const Register = () => {
                 required
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="e.g. Mayank"
+                placeholder="e.g. Rahul"
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>
@@ -120,7 +118,7 @@ const Register = () => {
                 required
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="e.g. Singh"
+                placeholder="e.g. Sharma"
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>
@@ -132,7 +130,7 @@ const Register = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="mayank@polytechnic.ac.in"
+                placeholder="student@nitas.edu"
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>
@@ -142,6 +140,7 @@ const Register = () => {
               <input
                 type="password"
                 required
+                minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
@@ -188,40 +187,56 @@ const Register = () => {
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-xs font-semibold text-slate-300 mb-1">College Name</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">College / School / University Name</label>
               <input
                 type="text"
                 required
                 value={collegeName}
                 onChange={(e) => setCollegeName(e.target.value)}
+                placeholder="e.g. National Institute of Technology & Advanced Studies / University Name"
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Course Branch</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Course / Program</label>
               <select
                 value={course}
                 onChange={(e) => setCourse(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option value="Diploma in Computer Science & Engineering">Diploma in CS & Engineering</option>
-                <option value="Diploma in Information Technology">Diploma in IT</option>
-                <option value="Diploma in Electrical Engineering">Diploma in Electrical Engineering</option>
-                <option value="Diploma in Mechanical Engineering">Diploma in Mechanical Engineering</option>
+                <option value="Computer Science & Engineering">Computer Science & Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Artificial Intelligence & Data Science">Artificial Intelligence & Data Science</option>
+                <option value="Computer Applications (BCA/MCA)">Computer Applications (BCA / MCA)</option>
+                <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
+                <option value="Mechanical & Automation Engineering">Mechanical & Automation Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Diploma in CS & Engineering">Diploma in CS & Engineering</option>
+                <option value="Diploma in Engineering (General)">Diploma in Engineering (General)</option>
+                <option value="B.Sc / M.Sc (Science & IT)">B.Sc / M.Sc (Science & IT)</option>
+                <option value="Higher Secondary (11th & 12th)">Higher Secondary (11th & 12th)</option>
+                <option value="High School (9th & 10th)">High School (9th & 10th)</option>
+                <option value="General Technical & Skill Development">General Technical & Skill Development</option>
+                <option value="Other Degree / Academic Program">Other Degree / Academic Program</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Course Year</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Year / Semester / Level</label>
               <select
                 value={courseYear}
                 onChange={(e) => setCourseYear(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
               >
-                <option value="1st Year">1st Year</option>
-                <option value="2nd Year">2nd Year</option>
-                <option value="3rd Year">3rd Year (Final Year)</option>
+                <option value="1st Year">1st Year (Semester 1 - 2)</option>
+                <option value="2nd Year">2nd Year (Semester 3 - 4)</option>
+                <option value="3rd Year">3rd Year (Semester 5 - 6)</option>
+                <option value="4th Year">4th Year (Semester 7 - 8)</option>
+                <option value="Higher Secondary (11th/12th)">Higher Secondary (11th / 12th)</option>
+                <option value="High School (9th/10th)">High School (9th / 10th)</option>
+                <option value="Postgraduate">Postgraduate</option>
+                <option value="Self-Paced Learning">Self-Paced / Open Learner</option>
               </select>
             </div>
 

@@ -63,7 +63,7 @@ const SendEmail = () => {
                 required
                 value={sendTo}
                 onChange={(e) => setSendTo(e.target.value)}
-                placeholder="student@estudy.com or all@polytechnic.ac.in"
+                placeholder="student@estudy.com or students@nitas.edu"
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>
