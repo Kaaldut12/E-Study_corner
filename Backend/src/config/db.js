@@ -31,8 +31,7 @@ export const connectDB = async () => {
     return conn;
   } catch (error) {
     console.error(`MongoDB Connection Error: ${error.message}`);
-    if (IS_PRODUCTION) {
-      throw new Error(`Database connection failed: ${error.message}`);
-    }
+    // In serverless environments, avoid crashing the container process so error responses can return proper CORS headers
+    return null;
   }
 };

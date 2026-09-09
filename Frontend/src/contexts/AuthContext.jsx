@@ -1,10 +1,11 @@
 // frontend/src/contexts/AuthContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 import { getMe, login as loginRequest, requestPasswordReset } from '../services/authService';
+import { API_BASE_URL } from '../services/api';
 
 const AuthContext = createContext();
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_URL = API_BASE_URL;
 
 
 

@@ -1,7 +1,31 @@
 // frontend/src/services/api.js
 import axios from 'axios';
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+/**
+ * Dynamically resolves the API base URL.
+ * Prevents remote deployments (e.g. Vercel) from failing with "Network Error"
+ * caused by accidentally calling http://localhost:3001.
+ */
+const resolveApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+
+  if (typeof window !== 'undefined') {
+    const isRemote = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+
+    if (isRemote) {
+      // If VITE_API_URL points to a remote backend (not localhost), use it
+      if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
+        return envUrl.replace(/\/+$/, '');
+      }
+      // If VITE_API_URL is missing or was defaulted to localhost, route to same-origin /api
+      return `${window.location.origin}/api`;
+    }
+  }
+
+  return (envUrl || 'http://localhost:3001/api').replace(/\/+$/, '');
+};
+
+export const API_BASE_URL = resolveApiBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -28,12 +52,12 @@ api.interceptors.response.use(
     // Standardize error message extraction
     const message = error.response?.data?.message || error.message || 'An unexpected error occurred';
     const code = error.response?.data?.code || 'UNKNOWN_ERROR';
-    
+
     // Auto logout on 401 token expiration (unless on auth routes)
-    if (error.response?.status === 401 && !error.config.url.includes('/auth/')) {
+    if (error.response?.status === 401 && !error.config?.url?.includes('/auth/')) {
       localStorage.removeItem('token');
       localStorage.removeItem('user_data');
-      if (window.location.pathname !== '/login') {
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
     }

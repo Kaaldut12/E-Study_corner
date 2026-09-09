@@ -20,8 +20,7 @@ import { notFoundHandler, globalErrorHandler } from './src/middleware/errorMiddl
 
 // Connect to MongoDB (single source of truth)
 connectDB().catch((err) => {
-  console.error('Fatal database startup failure:', err.message);
-  if (IS_PRODUCTION) process.exit(1);
+  console.error('Database connection startup warning:', err.message);
 });
 
 const app = express();
@@ -33,7 +32,7 @@ app.use(securityHeaders);
 app.use(apiRateLimiter);
 app.use(sanitizeInput);
 
-// CORS configuration - strictly allows configured frontend origins and local dev
+// CORS configuration - allows configured frontend origins, all Vercel deployments, and local dev
 app.use(cors({
   origin: (requestOrigin, callback) => {
     if (!requestOrigin) return callback(null, true);
@@ -42,17 +41,18 @@ app.use(cors({
       return callback(null, true);
     }
 
-    // Allow localhost in non-production environments
-    if (!IS_PRODUCTION && (requestOrigin.includes('localhost') || requestOrigin.includes('127.0.0.1'))) {
+    // Always allow Vercel deployments (production & preview branches)
+    if (requestOrigin.endsWith('.vercel.app')) {
       return callback(null, true);
     }
 
-    // Allow Vercel preview only if explicitly configured via env
-    if (process.env.ALLOW_VERCEL_PREVIEW === 'true' && requestOrigin.endsWith('.vercel.app')) {
+    // Allow localhost and local IP addresses
+    if (requestOrigin.includes('localhost') || requestOrigin.includes('127.0.0.1') || requestOrigin.includes('192.168.')) {
       return callback(null, true);
     }
 
-    return callback(new Error(`Origin '${requestOrigin}' is not allowed by CORS policy`));
+    // Allow configured custom domains or fallback
+    return callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

@@ -1,6 +1,6 @@
 // frontend/src/components/common/EnquiryModal.jsx
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../services/api';
 
 const EnquiryModal = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,15 +18,13 @@ const EnquiryModal = () => {
     return () => window.removeEventListener('open-enquiry-modal', handleOpen);
   }, []);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setSuccessMsg('');
 
     try {
-      const res = await axios.post(`${API_URL}/public/enquiry`, {
+      const res = await api.post('/public/enquiry', {
         Name: name,
         EmailId: email,
         MobileNo: mobileNo,
