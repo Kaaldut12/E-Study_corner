@@ -190,6 +190,23 @@ export const getStudyMaterials = async (req, res) => {
   }
 };
 
+export const getProfile = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const user = await dataStore.getUserById(studentId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Student profile not found.' });
+    }
+    const { password: _, ...userNoPass } = user;
+    return res.status(200).json({
+      success: true,
+      user: userNoPass
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const updateProfile = async (req, res) => {
   try {
     const studentId = req.user.id;

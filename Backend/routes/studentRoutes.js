@@ -7,6 +7,7 @@ import {
   getStudentFeedback,
   sendContactMessage,
   getStudyMaterials,
+  getProfile,
   updateProfile,
   changePassword,
   getStudentCourses,
@@ -62,6 +63,7 @@ router.post('/questions', validateTeacherQuestion, askTeacherQuestion);
 
 // Study Material & Profile
 router.get('/study-material', getStudyMaterials);
+router.get('/profile', getProfile);
 router.put('/profile', updateProfile);
 router.post('/change-password', changePassword);
 

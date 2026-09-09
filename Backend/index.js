@@ -25,14 +25,13 @@ connectDB().catch((err) => {
 
 const app = express();
 
+// Trust reverse proxy (Vercel, AWS ALB, Nginx, Cloudflare) for accurate client IP identification
+app.set('trust proxy', 1);
+
 // ==================== Middleware ====================
 
-// Security headers & sliding-window rate limiting
-app.use(securityHeaders);
-app.use(apiRateLimiter);
-app.use(sanitizeInput);
-
-// CORS configuration - allows configured origins in ALLOWED_ORIGINS, any project Vercel preview domain, and local dev
+// 1. CORS MUST BE FIRST so that ALL responses (including errors, 429, 500, preflight OPTIONS)
+// always receive proper Access-Control-Allow-Origin headers and avoid browser Network Errors.
 app.use(cors({
   origin: (requestOrigin, callback) => {
     // Allow non-browser or same-origin requests without origin header (e.g. mobile apps, curl, server-to-server)
@@ -44,7 +43,7 @@ app.use(cors({
     }
 
     // 2. All e-study-corner preview and deployment domains on Vercel
-    const isAppVercelDomain = /^https:\/\/(e-study-corner[a-z0-9-]*|.*kaaldut12[a-z0-9-]*)\.vercel\.app$/i.test(requestOrigin);
+    const isAppVercelDomain = /^https:\/\/(e-study-corner[a-z0-9-]*|e-study-corder[a-z0-9-]*|.*kaaldut12[a-z0-9-]*)\.vercel\.app$/i.test(requestOrigin);
     if (isAppVercelDomain) {
       return callback(null, true);
     }
@@ -65,13 +64,18 @@ app.use(cors({
     return callback(null, false);
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
 }));
 
-// Body parser middleware
+// 2. Body parser middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
+// 3. Security headers & sliding-window rate limiting
+app.use(securityHeaders);
+app.use(apiRateLimiter);
+app.use(sanitizeInput);
 
 // Request logging middleware
 app.use((req, res, next) => {

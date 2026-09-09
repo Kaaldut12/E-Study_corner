@@ -32,7 +32,7 @@ export const API_BASE_URL = resolveApiBaseUrl();
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
-  timeout: 15000
+  timeout: 30000
 });
 
 // Attach JWT Bearer token to custom api instance
@@ -52,7 +52,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     // Standardize error message extraction
-    const message = error.response?.data?.message || error.message || 'An unexpected error occurred';
+    let message = error.response?.data?.message;
+    if (!message) {
+      if (error.message === 'Network Error') {
+        message = 'Unable to reach the server. Please verify your connection or try again in a moment.';
+      } else {
+        message = error.message || 'An unexpected error occurred';
+      }
+    }
     const code = error.response?.data?.code || 'UNKNOWN_ERROR';
 
     // Auto logout on 401 token expiration (unless on auth routes)
