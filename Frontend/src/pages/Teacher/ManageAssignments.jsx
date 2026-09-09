@@ -1,8 +1,8 @@
-// frontend/src/pages/Teacher/ManageAssignments.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import api from '../../services/api';
+import downloadFile from '../../utils/fileDownload';
 
 const ManageAssignments = () => {
   const [assignments, setAssignments] = useState([]);
@@ -10,6 +10,7 @@ const ManageAssignments = () => {
   const [toastMsg, setToastMsg] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const fetchAssignments = async () => {
     try {
@@ -49,11 +50,14 @@ const ManageAssignments = () => {
 
   const filteredAssignments = assignments.filter((asg) => {
     const matchesSubject = selectedSubject === 'all' || asg.subject === selectedSubject;
+    const matchesCategory =
+      selectedCategory === 'all' ||
+      (asg.category || 'assignment').toLowerCase() === selectedCategory.toLowerCase();
     const matchesSearch =
       asg.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       asg.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       asg.subject?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSubject && matchesSearch;
+    return matchesSubject && matchesCategory && matchesSearch;
   });
 
   const totalSubmissionsCount = assignments.reduce((acc, a) => acc + (a.submissionCount || 0), 0);
@@ -138,6 +142,29 @@ const ManageAssignments = () => {
           </div>
         </div>
 
+        {/* Category Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-1">Category:</span>
+          {[
+            { id: 'all', label: 'All Tasks' },
+            { id: 'homework', label: '📚 Homework' },
+            { id: 'assignment', label: '📝 Assignments' },
+            { id: 'project', label: '💻 Projects & Labs' }
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition whitespace-nowrap border ${
+                selectedCategory === cat.id
+                  ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
+                  : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
         {/* Assignments List */}
         {loading ? (
           <div className="flex justify-center py-16">
@@ -173,8 +200,14 @@ const ManageAssignments = () => {
                   <h3 className="text-base font-bold text-white leading-snug">{asg.title}</h3>
                   <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed">{asg.description}</p>
 
-                  {asg.resourceLink && (
-                    <div className="text-xs">
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    {asg.category && (
+                      <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/20 uppercase tracking-wider">
+                        {asg.category === 'homework' ? '📚 Homework' : asg.category}
+                      </span>
+                    )}
+
+                    {asg.resourceLink && (
                       <a
                         href={asg.resourceLink}
                         target="_blank"
@@ -183,6 +216,23 @@ const ManageAssignments = () => {
                       >
                         <span>🔗 Reference Material</span>
                       </a>
+                    )}
+                  </div>
+
+                  {asg.attachmentUrl && (
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          downloadFile(
+                            asg.attachmentUrl,
+                            asg.attachmentName || `${asg.title.replace(/\s+/g, '_')}_Document.pdf`
+                          )
+                        }
+                        className="py-1.5 px-3 bg-purple-600/15 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <span>📥 Download Coursework File ({asg.attachmentName || 'Attachment'})</span>
+                      </button>
                     </div>
                   )}
                 </div>

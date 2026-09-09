@@ -79,7 +79,7 @@ export const createAssignment = async (req, res) => {
     const teacherId = req.user.id;
     const teacherName = req.user.name;
     const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
-    const { courseId, title, subject, description, dueDate, totalPoints, resourceLink, attachmentUrl, attachmentName } = req.body;
+    const { courseId, title, subject, description, dueDate, totalPoints, resourceLink, attachmentUrl, attachmentName, category } = req.body;
 
     if (!title || !subject || !description || !dueDate) {
       return res.status(400).json({
@@ -124,6 +124,7 @@ export const createAssignment = async (req, res) => {
       teacherName,
       dueDate,
       totalPoints: Number(totalPoints) || 100,
+      category: category || 'assignment',
       resourceLink: resourceLink || '',
       attachmentUrl: attachmentUrl || '',
       attachmentName: attachmentName || ''

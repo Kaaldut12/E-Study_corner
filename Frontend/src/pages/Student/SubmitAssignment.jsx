@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import api from '../../services/api';
+import downloadFile from '../../utils/fileDownload';
 
 const SubmitAssignment = () => {
   const { assignmentId } = useParams();
@@ -230,15 +231,13 @@ const SubmitAssignment = () => {
                 </a>
               )}
               {assignment.attachmentUrl && (
-                <a
-                  href={assignment.attachmentUrl}
-                  download={assignment.attachmentName || 'Problem_Sheet.pdf'}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-purple-400 hover:underline inline-flex items-center gap-1 font-medium"
+                <button
+                  type="button"
+                  onClick={() => downloadFile(assignment.attachmentUrl, assignment.attachmentName || `${assignment.title}_Problem_Sheet.pdf`)}
+                  className="py-1.5 px-3 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-semibold transition inline-flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>📎 Download Question Sheet / Template</span>
-                </a>
+                  <span>📥 Download Question Sheet / Homework Document</span>
+                </button>
               )}
             </div>
           )}
@@ -326,13 +325,13 @@ const SubmitAssignment = () => {
 
                     <div className="flex items-center gap-2">
                       {attachmentUrl && (
-                        <a
-                          href={attachmentUrl}
-                          download={fileName || 'Submitted_Work.pdf'}
-                          className="text-xs text-indigo-400 hover:underline px-2"
+                        <button
+                          type="button"
+                          onClick={() => downloadFile(attachmentUrl, fileName || 'My_Submitted_Work.pdf')}
+                          className="text-xs text-indigo-400 hover:text-indigo-300 font-bold underline px-2 cursor-pointer"
                         >
-                          Download
-                        </a>
+                          Download My File
+                        </button>
                       )}
                       <button
                         type="button"

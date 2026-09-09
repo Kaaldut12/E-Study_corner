@@ -13,6 +13,9 @@ import teacherRoutes from './routes/teacherRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import systemRoutes from './routes/systemRoutes.js';
+import attendanceRoutes from './routes/attendanceRoutes.js';
+import leaveRoutes from './routes/leaveRoutes.js';
+import fileRoutes from './routes/fileRoutes.js';
 
 // Production Security Middleware & Error Handlers
 import { securityHeaders, apiRateLimiter, sanitizeInput } from './src/middleware/security.js';
@@ -115,6 +118,9 @@ app.get('/', (req, res) => {
       student: '/api/student',
       teacher: '/api/teacher',
       admin: '/api/admin',
+      attendance: '/api/attendance',
+      leaves: '/api/leaves',
+      files: '/api/files',
       public: '/api/public',
       system: '/api/system'
     }
@@ -138,6 +144,9 @@ app.use(['/api/auth', '/auth'], authRoutes);
 app.use(['/api/student', '/student'], studentRoutes);
 app.use(['/api/teacher', '/teacher'], teacherRoutes);
 app.use(['/api/admin', '/admin'], adminRoutes);
+app.use(['/api/attendance', '/attendance'], attendanceRoutes);
+app.use(['/api/leaves', '/leaves'], leaveRoutes);
+app.use(['/api/files', '/files'], fileRoutes);
 app.use(['/api/system', '/system'], systemRoutes);
 
 // ==================== Error Handling ====================

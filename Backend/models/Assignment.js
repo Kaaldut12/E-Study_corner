@@ -11,6 +11,7 @@ const assignmentSchema = new mongoose.Schema({
   teacherName: { type: String, required: true },
   dueDate: { type: Date, required: true },
   totalPoints: { type: Number, default: 100 },
+  category: { type: String, enum: ['assignment', 'homework', 'project', 'lab'], default: 'assignment' },
   resourceLink: { type: String, default: '' },
   attachmentUrl: { type: String, default: '' },
   attachmentName: { type: String, default: '' },

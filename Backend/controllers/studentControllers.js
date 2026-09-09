@@ -993,20 +993,24 @@ export const getWeakTopicAnalysis = async (req, res) => {
     let totalQuestionsAnswered = 0;
     let totalCorrect = 0;
     const topicStats = {}; // topicKey -> { correct, total, quizId, questionId, subject, topicTitle, explanation }
+    const quizMap = new Map((quizzes || []).map(q => [q.id, q]));
 
     for (const att of attempts) {
       if (att.answers && Array.isArray(att.answers)) {
+        const quiz = quizMap.get(att.quizId);
+        const subject = quiz ? quiz.subject : 'General Academics';
+        const quizTitle = quiz ? quiz.title : 'Assessment';
+
         for (const ans of att.answers) {
           totalQuestionsAnswered++;
-          const quiz = (quizzes || []).find(q => q.id === att.quizId);
           const key = `${att.quizId}_${ans.questionId}`;
 
           if (!topicStats[key]) {
             topicStats[key] = {
               quizId: att.quizId,
               questionId: ans.questionId,
-              subject: quiz ? quiz.subject : 'General Academics',
-              quizTitle: quiz ? quiz.title : 'Assessment',
+              subject,
+              quizTitle,
               correct: 0,
               total: 0
             };
@@ -1033,24 +1037,38 @@ export const getWeakTopicAnalysis = async (req, res) => {
     const overallDiagnosticScore = Math.round((totalCorrect / totalQuestionsAnswered) * 100);
 
     // Calculate real accuracy per question/topic item
-    const weakTopics = [];
     const statItems = Object.values(topicStats);
+    const weakStatItems = statItems
+      .map(item => ({
+        ...item,
+        accuracy: Math.round((item.correct / item.total) * 100)
+      }))
+      .filter(item => item.accuracy < 75);
 
-    for (const item of statItems) {
-      const accuracy = Math.round((item.correct / item.total) * 100);
-      if (accuracy < 75) {
-        const questions = await dataStore.getQuestionsForQuiz(item.quizId);
-        const qDoc = (questions || []).find(q => q.id === item.questionId);
+    // Optimize DB query: fetch questions once per unique quiz in parallel (eliminating N+1 queries)
+    const quizQuestionsCache = new Map();
+    const uniqueQuizIds = [...new Set(weakStatItems.map(item => item.quizId))];
+    await Promise.all(
+      uniqueQuizIds.map(async (quizId) => {
+        const questions = await dataStore.getQuestionsForQuiz(quizId);
+        quizQuestionsCache.set(quizId, questions || []);
+      })
+    );
 
-        weakTopics.push({
-          topic: qDoc ? qDoc.questionText.slice(0, 60) + '...' : `${item.quizTitle} Quiz Concept`,
-          subject: item.subject,
-          accuracy,
-          status: accuracy < 50 ? 'Critical Review' : 'Needs Practice',
-          recommendation: qDoc && qDoc.explanation ? qDoc.explanation : 'Review course study materials and re-take topic quiz.',
-          actionUrl: `/student/quizzes/${item.quizId}`
-        });
-      }
+    const weakTopics = [];
+    for (const item of weakStatItems) {
+      const questions = quizQuestionsCache.get(item.quizId) || [];
+      const qDoc = questions.find(q => q.id === item.questionId);
+
+      weakTopics.push({
+        topicId: `${item.quizId}_${item.questionId}`,
+        topic: qDoc ? qDoc.questionText.slice(0, 60) + '...' : `${item.quizTitle} Quiz Concept`,
+        subject: item.subject,
+        accuracy: item.accuracy,
+        status: item.accuracy < 50 ? 'Critical Review' : 'Needs Practice',
+        recommendation: qDoc && qDoc.explanation ? qDoc.explanation : 'Review course study materials and re-take topic quiz.',
+        actionUrl: `/student/quizzes/${item.quizId}`
+      });
     }
 
     // Sort weakest topics first

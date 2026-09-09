@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import api from '../../services/api';
+import downloadFile from '../../utils/fileDownload';
 
 const ViewAssignments = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all'); // 'all' | 'homework' | 'assignment' | 'project'
   const [searchQuery, setSearchQuery] = useState('');
 
   const fetchAssignments = async () => {
@@ -33,12 +35,15 @@ const ViewAssignments = () => {
 
   const filteredAssignments = assignments.filter((asg) => {
     const matchesStatus = filterStatus === 'all' || asg.status === filterStatus;
+    const matchesCategory =
+      filterCategory === 'all' ||
+      (asg.category || 'assignment').toLowerCase() === filterCategory.toLowerCase();
     const matchesSearch =
       asg.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       asg.subject?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       asg.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       asg.teacherName?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+    return matchesStatus && matchesCategory && matchesSearch;
   });
 
   const getStatusBadge = (asg) => {
@@ -112,36 +117,61 @@ const ViewAssignments = () => {
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            {[
-              { id: 'all', label: `All Tasks (${assignments.length})` },
-              { id: 'pending', label: `Pending (${pendingCount})` },
-              { id: 'submitted', label: `Submitted (${submittedCount})` },
-              { id: 'graded', label: `Graded (${gradedCount})` }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setFilterStatus(tab.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
-                  filterStatus === tab.id
-                    ? 'bg-indigo-600 text-white shadow'
-                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+              {[
+                { id: 'all', label: `All Statuses (${assignments.length})` },
+                { id: 'pending', label: `Pending (${pendingCount})` },
+                { id: 'submitted', label: `Submitted (${submittedCount})` },
+                { id: 'graded', label: `Graded (${gradedCount})` }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setFilterStatus(tab.id)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                    filterStatus === tab.id
+                      ? 'bg-indigo-600 text-white shadow'
+                      : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="w-full sm:w-72">
+              <input
+                type="text"
+                placeholder="Search coursework, homework, or subjects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              />
+            </div>
           </div>
 
-          <div className="w-full sm:w-72">
-            <input
-              type="text"
-              placeholder="Search assignments or subjects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-            />
+          {/* Category Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-1">Type:</span>
+            {[
+              { id: 'all', label: 'All Tasks' },
+              { id: 'homework', label: '📚 Homework Only' },
+              { id: 'assignment', label: '📝 Assignments Only' },
+              { id: 'project', label: '💻 Projects & Labs' }
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setFilterCategory(cat.id)}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition whitespace-nowrap border ${
+                  filterCategory === cat.id
+                    ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
+                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -159,9 +189,16 @@ const ViewAssignments = () => {
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                      {asg.subject}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                        {asg.subject}
+                      </span>
+                      {asg.category && (
+                        <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/20 uppercase tracking-wider">
+                          {asg.category === 'homework' ? '📚 Homework' : asg.category}
+                        </span>
+                      )}
+                    </div>
                     {getStatusBadge(asg)}
                   </div>
 
@@ -184,15 +221,22 @@ const ViewAssignments = () => {
 
                   {asg.attachmentUrl && (
                     <div className="pt-1">
-                      <a
-                        href={asg.attachmentUrl}
-                        download={asg.attachmentName || 'Problem_Sheet.pdf'}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs text-purple-400 hover:underline inline-flex items-center gap-1 font-medium"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          downloadFile(
+                            asg.attachmentUrl,
+                            asg.attachmentName || `${asg.title.replace(/\s+/g, '_')}_Document.pdf`
+                          )
+                        }
+                        className="w-full sm:w-auto py-2 px-3.5 bg-purple-600/15 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-bold transition flex items-center justify-center sm:justify-start gap-2 shadow-sm hover:scale-[1.01] cursor-pointer"
                       >
-                        <span>📎 Download Instructor Problem Sheet</span>
-                      </a>
+                        <span>📥</span>
+                        <span>
+                          Download {asg.category === 'homework' ? 'Homework Document' : 'Problem Sheet'} (
+                          {asg.attachmentName || 'Attached File'})
+                        </span>
+                      </button>
                     </div>
                   )}
                 </div>

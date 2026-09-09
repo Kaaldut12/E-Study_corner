@@ -31,6 +31,7 @@ import AICoach from './pages/Student/AICoach';
 import AIRecommendations from './pages/Student/AIRecommendations';
 import WeakTopicDetector from './pages/Student/WeakTopicDetector';
 import StudentQuestions from './pages/Student/StudentQuestions';
+import ApplyLeave from './pages/Student/ApplyLeave';
 
 // Teacher Pages
 import TeacherDashboard from './pages/Teacher/TeacherDashboard';
@@ -41,6 +42,7 @@ import CreateCourse from './pages/Teacher/CreateCourse';
 import ManageStudents from './pages/Teacher/ManageStudents';
 import ManageAssignments from './pages/Teacher/ManageAssignments';
 import TeacherQuestions from './pages/Teacher/TeacherQuestions';
+import TeacherLeaves from './pages/Teacher/TeacherLeaves';
 
 // Admin Pages
 import AdminDashboard from './pages/Admin/AdminDashboard';
@@ -53,6 +55,7 @@ import ViewMessages from './pages/Admin/ViewMessages';
 import SendEmail from './pages/Admin/SendEmail';
 import PlatformAnalytics from './pages/Admin/PlatformAnalytics';
 import SystemHealth from './pages/Admin/SystemHealth';
+import LeaveManagement from './pages/Admin/LeaveManagement';
 
 // Common Components & Pages
 import ErrorBoundary from './components/common/ErrorBoundary';
@@ -96,6 +99,7 @@ function App() {
                   <Route path="/profile" element={<MyProfile />} />
                   <Route path="/change-password" element={<ChangePassword />} />
                   <Route path="/contact-admin" element={<ContactAdmin />} />
+                  <Route path="/leave" element={<ApplyLeave />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </ProtectedRoute>
@@ -116,6 +120,7 @@ function App() {
                   <Route path="/create-assignment" element={<CreateAssignment />} />
                   <Route path="/submissions/:assignmentId" element={<ViewSubmissions />} />
                   <Route path="/questions" element={<TeacherQuestions />} />
+                  <Route path="/leave" element={<TeacherLeaves />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </ProtectedRoute>
@@ -135,6 +140,7 @@ function App() {
                   <Route path="/notifications" element={<NotificationManagement />} />
                   <Route path="/enquiries" element={<EnquiryManagement />} />
                   <Route path="/study-material" element={<UploadStudyMaterial />} />
+                  <Route path="/leaves" element={<LeaveManagement />} />
                   <Route path="/feedback" element={<ViewFeedback />} />
                   <Route path="/messages" element={<ViewMessages />} />
                   <Route path="/send-email" element={<SendEmail />} />

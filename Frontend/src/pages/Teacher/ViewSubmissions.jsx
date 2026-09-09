@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import api from '../../services/api';
+import downloadFile from '../../utils/fileDownload';
 
 const QUICK_FEEDBACK_TEMPLATES = [
   'Excellent work! Thorough analysis and clean implementation.',
@@ -308,15 +309,13 @@ const ViewSubmissions = () => {
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <a
-                          href={sub.attachmentUrl}
-                          download={sub.fileName || 'Student_Submitted_Document.pdf'}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="py-2 px-4 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow hover:opacity-95 transition flex items-center gap-1.5"
+                        <button
+                          type="button"
+                          onClick={() => downloadFile(sub.attachmentUrl, sub.fileName || 'Student_Submitted_Homework.pdf')}
+                          className="py-2 px-4 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold rounded-xl shadow hover:opacity-95 transition flex items-center gap-1.5 cursor-pointer"
                         >
-                          <span>📥 Download Attached File</span>
-                        </a>
+                          <span>📥 Download Student Document</span>
+                        </button>
                       </div>
                     </div>
                   )}

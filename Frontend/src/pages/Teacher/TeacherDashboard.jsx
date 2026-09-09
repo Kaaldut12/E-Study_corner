@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
+import AttendanceWidget from '../../components/common/AttendanceWidget';
 import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 
@@ -73,6 +74,9 @@ const TeacherDashboard = () => {
             <span>Create Assignment</span>
           </Link>
         </div>
+
+        {/* Daily Attendance Check-In Widget */}
+        <AttendanceWidget />
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

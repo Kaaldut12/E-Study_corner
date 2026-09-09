@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import api from '../../services/api';
+import downloadFile from '../../utils/fileDownload';
 
 const SUBJECT_SUGGESTIONS = [
   'Computer Science',
@@ -24,9 +25,11 @@ const CreateAssignment = () => {
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [totalPoints, setTotalPoints] = useState(100);
+  const [category, setCategory] = useState('assignment'); // 'assignment' | 'homework' | 'project' | 'lab'
   const [resourceLink, setResourceLink] = useState('');
   const [attachmentName, setAttachmentName] = useState('');
   const [attachmentUrl, setAttachmentUrl] = useState('');
+  const [fileSize, setFileSize] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -58,9 +61,12 @@ const CreateAssignment = () => {
   };
 
   const handleFileAttachment = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
       setAttachmentName(file.name);
+      const sizeInMB = file.size / (1024 * 1024);
+      setFileSize(sizeInMB < 1 ? `${(file.size / 1024).toFixed(1)} KB` : `${sizeInMB.toFixed(2)} MB`);
+
       const reader = new FileReader();
       reader.onload = (event) => {
         setAttachmentUrl(event.target.result);
@@ -86,6 +92,7 @@ const CreateAssignment = () => {
         courseId: courseId || 'course_1',
         title: title.trim(),
         subject: subject.trim(),
+        category,
         description: description.trim(),
         dueDate,
         totalPoints: Number(totalPoints) || 100,
@@ -266,7 +273,35 @@ const CreateAssignment = () => {
                 />
               </div>
 
-              {/* External Reference Link */}
+              {/* Coursework Category Selector */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Coursework Category <span className="text-rose-400">*</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: 'assignment', label: '📝 Assignment', desc: 'Graded coursework' },
+                    { id: 'homework', label: '📚 Homework', desc: 'Daily practice problem' },
+                    { id: 'project', label: '💻 Capstone Project', desc: 'Term project' },
+                    { id: 'lab', label: '🔬 Lab Assessment', desc: 'Practical experiment' }
+                  ].map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setCategory(cat.id)}
+                      className={`px-3.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border ${
+                        category === cat.id
+                          ? 'bg-purple-600 text-white border-purple-500 shadow-md'
+                          : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:bg-slate-850'
+                      }`}
+                    >
+                      <span>{cat.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Reference Documentation / Lab URL */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
                   Reference Documentation / Lab URL (Optional)
@@ -280,37 +315,62 @@ const CreateAssignment = () => {
                 />
               </div>
 
-              {/* Optional File Attachment (Question Sheet / Starter Code) */}
+              {/* File Attachment (Question Sheet / Starter Code / Homework Doc) */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                  Attach Problem Sheet / Starter Template File (Optional)
+                  Attach Problem Sheet / Homework Document (PDF, Word, Code)
                 </label>
-                <div className="border border-dashed border-slate-800 hover:border-purple-500/50 rounded-2xl p-4 transition bg-slate-900/40 relative">
+                <div className="border border-dashed border-slate-850 hover:border-purple-500/50 rounded-2xl p-5 transition bg-slate-900/40 relative">
                   <input
                     type="file"
                     onChange={handleFileAttachment}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                   {attachmentName ? (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg">📎</span>
-                        <span className="text-xs font-bold text-purple-400">{attachmentName}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative z-10">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 font-bold border border-purple-500/30 flex items-center justify-center text-lg shrink-0">
+                          📄
+                        </div>
+                        <div>
+                          <span className="text-xs font-bold text-white block">{attachmentName}</span>
+                          <span className="text-[11px] text-slate-400 font-mono">
+                            {fileSize || 'Uploaded file'} • Ready for students
+                          </span>
+                        </div>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAttachmentName('');
-                          setAttachmentUrl('');
-                        }}
-                        className="text-xs text-rose-400 hover:underline px-2"
-                      >
-                        Remove
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            downloadFile(attachmentUrl, attachmentName);
+                          }}
+                          className="py-1.5 px-3 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-lg text-xs font-semibold transition flex items-center gap-1"
+                        >
+                          <span>📥 Preview Download</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setAttachmentName('');
+                            setAttachmentUrl('');
+                            setFileSize('');
+                          }}
+                          className="py-1.5 px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/20 rounded-lg text-xs font-semibold transition"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    <div className="text-center py-2 text-xs text-slate-400">
-                      <span>Click or drag a problem statement PDF, ZIP, or code file to attach for students</span>
+                    <div className="text-center py-4 text-xs text-slate-400 space-y-1">
+                      <span className="text-2xl block mb-1">📎</span>
+                      <p className="font-semibold text-slate-300">
+                        Click or drag a homework sheet, problem PDF, or template code file
+                      </p>
+                      <p className="text-[11px] text-slate-500">Supports PDF, Word docs, code files, and archives</p>
                     </div>
                   )}
                 </div>
