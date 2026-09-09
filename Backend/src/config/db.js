@@ -1,37 +1,57 @@
 // backend/src/config/db.js
 import mongoose from 'mongoose';
-import { MONGODB_URI, IS_PRODUCTION } from './env.js';
+import { MONGODB_URI } from './env.js';
+
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 export const connectDB = async () => {
-  if (mongoose.connection.readyState >= 1) {
-    return;
+  if (cached.conn && mongoose.connection.readyState === 1) {
+    return cached.conn;
+  }
+
+  if (mongoose.connection.readyState === 1) {
+    cached.conn = mongoose.connection;
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+    };
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+      console.log(`[MongoDB] Connected Successfully: ${mongooseInstance.connection.host}/${mongooseInstance.connection.name}`);
+      cached.conn = mongooseInstance.connection;
+      return cached.conn;
+    }).catch((err) => {
+      cached.promise = null;
+      cached.conn = null;
+      console.error(`[MongoDB] Connection Error: ${err.message}`);
+      throw err;
+    });
   }
 
   try {
-    const conn = await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000
-    });
-
-    console.log(`
-╔══════════════════════════════════════════════════════════════╗
-║  MongoDB Connected Successfully!                             ║
-║  Host: ${conn.connection.host}
-║  Database: ${conn.connection.name}
-╚══════════════════════════════════════════════════════════════╝
-    `);
-
-    mongoose.connection.on('error', (err) => {
-      console.error('MongoDB runtime connection error:', err.message);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      console.warn('MongoDB connection lost. Reconnecting...');
-    });
-
-    return conn;
-  } catch (error) {
-    console.error(`MongoDB Connection Error: ${error.message}`);
-    // In serverless environments, avoid crashing the container process so error responses can return proper CORS headers
-    return null;
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    cached.conn = null;
+    throw e;
   }
+
+  return cached.conn;
 };
+
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB runtime connection error:', err.message);
+});
+
+mongoose.connection.on('disconnected', () => {
+  console.warn('MongoDB connection lost. Reconnecting on next request...');
+});
+

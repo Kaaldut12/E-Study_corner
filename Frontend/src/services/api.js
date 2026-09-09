@@ -13,16 +13,18 @@ const resolveApiBaseUrl = () => {
     const isRemote = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
 
     if (isRemote) {
-      // If VITE_API_URL points to a remote backend (not localhost), use it
+      // If VITE_API_URL points to a remote backend (not localhost), use it and ensure /api
       if (envUrl && !envUrl.includes('localhost') && !envUrl.includes('127.0.0.1')) {
-        return envUrl.replace(/\/+$/, '');
+        const clean = envUrl.replace(/\/+$/, '');
+        return clean.endsWith('/api') ? clean : `${clean}/api`;
       }
       // If VITE_API_URL is missing or was defaulted to localhost, route to same-origin /api
       return `${window.location.origin}/api`;
     }
   }
 
-  return (envUrl || 'http://localhost:3001/api').replace(/\/+$/, '');
+  const base = (envUrl || 'http://localhost:3001/api').replace(/\/+$/, '');
+  return base.endsWith('/api') ? base : `${base}/api`;
 };
 
 export const API_BASE_URL = resolveApiBaseUrl();
