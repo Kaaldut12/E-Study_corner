@@ -83,6 +83,17 @@ export const submitAssignment = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Assignment not found.' });
     }
 
+    // Verify student is enrolled in the course associated with this assignment
+    if (assignment.courseId) {
+      const enrollment = await dataStore.getEnrollment(studentId, assignment.courseId);
+      if (!enrollment) {
+        return res.status(403).json({
+          success: false,
+          message: 'Access denied: You must be actively enrolled in this course to submit assignments.'
+        });
+      }
+    }
+
     const submission = await dataStore.createSubmission({
       assignmentId,
       studentId,
@@ -290,6 +301,32 @@ export const getCourseDetails = async (req, res) => {
     const completedLessons = enrollment ? (enrollment.completedLessons || []) : (prog ? (prog.completedLessons || []) : []);
     const percentage = enrollment ? enrollment.progressPercentage : (prog ? prog.percentage : 0);
 
+    // Filter and sanitize lessons based on enrollment & free preview status
+    const sanitizedLessons = lessons.map(lesson => {
+      const isPreview = lesson.isFreePreview === true || lesson.isFreePreview === 'true';
+      if (isEnrolled || isPreview) {
+        return {
+          ...lesson,
+          isFreePreview: isPreview,
+          isLocked: false
+        };
+      }
+      return {
+        id: lesson.id,
+        courseId: lesson.courseId,
+        moduleTitle: lesson.moduleTitle,
+        lessonOrder: lesson.lessonOrder || lesson.order || 1,
+        title: lesson.title,
+        description: lesson.description || '',
+        durationMinutes: lesson.durationMinutes || 20,
+        contentType: lesson.contentType || 'article',
+        isFreePreview: false,
+        isLocked: true,
+        contentUrl: '',
+        content: ''
+      };
+    });
+
     return res.status(200).json({
       success: true,
       course: {
@@ -297,7 +334,7 @@ export const getCourseDetails = async (req, res) => {
         isEnrolled,
         enrollmentStatus: enrollment ? enrollment.status : 'not_enrolled'
       },
-      lessons,
+      lessons: sanitizedLessons,
       isEnrolled,
       progress: {
         percentage,

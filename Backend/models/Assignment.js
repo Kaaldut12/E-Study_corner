@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 
 const assignmentSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
+  courseId: { type: String, required: true },
   title: { type: String, required: true },
   subject: { type: String, required: true },
   description: { type: String, required: true },
@@ -16,6 +17,7 @@ const assignmentSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
+assignmentSchema.index({ courseId: 1 });
 assignmentSchema.index({ teacherId: 1 });
 assignmentSchema.index({ subject: 1 });
 

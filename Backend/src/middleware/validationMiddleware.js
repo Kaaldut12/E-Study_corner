@@ -26,9 +26,15 @@ export const validateBody = (requiredFields = []) => {
   };
 };
 
-export const validateAssignment = validateBody(['title', 'subject', 'dueDate']);
+export const validateAssignment = validateBody(['courseId', 'title', 'subject', 'dueDate']);
 
 export const validateCourse = validateBody(['title', 'subject', 'code']);
+
+export const validateLesson = validateBody(['title', 'moduleTitle']);
+
+export const validateQuiz = validateBody(['title', 'subject']);
+
+export const validateQuestion = validateBody(['questionText', 'options', 'correctOptionIndex']);
 
 export const validateSubmission = (req, res, next) => {
   const assignmentId = req.body.assignmentId || req.params.id;
@@ -57,3 +63,4 @@ export const validateGrade = (req, res, next) => {
   }
   next();
 };
+

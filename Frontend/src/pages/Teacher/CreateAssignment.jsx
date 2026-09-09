@@ -1,5 +1,5 @@
 // frontend/src/pages/Teacher/CreateAssignment.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import api from '../../services/api';
@@ -17,6 +17,8 @@ const SUBJECT_SUGGESTIONS = [
 const CreateAssignment = () => {
   const navigate = useNavigate();
 
+  const [courses, setCourses] = useState([]);
+  const [courseId, setCourseId] = useState('');
   const [title, setTitle] = useState('');
   const [subject, setSubject] = useState('Computer Science');
   const [description, setDescription] = useState('');
@@ -28,6 +30,32 @@ const CreateAssignment = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await api.get('/teacher/courses');
+        if (res.data.success && res.data.courses && res.data.courses.length > 0) {
+          setCourses(res.data.courses);
+          setCourseId(res.data.courses[0].id);
+          if (res.data.courses[0].subject) {
+            setSubject(res.data.courses[0].subject);
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to fetch courses:', err.message);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  const handleCourseChange = (selectedId) => {
+    setCourseId(selectedId);
+    const selected = courses.find(c => c.id === selectedId);
+    if (selected && selected.subject) {
+      setSubject(selected.subject);
+    }
+  };
 
   const handleFileAttachment = (e) => {
     const file = e.target.files[0];
@@ -55,6 +83,7 @@ const CreateAssignment = () => {
 
     try {
       const res = await api.post('/teacher/assignments', {
+        courseId: courseId || 'course_1',
         title: title.trim(),
         subject: subject.trim(),
         description: description.trim(),
@@ -113,6 +142,38 @@ const CreateAssignment = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
+              {/* Associated Course */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                  Associated Course <span className="text-rose-400">*</span>
+                </label>
+                {courses.length > 0 ? (
+                  <select
+                    value={courseId}
+                    onChange={(e) => handleCourseChange(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-purple-500 transition"
+                  >
+                    {courses.map(c => (
+                      <option key={c.id} value={c.id}>
+                        {c.code} - {c.title} ({c.subject})
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    required
+                    value={courseId}
+                    onChange={(e) => setCourseId(e.target.value)}
+                    placeholder="Enter Course ID (e.g. course_1)"
+                    className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-purple-500 transition"
+                  />
+                )}
+                <p className="text-[11px] text-slate-400 mt-1">
+                  Enrolled students of this course will be authorized to submit their solutions.
+                </p>
+              </div>
+
               {/* Title */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">

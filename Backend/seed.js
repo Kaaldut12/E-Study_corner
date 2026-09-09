@@ -211,37 +211,94 @@ export const seedCourses = [
 ];
 
 export const seedLessons = [
+  // Course 1: Data Structures & Algorithms
   {
     id: 'lesson_1',
     courseId: 'course_1',
-    title: 'Asymptotic Notation & Time Complexity',
-    duration: '22 mins',
-    order: 1,
-    content: 'Comprehensive analysis of Big-O, Big-Omega, and Big-Theta notation with practical code walkthroughs.'
+    moduleTitle: 'Module 1: Foundations & Algorithmic Complexity',
+    lessonOrder: 1,
+    title: 'Asymptotic Notation & Time Complexity Analysis',
+    description: 'Comprehensive analysis of Big-O, Big-Omega, and Big-Theta notation with practical code walkthroughs.',
+    contentType: 'article',
+    contentUrl: 'https://en.wikipedia.org/wiki/Asymptotic_analysis',
+    durationMinutes: 25,
+    isFreePreview: true
   },
   {
     id: 'lesson_2',
     courseId: 'course_1',
+    moduleTitle: 'Module 1: Foundations & Algorithmic Complexity',
+    lessonOrder: 2,
     title: 'Binary Search Trees & Node Balancing',
-    duration: '28 mins',
-    order: 2,
-    content: 'Insertion, recursive search, deletion cases, and height balance properties in Binary Search Trees.'
+    description: 'Insertion, recursive search, deletion cases, and height balance properties in Binary Search Trees.',
+    contentType: 'video',
+    contentUrl: 'https://www.youtube.com/watch?v=gcULXE7ViZw',
+    durationMinutes: 30,
+    isFreePreview: false
   },
+  {
+    id: 'lesson_1_3',
+    courseId: 'course_1',
+    moduleTitle: 'Module 2: Advanced Non-Linear Data Structures',
+    lessonOrder: 3,
+    title: 'Graph Traversals: BFS & DFS Implementation',
+    description: 'Breadth-First and Depth-First search algorithms, adjacency list representations, and cycle detection.',
+    contentType: 'article',
+    contentUrl: '',
+    durationMinutes: 35,
+    isFreePreview: false
+  },
+
+  // Course 2: Database Management Systems
   {
     id: 'lesson_3',
     courseId: 'course_2',
-    title: 'Relational Model & Keys (Primary, Foreign, Candidate)',
-    duration: '20 mins',
-    order: 1,
-    content: 'Formal definition of relational schemas, tuple attributes, and referential integrity constraints.'
+    moduleTitle: 'Module 1: Relational Schema Design',
+    lessonOrder: 1,
+    title: 'Relational Model & Key Constraints',
+    description: 'Formal definition of relational schemas, tuple attributes, primary and foreign key constraints.',
+    contentType: 'article',
+    contentUrl: '',
+    durationMinutes: 20,
+    isFreePreview: true
   },
+  {
+    id: 'lesson_2_2',
+    courseId: 'course_2',
+    moduleTitle: 'Module 1: Relational Schema Design',
+    lessonOrder: 2,
+    title: 'Normalization: 1NF, 2NF, 3NF & BCNF',
+    description: 'Eliminating data redundancy and update anomalies through functional dependency decomposition.',
+    contentType: 'video',
+    contentUrl: '',
+    durationMinutes: 30,
+    isFreePreview: false
+  },
+
+  // Course 3: Operating Systems
   {
     id: 'lesson_4',
     courseId: 'course_3',
+    moduleTitle: 'Module 1: Process Architecture',
+    lessonOrder: 1,
     title: 'Process Lifecycle & Context Switching',
-    duration: '25 mins',
-    order: 1,
-    content: 'Understanding process states (Ready, Running, Blocked) and PCB data structures.'
+    description: 'Understanding process states (Ready, Running, Blocked) and PCB data structures.',
+    contentType: 'article',
+    contentUrl: '',
+    durationMinutes: 25,
+    isFreePreview: true
+  },
+  {
+    id: 'lesson_3_2',
+    courseId: 'course_3',
+    moduleTitle: 'Module 2: CPU Scheduling & Synchronization',
+    lessonOrder: 2,
+    title: 'CPU Scheduling Algorithms & Deadlock Avoidance',
+    description: 'Round Robin, SJF, and Banker algorithm for resource allocation without deadlock.',
+    contentType: 'video',
+    contentUrl: '',
+    durationMinutes: 35,
+    isFreePreview: false
   }
 ];
 
@@ -494,8 +551,8 @@ export const seedProgress = [
     studentName: 'Student Scholar',
     courseId: 'course_1',
     courseTitle: 'Data Structures & Algorithms in Python & C++',
-    completedLessons: ['les_1', 'les_2'],
-    percentage: 65,
+    completedLessons: ['lesson_1'],
+    percentage: 33,
     studyStreakDays: 6,
     totalStudyMinutes: 320,
     lastActiveAt: new Date()
@@ -506,8 +563,8 @@ export const seedProgress = [
     studentName: 'Student Scholar',
     courseId: 'course_2',
     courseTitle: 'Database Management Systems & SQL Mastery',
-    completedLessons: ['les_3'],
-    percentage: 40,
+    completedLessons: ['lesson_3'],
+    percentage: 50,
     studyStreakDays: 6,
     totalStudyMinutes: 180,
     lastActiveAt: new Date()
@@ -604,6 +661,7 @@ export const seedStudyMaterials = [
 export const seedAssignments = [
   {
     id: 'asg_1',
+    courseId: 'course_1',
     title: 'Data Structures & Algorithms - Binary Search Trees Implementation',
     subject: 'Computer Science',
     description: 'Design and implement a robust Binary Search Tree (BST) supporting insertion, deletion of nodes with two children, in-order traversal, and height calculation. Include clear time-complexity analysis.',
@@ -618,6 +676,7 @@ export const seedAssignments = [
   },
   {
     id: 'asg_2',
+    courseId: 'course_3',
     title: 'Operating Systems - Process Scheduling Simulator',
     subject: 'Computer Science',
     description: 'Implement Round Robin (RR) and Shortest Job First (SJF) process scheduling algorithms in Python, C++, or Java. Submit your code along with average waiting time and turnaround time calculations.',
@@ -632,6 +691,7 @@ export const seedAssignments = [
   },
   {
     id: 'asg_3',
+    courseId: 'course_2',
     title: 'Database Systems - Normalized Schema Design & SQL Queries',
     subject: 'Computer Science',
     description: 'Design a 3NF normalized schema for an E-commerce platform. Write SQL queries for top-selling products, customer order histories, and inventory triggers.',

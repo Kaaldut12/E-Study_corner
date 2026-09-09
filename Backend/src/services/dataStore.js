@@ -1,4 +1,5 @@
 // backend/src/services/dataStore.js
+import crypto from 'crypto';
 import mongoose from 'mongoose';
 import User from '../../models/User.js';
 import Course from '../../models/Course.js';
@@ -61,6 +62,7 @@ const memTeacherQuestions = [...seedTeacherQuestions];
 const memEnrollments = [];
 const memQuizSessions = new Map();
 
+const generateId = (prefix) => `${prefix}_${crypto.randomUUID().slice(0, 8)}`;
 const isDBConnected = () => mongoose.connection.readyState === 1;
 
 export const dataStore = {
@@ -132,7 +134,7 @@ export const dataStore = {
   },
 
   createUser: async (userData) => {
-    const newId = userData.id || `user_${Date.now()}`;
+    const newId = userData.id || generateId('user');
     const userRole = userData.role || 'student';
     const permissions = (Array.isArray(userData.permissions) && userData.permissions.length > 0)
       ? userData.permissions
@@ -330,7 +332,7 @@ export const dataStore = {
       : String(notiMessage);
 
     const payload = {
-      id: `noti_${Date.now()}`,
+      id: generateId('noti'),
       notificationId: memNotifications.length + 101,
       notiMessage: text,
       notiDt: new Date(),
@@ -379,7 +381,7 @@ export const dataStore = {
 
   createEnquiry: async (enqData) => {
     const payload = {
-      id: `enq_${Date.now()}`,
+      id: generateId('enq'),
       enquiryId: memEnquiries.length + 1,
       enquiryDt: new Date(),
       createdAt: new Date(),
@@ -427,7 +429,7 @@ export const dataStore = {
 
   createStudyMaterial: async (matData) => {
     const payload = {
-      id: `mat_${Date.now()}`,
+      id: generateId('mat'),
       materialId: memStudyMaterials.length + 1,
       uploadDt: new Date(),
       createdAt: new Date(),
@@ -488,7 +490,8 @@ export const dataStore = {
 
   createAssignment: async (asgData) => {
     const payload = {
-      id: asgData.id || `asg_${Date.now()}`,
+      id: asgData.id || generateId('asg'),
+      courseId: asgData.courseId,
       createdAt: new Date(),
       ...asgData
     };
@@ -582,7 +585,7 @@ export const dataStore = {
           return updated;
         }
         const doc = await Submission.create({
-          id: `sub_${Date.now()}`,
+          id: generateId('sub'),
           submittedAt: new Date(),
           status: 'submitted',
           grade: null,
@@ -602,7 +605,7 @@ export const dataStore = {
       return memSubmissions[idx];
     }
     const payload = {
-      id: `sub_${Date.now()}`,
+      id: generateId('sub'),
       submittedAt: new Date(),
       status: 'submitted',
       grade: null,
@@ -655,7 +658,7 @@ export const dataStore = {
 
   createSupportMessage: async (msgData) => {
     const payload = {
-      id: `msg_${Date.now()}`,
+      id: generateId('msg'),
       status: 'pending',
       createdAt: new Date(),
       adminReply: '',
@@ -710,7 +713,7 @@ export const dataStore = {
 
   createPlatformFeedback: async (fbData) => {
     const payload = {
-      id: `fb_${Date.now()}`,
+      id: generateId('fb'),
       createdAt: new Date(),
       ...fbData
     };
@@ -753,7 +756,7 @@ export const dataStore = {
 
   createCourse: async (courseData) => {
     const payload = {
-      id: courseData.id || `course_${Date.now()}`,
+      id: courseData.id || generateId('course'),
       createdAt: new Date(),
       status: 'active',
       ...courseData
@@ -770,17 +773,76 @@ export const dataStore = {
     return payload;
   },
 
+  updateCourse: async (courseId, updates, teacherId, isAdmin = false) => {
+    const course = await dataStore.getCourseById(courseId);
+    if (!course) return { error: 'not_found', message: 'Course not found.' };
+    if (!isAdmin && teacherId && course.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own this course.' };
+    }
+
+    const safeUpdates = {};
+    ['title', 'description', 'subject', 'department', 'courseYear', 'thumbnail', 'code', 'status'].forEach(f => {
+      if (updates[f] !== undefined) safeUpdates[f] = updates[f];
+    });
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Course.findOneAndUpdate({ id: courseId }, { $set: safeUpdates }, { new: true }).lean();
+        if (doc) {
+          const idx = memCourses.findIndex(c => c.id === courseId);
+          if (idx !== -1) memCourses[idx] = { ...memCourses[idx], ...doc };
+          return { data: doc };
+        }
+      } catch (err) {
+        console.warn('[dataStore] DB updateCourse error:', err.message);
+      }
+    }
+    const memCourse = memCourses.find(c => c.id === courseId);
+    if (memCourse) {
+      Object.assign(memCourse, safeUpdates);
+      return { data: memCourse };
+    }
+    return { error: 'not_found', message: 'Course not found.' };
+  },
+
+  deleteCourse: async (courseId, teacherId, isAdmin = false) => {
+    const course = await dataStore.getCourseById(courseId);
+    if (!course) return { error: 'not_found', message: 'Course not found.' };
+    if (!isAdmin && teacherId && course.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own this course.' };
+    }
+
+    if (isDBConnected()) {
+      try {
+        await Course.deleteOne({ id: courseId });
+        await Lesson.deleteMany({ courseId });
+        await Quiz.deleteMany({ courseId });
+        await Assignment.deleteMany({ courseId });
+      } catch (err) {
+        console.warn('[dataStore] DB deleteCourse error:', err.message);
+      }
+    }
+    const idx = memCourses.findIndex(c => c.id === courseId);
+    if (idx !== -1) memCourses.splice(idx, 1);
+    for (let i = memLessons.length - 1; i >= 0; i--) if (memLessons[i].courseId === courseId) memLessons.splice(i, 1);
+    for (let i = memQuizzes.length - 1; i >= 0; i--) if (memQuizzes[i].courseId === courseId) memQuizzes.splice(i, 1);
+    for (let i = memAssignments.length - 1; i >= 0; i--) if (memAssignments[i].courseId === courseId) memAssignments.splice(i, 1);
+    return { success: true };
+  },
+
   // ==================== LESSONS ====================
   getLessonsForCourse: async (courseId) => {
     if (isDBConnected()) {
       try {
-        const docs = await Lesson.find({ courseId }).sort({ order: 1 }).lean();
+        const docs = await Lesson.find({ courseId }).sort({ lessonOrder: 1, order: 1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
         console.warn('[dataStore] DB getLessonsForCourse error:', err.message);
       }
     }
-    return memLessons.filter(l => l.courseId === courseId);
+    return memLessons
+      .filter(l => l.courseId === courseId)
+      .sort((a, b) => (a.lessonOrder || a.order || 0) - (b.lessonOrder || b.order || 0));
   },
 
   getLessonById: async (lessonId) => {
@@ -793,6 +855,94 @@ export const dataStore = {
       }
     }
     return memLessons.find(l => l.id === lessonId) || null;
+  },
+
+  createLesson: async (courseId, lessonData, teacherId, isAdmin = false) => {
+    const course = await dataStore.getCourseById(courseId);
+    if (!course) return { error: 'not_found', message: 'Course not found.' };
+    if (!isAdmin && teacherId && course.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own this course.' };
+    }
+
+    const payload = {
+      id: lessonData.id || generateId('lesson'),
+      courseId,
+      moduleTitle: lessonData.moduleTitle || 'General',
+      lessonOrder: Number(lessonData.lessonOrder ?? lessonData.order ?? 1),
+      title: lessonData.title,
+      description: lessonData.description || '',
+      contentType: lessonData.contentType || 'article',
+      contentUrl: lessonData.contentUrl || '',
+      durationMinutes: Number(lessonData.durationMinutes || 20),
+      isFreePreview: lessonData.isFreePreview === true || lessonData.isFreePreview === 'true',
+      createdAt: new Date()
+    };
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Lesson.create(payload);
+        const resObj = doc.toObject ? doc.toObject() : doc;
+        memLessons.push(resObj);
+        return { data: resObj };
+      } catch (err) {
+        console.warn('[dataStore] DB createLesson error:', err.message);
+      }
+    }
+    memLessons.push(payload);
+    return { data: payload };
+  },
+
+  updateLesson: async (lessonId, updates, teacherId, isAdmin = false) => {
+    const lesson = await dataStore.getLessonById(lessonId);
+    if (!lesson) return { error: 'not_found', message: 'Lesson not found.' };
+    const course = await dataStore.getCourseById(lesson.courseId);
+    if (!isAdmin && teacherId && course && course.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own the course for this lesson.' };
+    }
+
+    const safeUpdates = {};
+    ['moduleTitle', 'lessonOrder', 'title', 'description', 'contentType', 'contentUrl', 'durationMinutes', 'isFreePreview'].forEach(f => {
+      if (updates[f] !== undefined) safeUpdates[f] = updates[f];
+    });
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Lesson.findOneAndUpdate({ id: lessonId }, { $set: safeUpdates }, { new: true }).lean();
+        if (doc) {
+          const idx = memLessons.findIndex(l => l.id === lessonId);
+          if (idx !== -1) memLessons[idx] = { ...memLessons[idx], ...doc };
+          return { data: doc };
+        }
+      } catch (err) {
+        console.warn('[dataStore] DB updateLesson error:', err.message);
+      }
+    }
+    const memLesson = memLessons.find(l => l.id === lessonId);
+    if (memLesson) {
+      Object.assign(memLesson, safeUpdates);
+      return { data: memLesson };
+    }
+    return { error: 'not_found', message: 'Lesson not found.' };
+  },
+
+  deleteLesson: async (lessonId, teacherId, isAdmin = false) => {
+    const lesson = await dataStore.getLessonById(lessonId);
+    if (!lesson) return { error: 'not_found', message: 'Lesson not found.' };
+    const course = await dataStore.getCourseById(lesson.courseId);
+    if (!isAdmin && teacherId && course && course.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own the course for this lesson.' };
+    }
+
+    if (isDBConnected()) {
+      try {
+        await Lesson.deleteOne({ id: lessonId });
+      } catch (err) {
+        console.warn('[dataStore] DB deleteLesson error:', err.message);
+      }
+    }
+    const idx = memLessons.findIndex(l => l.id === lessonId);
+    if (idx !== -1) memLessons.splice(idx, 1);
+    return { success: true };
   },
 
   // ==================== QUIZZES ====================
@@ -808,16 +958,108 @@ export const dataStore = {
     return memQuizzes;
   },
 
-  getQuestionsForQuiz: async (quizId) => {
+  getQuizById: async (quizId) => {
     if (isDBConnected()) {
       try {
-        const docs = await Question.find({ quizId }).lean();
-        if (docs && docs.length > 0) return docs;
+        const doc = await Quiz.findOne({ id: quizId }).lean();
+        if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB getQuestionsForQuiz error:', err.message);
+        console.warn('[dataStore] DB getQuizById error:', err.message);
       }
     }
-    return memQuestions.filter(q => q.quizId === quizId);
+    return memQuizzes.find(q => q.id === quizId) || null;
+  },
+
+  createQuiz: async (courseId, quizData, teacherId, teacherName, isAdmin = false) => {
+    if (courseId) {
+      const course = await dataStore.getCourseById(courseId);
+      if (!course) return { error: 'not_found', message: 'Course not found.' };
+      if (!isAdmin && teacherId && course.teacherId !== teacherId) {
+        return { error: 'unauthorized', message: 'Unauthorized: You do not own this course.' };
+      }
+    }
+
+    const payload = {
+      id: quizData.id || generateId('quiz'),
+      courseId: courseId || quizData.courseId || '',
+      title: quizData.title,
+      subject: quizData.subject || '',
+      description: quizData.description || '',
+      timeLimitMinutes: Number(quizData.timeLimitMinutes || 15),
+      totalQuestions: Number(quizData.totalQuestions || 5),
+      passingScore: Number(quizData.passingScore || 70),
+      teacherId,
+      teacherName: teacherName || 'Instructor',
+      createdAt: new Date()
+    };
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Quiz.create(payload);
+        const resObj = doc.toObject ? doc.toObject() : doc;
+        memQuizzes.push(resObj);
+        return { data: resObj };
+      } catch (err) {
+        console.warn('[dataStore] DB createQuiz error:', err.message);
+      }
+    }
+    memQuizzes.push(payload);
+    return { data: payload };
+  },
+
+  updateQuiz: async (quizId, updates, teacherId, isAdmin = false) => {
+    const quiz = await dataStore.getQuizById(quizId);
+    if (!quiz) return { error: 'not_found', message: 'Quiz not found.' };
+    if (!isAdmin && teacherId && quiz.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own this quiz.' };
+    }
+
+    const safeUpdates = {};
+    ['title', 'subject', 'description', 'timeLimitMinutes', 'totalQuestions', 'passingScore', 'courseId'].forEach(f => {
+      if (updates[f] !== undefined) safeUpdates[f] = updates[f];
+    });
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Quiz.findOneAndUpdate({ id: quizId }, { $set: safeUpdates }, { new: true }).lean();
+        if (doc) {
+          const idx = memQuizzes.findIndex(q => q.id === quizId);
+          if (idx !== -1) memQuizzes[idx] = { ...memQuizzes[idx], ...doc };
+          return { data: doc };
+        }
+      } catch (err) {
+        console.warn('[dataStore] DB updateQuiz error:', err.message);
+      }
+    }
+    const memQuiz = memQuizzes.find(q => q.id === quizId);
+    if (memQuiz) {
+      Object.assign(memQuiz, safeUpdates);
+      return { data: memQuiz };
+    }
+    return { error: 'not_found', message: 'Quiz not found.' };
+  },
+
+  deleteQuiz: async (quizId, teacherId, isAdmin = false) => {
+    const quiz = await dataStore.getQuizById(quizId);
+    if (!quiz) return { error: 'not_found', message: 'Quiz not found.' };
+    if (!isAdmin && teacherId && quiz.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own this quiz.' };
+    }
+
+    if (isDBConnected()) {
+      try {
+        await Quiz.deleteOne({ id: quizId });
+        await Question.deleteMany({ quizId });
+        await QuizAttempt.deleteMany({ quizId });
+      } catch (err) {
+        console.warn('[dataStore] DB deleteQuiz error:', err.message);
+      }
+    }
+    const idx = memQuizzes.findIndex(q => q.id === quizId);
+    if (idx !== -1) memQuizzes.splice(idx, 1);
+    for (let i = memQuestions.length - 1; i >= 0; i--) if (memQuestions[i].quizId === quizId) memQuestions.splice(i, 1);
+    for (let i = memQuizAttempts.length - 1; i >= 0; i--) if (memQuizAttempts[i].quizId === quizId) memQuizAttempts.splice(i, 1);
+    return { success: true };
   },
 
   saveQuizAttempt: async (attemptData) => {
@@ -857,6 +1099,116 @@ export const dataStore = {
     return memQuizAttempts.filter(a => a.studentId === studentId && a.quizId === quizId);
   },
 
+  // ==================== QUESTIONS ====================
+  getQuestionsForQuiz: async (quizId) => {
+    if (isDBConnected()) {
+      try {
+        const docs = await Question.find({ quizId }).lean();
+        if (docs && docs.length > 0) return docs;
+      } catch (err) {
+        console.warn('[dataStore] DB getQuestionsForQuiz error:', err.message);
+      }
+    }
+    return memQuestions.filter(q => q.quizId === quizId);
+  },
+
+  getQuestionById: async (questionId) => {
+    if (isDBConnected()) {
+      try {
+        const doc = await Question.findOne({ id: questionId }).lean();
+        if (doc) return doc;
+      } catch (err) {
+        console.warn('[dataStore] DB getQuestionById error:', err.message);
+      }
+    }
+    return memQuestions.find(q => q.id === questionId) || null;
+  },
+
+  createQuestion: async (quizId, questionData, teacherId, isAdmin = false) => {
+    const quiz = await dataStore.getQuizById(quizId);
+    if (!quiz) return { error: 'not_found', message: 'Quiz not found.' };
+    if (!isAdmin && teacherId && quiz.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own this quiz.' };
+    }
+
+    const payload = {
+      id: questionData.id || generateId('q'),
+      quizId,
+      questionText: questionData.questionText,
+      options: questionData.options || [],
+      correctOptionIndex: Number(questionData.correctOptionIndex),
+      explanation: questionData.explanation || '',
+      points: Number(questionData.points || 10),
+      createdAt: new Date()
+    };
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Question.create(payload);
+        const resObj = doc.toObject ? doc.toObject() : doc;
+        memQuestions.push(resObj);
+        return { data: resObj };
+      } catch (err) {
+        console.warn('[dataStore] DB createQuestion error:', err.message);
+      }
+    }
+    memQuestions.push(payload);
+    return { data: payload };
+  },
+
+  updateQuestion: async (questionId, updates, teacherId, isAdmin = false) => {
+    const question = await dataStore.getQuestionById(questionId);
+    if (!question) return { error: 'not_found', message: 'Question not found.' };
+    const quiz = await dataStore.getQuizById(question.quizId);
+    if (!isAdmin && teacherId && quiz && quiz.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own the quiz for this question.' };
+    }
+
+    const safeUpdates = {};
+    ['questionText', 'options', 'correctOptionIndex', 'explanation', 'points'].forEach(f => {
+      if (updates[f] !== undefined) safeUpdates[f] = updates[f];
+    });
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Question.findOneAndUpdate({ id: questionId }, { $set: safeUpdates }, { new: true }).lean();
+        if (doc) {
+          const idx = memQuestions.findIndex(q => q.id === questionId);
+          if (idx !== -1) memQuestions[idx] = { ...memQuestions[idx], ...doc };
+          return { data: doc };
+        }
+      } catch (err) {
+        console.warn('[dataStore] DB updateQuestion error:', err.message);
+      }
+    }
+    const memQuestion = memQuestions.find(q => q.id === questionId);
+    if (memQuestion) {
+      Object.assign(memQuestion, safeUpdates);
+      return { data: memQuestion };
+    }
+    return { error: 'not_found', message: 'Question not found.' };
+  },
+
+  deleteQuestion: async (questionId, teacherId, isAdmin = false) => {
+    const question = await dataStore.getQuestionById(questionId);
+    if (!question) return { error: 'not_found', message: 'Question not found.' };
+    const quiz = await dataStore.getQuizById(question.quizId);
+    if (!isAdmin && teacherId && quiz && quiz.teacherId !== teacherId) {
+      return { error: 'unauthorized', message: 'Unauthorized: You do not own the quiz for this question.' };
+    }
+
+    if (isDBConnected()) {
+      try {
+        await Question.deleteOne({ id: questionId });
+      } catch (err) {
+        console.warn('[dataStore] DB deleteQuestion error:', err.message);
+      }
+    }
+    const idx = memQuestions.findIndex(q => q.id === questionId);
+    if (idx !== -1) memQuestions.splice(idx, 1);
+    return { success: true };
+  },
+
   // ==================== NOTES ====================
   getStudentNotes: async (studentId) => {
     if (isDBConnected()) {
@@ -871,7 +1223,7 @@ export const dataStore = {
   },
 
   createNote: async (noteData) => {
-    const payload = { id: `note_${Date.now()}`, createdAt: new Date(), updatedAt: new Date(), ...noteData };
+    const payload = { id: generateId('note'), createdAt: new Date(), updatedAt: new Date(), ...noteData };
     if (isDBConnected()) {
       try {
         const doc = await Note.create(payload);
@@ -942,7 +1294,7 @@ export const dataStore = {
           return { action: 'removed', bookmarked: false };
         }
         const doc = await Bookmark.create({
-          id: `bm_${Date.now()}`,
+          id: generateId('bm'),
           studentId,
           itemType,
           itemId,
@@ -960,7 +1312,7 @@ export const dataStore = {
       return { action: 'removed', bookmarked: false };
     }
     const bm = {
-      id: `bm_${Date.now()}`,
+      id: generateId('bm'),
       studentId,
       itemType,
       itemId,
@@ -1015,7 +1367,7 @@ export const dataStore = {
       memProgress[idx] = { ...memProgress[idx], ...updates };
       return memProgress[idx];
     }
-    const newProg = { id: `prog_${Date.now()}`, studentId, courseId, ...updates };
+    const newProg = { id: generateId('prog'), studentId, courseId, ...updates };
     memProgress.push(newProg);
     return newProg;
   },
@@ -1050,7 +1402,7 @@ export const dataStore = {
     if (existingMem) return existingMem;
 
     const payload = {
-      id: `enr_${Date.now()}`,
+      id: generateId('enr'),
       studentId,
       studentName: studentName || 'Student',
       courseId,
@@ -1072,7 +1424,7 @@ export const dataStore = {
           { studentId, courseId },
           {
             $setOnInsert: {
-              id: `prog_${Date.now()}`,
+              id: generateId('prog'),
               studentId,
               studentName: studentName || 'Student',
               courseId,
@@ -1305,7 +1657,7 @@ export const dataStore = {
 
   createTeacherQuestion: async (data) => {
     const payload = {
-      id: `tq_${Date.now()}`,
+      id: generateId('tq'),
       status: 'pending',
       teacherReply: '',
       repliedAt: null,
@@ -1342,7 +1694,7 @@ export const dataStore = {
         console.warn('[dataStore] DB replyTeacherQuestion error:', err.message);
       }
     }
-    const q = memTeacherQuestions.find(x => x.id === id);
+    const q = memTeacherQuestions.find(x => x.id === id && (!teacherId || x.teacherId === teacherId));
     if (q) {
       q.teacherReply = replyText;
       q.status = 'answered';

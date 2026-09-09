@@ -78,7 +78,8 @@ export const createAssignment = async (req, res) => {
   try {
     const teacherId = req.user.id;
     const teacherName = req.user.name;
-    const { title, subject, description, dueDate, totalPoints, resourceLink, attachmentUrl, attachmentName } = req.body;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+    const { courseId, title, subject, description, dueDate, totalPoints, resourceLink, attachmentUrl, attachmentName } = req.body;
 
     if (!title || !subject || !description || !dueDate) {
       return res.status(400).json({
@@ -87,7 +88,35 @@ export const createAssignment = async (req, res) => {
       });
     }
 
+    let resolvedCourseId = courseId;
+    if (!resolvedCourseId) {
+      const allCourses = await dataStore.getCourses();
+      const teacherCourses = allCourses.filter(c => c.teacherId === teacherId);
+      if (teacherCourses.length > 0) {
+        const match = teacherCourses.find(c => c.subject?.toLowerCase() === subject?.toLowerCase());
+        resolvedCourseId = match ? match.id : teacherCourses[0].id;
+      } else if (allCourses.length > 0) {
+        resolvedCourseId = allCourses[0].id;
+      }
+    }
+
+    if (!resolvedCourseId) {
+      return res.status(400).json({
+        success: false,
+        message: 'A valid courseId is required to associate this assignment with a course.'
+      });
+    }
+
+    const course = await dataStore.getCourseById(resolvedCourseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Specified course not found.' });
+    }
+    if (!isAdmin && course.teacherId && course.teacherId !== teacherId) {
+      return res.status(403).json({ success: false, message: 'Unauthorized: You can only create assignments for your own courses.' });
+    }
+
     const newAssignment = await dataStore.createAssignment({
+      courseId: resolvedCourseId,
       title,
       subject,
       description,
@@ -191,10 +220,22 @@ export const gradeSubmission = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Submission not found.' });
     }
 
+    const assignment = await dataStore.getAssignmentById(submission.assignmentId);
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: 'Associated assignment not found.' });
+    }
+
+    const maxPoints = assignment.totalPoints !== undefined ? assignment.totalPoints : 100;
+    if (numericGrade > maxPoints) {
+      return res.status(400).json({
+        success: false,
+        message: `Grade cannot exceed the maximum assignment score of ${maxPoints} points.`
+      });
+    }
+
     // Verify teacher owns the assignment (or is admin/superadmin)
     if (!isAdmin) {
-      const assignment = await dataStore.getAssignmentById(submission.assignmentId);
-      if (assignment && assignment.teacherId !== teacherId) {
+      if (assignment.teacherId !== teacherId) {
         return res.status(403).json({ success: false, message: 'Unauthorized: You can only grade submissions for your own assignments.' });
       }
     }
@@ -363,4 +404,247 @@ export const replyTeacherQuestion = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ==================== COURSE EDIT & DELETE ====================
+
+export const updateTeacherCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.updateCourse(id, req.body, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: 'Course not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: 'Unauthorized: You do not own this course.' });
+    }
+    return res.status(200).json({ success: true, message: 'Course updated successfully.', course: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteTeacherCourse = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.deleteCourse(id, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: 'Course not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: 'Unauthorized: You do not own this course.' });
+    }
+    return res.status(200).json({ success: true, message: 'Course deleted successfully.' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== LESSON MANAGEMENT ====================
+
+export const createTeacherLesson = async (req, res) => {
+  try {
+    const courseId = req.params.courseId || req.body.courseId;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    if (!courseId) {
+      return res.status(400).json({ success: false, message: 'Course ID is required.' });
+    }
+    if (!req.body.title || !req.body.moduleTitle) {
+      return res.status(400).json({ success: false, message: 'Title and Module Title are required.' });
+    }
+
+    const result = await dataStore.createLesson(courseId, req.body, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Course not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(201).json({ success: true, message: 'Lesson created successfully.', lesson: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const updateTeacherLesson = async (req, res) => {
+  try {
+    const { id, lessonId } = req.params;
+    const targetId = lessonId || id;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.updateLesson(targetId, req.body, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Lesson not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(200).json({ success: true, message: 'Lesson updated successfully.', lesson: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteTeacherLesson = async (req, res) => {
+  try {
+    const { id, lessonId } = req.params;
+    const targetId = lessonId || id;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.deleteLesson(targetId, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Lesson not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(200).json({ success: true, message: 'Lesson deleted successfully.' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== QUIZ MANAGEMENT ====================
+
+export const createTeacherQuiz = async (req, res) => {
+  try {
+    const courseId = req.params.courseId || req.body.courseId;
+    const teacherId = req.user.id;
+    const teacherName = req.user.name;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    if (!req.body.title || !req.body.subject) {
+      return res.status(400).json({ success: false, message: 'Title and Subject are required for quiz.' });
+    }
+
+    const result = await dataStore.createQuiz(courseId, req.body, teacherId, teacherName, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Course not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(201).json({ success: true, message: 'Quiz created successfully.', quiz: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const updateTeacherQuiz = async (req, res) => {
+  try {
+    const { id, quizId } = req.params;
+    const targetId = quizId || id;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.updateQuiz(targetId, req.body, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Quiz not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(200).json({ success: true, message: 'Quiz updated successfully.', quiz: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteTeacherQuiz = async (req, res) => {
+  try {
+    const { id, quizId } = req.params;
+    const targetId = quizId || id;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.deleteQuiz(targetId, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Quiz not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(200).json({ success: true, message: 'Quiz deleted successfully.' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// ==================== QUESTION MANAGEMENT ====================
+
+export const createTeacherQuestionItem = async (req, res) => {
+  try {
+    const quizId = req.params.quizId || req.body.quizId;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    if (!quizId) {
+      return res.status(400).json({ success: false, message: 'Quiz ID is required.' });
+    }
+    if (!req.body.questionText || !req.body.options || req.body.correctOptionIndex === undefined) {
+      return res.status(400).json({ success: false, message: 'questionText, options, and correctOptionIndex are required.' });
+    }
+
+    const result = await dataStore.createQuestion(quizId, req.body, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Quiz not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(201).json({ success: true, message: 'Question created successfully.', question: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const updateTeacherQuestionItem = async (req, res) => {
+  try {
+    const { id, questionId } = req.params;
+    const targetId = questionId || id;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.updateQuestion(targetId, req.body, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Question not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(200).json({ success: true, message: 'Question updated successfully.', question: result.data });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteTeacherQuestionItem = async (req, res) => {
+  try {
+    const { id, questionId } = req.params;
+    const targetId = questionId || id;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const result = await dataStore.deleteQuestion(targetId, teacherId, isAdmin);
+    if (result.error === 'not_found') {
+      return res.status(404).json({ success: false, message: result.message || 'Question not found.' });
+    }
+    if (result.error === 'unauthorized') {
+      return res.status(403).json({ success: false, message: result.message || 'Unauthorized.' });
+    }
+    return res.status(200).json({ success: true, message: 'Question deleted successfully.' });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
