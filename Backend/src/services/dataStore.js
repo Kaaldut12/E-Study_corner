@@ -17,6 +17,7 @@ import Submission from '../../models/Submission.js';
 import SupportMessage from '../../models/SupportMessage.js';
 import Feedback from '../../models/Feedback.js';
 import { hashPassword, verifyPassword } from '../utils/password.js';
+import { getDefaultPermissions } from '../constants/permissions.js';
 import {
   seedUsers,
   seedCourses,
@@ -59,19 +60,50 @@ const isDBConnected = () => mongoose.connection.readyState === 1;
 export const dataStore = {
   // --- USERS ---
   getUsers: async () => {
-    if (isDBConnected()) return await User.find().lean();
-    return users;
+    let list;
+    if (isDBConnected()) {
+      list = await User.find().lean();
+    } else {
+      list = users;
+    }
+    return list.map(u => ({
+      ...u,
+      permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
+    }));
   },
   getUserById: async (id) => {
-    if (isDBConnected()) return await User.findOne({ id }).lean();
-    return users.find(u => u.id === id);
+    let u;
+    if (isDBConnected()) {
+      u = await User.findOne({ id }).lean();
+    } else {
+      u = users.find(x => x.id === id);
+    }
+    if (!u) return null;
+    return {
+      ...u,
+      permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
+    };
   },
   getUserByEmail: async (email) => {
-    if (isDBConnected()) return await User.findOne({ email: email.toLowerCase() }).lean();
-    return users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    let u;
+    if (isDBConnected()) {
+      u = await User.findOne({ email: email.toLowerCase() }).lean();
+    } else {
+      u = users.find(x => x.email.toLowerCase() === email.toLowerCase());
+    }
+    if (!u) return null;
+    return {
+      ...u,
+      permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
+    };
   },
   createUser: async (userData) => {
     const newId = `user_${Date.now()}`;
+    const userRole = userData.role || 'student';
+    const permissions = (Array.isArray(userData.permissions) && userData.permissions.length > 0)
+      ? userData.permissions
+      : getDefaultPermissions(userRole);
+
     const payload = {
       id: newId,
       status: 'active',
@@ -80,12 +112,18 @@ export const dataStore = {
       course: userData.course || 'Computer Science & Engineering',
       courseYear: userData.courseYear || '1st Year',
       ...userData,
+      role: userRole,
+      permissions,
       password: hashPassword(userData.password)
     };
 
     if (isDBConnected()) {
       const doc = await User.create(payload);
-      return doc.toObject();
+      const resObj = doc.toObject();
+      return {
+        ...resObj,
+        permissions: (resObj.permissions && resObj.permissions.length > 0) ? resObj.permissions : permissions
+      };
     }
 
     users.push(payload);
@@ -93,7 +131,12 @@ export const dataStore = {
   },
   updateUser: async (id, updates) => {
     if (isDBConnected()) {
-      return await User.findOneAndUpdate({ id }, { $set: updates }, { new: true }).lean();
+      const doc = await User.findOneAndUpdate({ id }, { $set: updates }, { new: true }).lean();
+      if (!doc) return null;
+      return {
+        ...doc,
+        permissions: (doc.permissions && doc.permissions.length > 0) ? doc.permissions : getDefaultPermissions(doc.role)
+      };
     }
     const idx = users.findIndex(u => u.id === id);
     if (idx !== -1) {

@@ -21,6 +21,8 @@ import Submission from './models/Submission.js';
 import SupportMessage from './models/SupportMessage.js';
 import Feedback from './models/Feedback.js';
 
+import { DEFAULT_ROLE_PERMISSIONS } from './src/constants/permissions.js';
+
 dotenv.config();
 
 export const seedSuperAdmin = {
@@ -31,6 +33,7 @@ export const seedSuperAdmin = {
   email: process.env.SEED_SUPERADMIN_EMAIL || 'superadmin@estudy.com',
   password: hashPassword(process.env.SEED_SUPERADMIN_PASSWORD || 'SuperAdmin@123'),
   role: 'superadmin',
+  permissions: DEFAULT_ROLE_PERMISSIONS.superadmin,
   gender: 'Male',
   department: process.env.SEED_SUPERADMIN_DEPT || 'Administration & Platform Governance',
   collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
@@ -48,6 +51,7 @@ export const seedAdmin = {
   email: process.env.SEED_ADMIN_EMAIL || 'admin@estudy.com',
   password: hashPassword(process.env.SEED_DEFAULT_PASSWORD || 'Admin@123'),
   role: 'admin',
+  permissions: DEFAULT_ROLE_PERMISSIONS.admin,
   gender: process.env.SEED_ADMIN_GENDER || 'Male',
   department: process.env.SEED_ADMIN_DEPT || 'Department of CS & Engg',
   collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
@@ -65,6 +69,7 @@ export const seedTeacher = {
   email: process.env.SEED_TEACHER_EMAIL || 'teacher@estudy.com',
   password: hashPassword(process.env.SEED_DEFAULT_PASSWORD || 'Admin@123'),
   role: 'teacher',
+  permissions: DEFAULT_ROLE_PERMISSIONS.teacher,
   gender: process.env.SEED_TEACHER_GENDER || 'Male',
   department: process.env.SEED_TEACHER_DEPT || 'Department of CS & Engg',
   collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
@@ -82,6 +87,7 @@ export const seedStudent = {
   email: process.env.SEED_STUDENT_EMAIL || 'student@estudy.com',
   password: hashPassword(process.env.SEED_DEFAULT_PASSWORD || 'Admin@123'),
   role: 'student',
+  permissions: DEFAULT_ROLE_PERMISSIONS.student,
   gender: process.env.SEED_STUDENT_GENDER || 'Male',
   course: process.env.SEED_STUDENT_COURSE || 'Computer Science & Engineering',
   courseYear: process.env.SEED_STUDENT_YEAR || '1st Year',
@@ -100,6 +106,7 @@ export const seedStudent2 = {
   email: 'priya@estudy.com',
   password: hashPassword('Admin@123'),
   role: 'student',
+  permissions: DEFAULT_ROLE_PERMISSIONS.student,
   gender: 'Female',
   course: 'Computer Science & Engineering',
   courseYear: '2nd Year',
@@ -118,6 +125,7 @@ export const seedStudent3 = {
   email: 'rahul@estudy.com',
   password: hashPassword('Admin@123'),
   role: 'student',
+  permissions: DEFAULT_ROLE_PERMISSIONS.student,
   gender: 'Male',
   course: 'Information Technology',
   courseYear: '1st Year',

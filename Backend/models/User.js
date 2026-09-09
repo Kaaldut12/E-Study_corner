@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['student', 'teacher', 'admin', 'superadmin'], default: 'student' },
+  permissions: { type: [String], default: [] },
   gender: { type: String, default: 'Male' },
   collegeName: { type: String, default: 'National Institute of Technology & Advanced Studies' },
   course: { type: String, default: 'Computer Science & Engineering' },

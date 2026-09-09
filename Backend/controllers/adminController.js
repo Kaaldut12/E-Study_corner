@@ -57,9 +57,23 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
+import { ALL_PERMISSIONS, DEFAULT_ROLE_PERMISSIONS } from '../src/constants/permissions.js';
+
+export const getSystemPermissions = async (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      permissions: ALL_PERMISSIONS,
+      defaultRolePermissions: DEFAULT_ROLE_PERMISSIONS
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password, role, gradeLevel, department, collegeName, course, subject } = req.body;
+    const { name, email, password, role, gradeLevel, department, collegeName, course, subject, permissions } = req.body;
     if (!name || !email || !password || !role) {
       return res.status(400).json({ success: false, message: 'Name, email, password, and role are required.' });
     }
@@ -81,6 +95,7 @@ export const createUser = async (req, res) => {
       email,
       password,
       role,
+      permissions: Array.isArray(permissions) ? permissions : undefined,
       department: department || (role === 'teacher' ? 'Computer Science & Engineering' : role === 'superadmin' ? 'Administration' : 'General'),
       subject: subject || (role === 'teacher' ? 'Computer Science' : ''),
       gradeLevel: gradeLevel || '3rd Year',
@@ -114,6 +129,10 @@ export const updateUser = async (req, res) => {
         success: false,
         message: 'Access denied: Only a Super Admin can modify Super Admin accounts or permissions.'
       });
+    }
+
+    if (updates.permissions && !Array.isArray(updates.permissions)) {
+      return res.status(400).json({ success: false, message: 'Permissions must be an array of permission IDs' });
     }
 
     const updated = await dataStore.updateUser(id, updates);

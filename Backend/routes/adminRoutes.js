@@ -2,6 +2,8 @@
 import express from 'express';
 import {
   getAdminDashboard,
+  getAdminAnalytics,
+  getSystemPermissions,
   getAllUsers,
   createUser,
   updateUser,
@@ -16,8 +18,7 @@ import {
   deleteEnquiry,
   uploadStudyMaterial,
   deleteStudyMaterial,
-  sendEmailBroadcast,
-  getAdminAnalytics
+  sendEmailBroadcast
 } from '../controllers/adminController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -28,6 +29,7 @@ router.use(requireRole(['admin', 'superadmin']));
 
 router.get('/dashboard', getAdminDashboard);
 router.get('/analytics', getAdminAnalytics);
+router.get('/permissions', getSystemPermissions);
 router.get('/users', getAllUsers);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);

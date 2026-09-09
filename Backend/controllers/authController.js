@@ -4,17 +4,21 @@ import { dataStore } from '../src/services/dataStore.js';
 import { sendPasswordResetEmail } from '../src/services/emailService.js';
 import { hashPassword, isBcryptHash, verifyPassword } from '../src/utils/password.js';
 
+import { getDefaultPermissions } from '../src/constants/permissions.js';
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
 const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '24h';
 
 const toPublicUser = (user) => {
   const {
-    id, name, firstName, lastName, email, role, gender, collegeName, course,
+    id, name, firstName, lastName, email, role, permissions, gender, collegeName, course,
     courseYear, mobileNo, dob, addressP, userpic, status, joinedAt, createdAt,
     updatedAt
   } = user;
   return {
-    id, name, firstName, lastName, email, role, gender, collegeName, course,
+    id, name, firstName, lastName, email, role,
+    permissions: (permissions && permissions.length > 0) ? permissions : getDefaultPermissions(role),
+    gender, collegeName, course,
     courseYear, mobileNo, dob, addressP, userpic, status, joinedAt, createdAt,
     updatedAt
   };
@@ -57,7 +61,8 @@ export const login = async (req, res) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      permissions: (user.permissions && user.permissions.length > 0) ? user.permissions : getDefaultPermissions(user.role)
     };
 
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
@@ -125,7 +130,13 @@ export const register = async (req, res) => {
     });
 
     const token = jwt.sign(
-      { id: newUser.id, name: newUser.name, email: newUser.email, role: newUser.role },
+      {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+        permissions: (newUser.permissions && newUser.permissions.length > 0) ? newUser.permissions : getDefaultPermissions(newUser.role)
+      },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRATION }
     );
