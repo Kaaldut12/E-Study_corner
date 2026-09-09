@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 
 // Import environment & database configuration
-import { PORT, ALLOWED_ORIGINS, COLLEGE_NAME, IS_PRODUCTION } from './src/config/env.js';
+import { PORT, ALLOWED_ORIGINS, COLLEGE_NAME, IS_PRODUCTION, MONGODB_URI } from './src/config/env.js';
 import { connectDB } from './src/config/db.js';
 
 // Import routes
