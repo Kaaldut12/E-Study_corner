@@ -16,4 +16,7 @@ const assignmentSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
+assignmentSchema.index({ teacherId: 1 });
+assignmentSchema.index({ subject: 1 });
+
 export default mongoose.model('Assignment', assignmentSchema);

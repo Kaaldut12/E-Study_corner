@@ -1,7 +1,10 @@
-// backend/src/index.js
+// backend/index.js
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+
+// Import environment & database configuration
+import { PORT, ALLOWED_ORIGINS, COLLEGE_NAME, IS_PRODUCTION } from './src/config/env.js';
+import { connectDB } from './src/config/db.js';
 
 // Import routes
 import authRoutes from './routes/authRoutes.js';
@@ -10,19 +13,18 @@ import teacherRoutes from './routes/teacherRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import systemRoutes from './routes/systemRoutes.js';
-import { connectDB } from './src/config/db.js';
 
-// V5 Production Security Middleware
+// Production Security Middleware & Error Handlers
 import { securityHeaders, apiRateLimiter, sanitizeInput } from './src/middleware/security.js';
+import { notFoundHandler, globalErrorHandler } from './src/middleware/errorMiddleware.js';
 
-// Load environment variables
-dotenv.config();
-
-// Connect to MongoDB
-connectDB();
+// Connect to MongoDB (single source of truth)
+connectDB().catch((err) => {
+  console.error('Fatal database startup failure:', err.message);
+  if (IS_PRODUCTION) process.exit(1);
+});
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 // ==================== Middleware ====================
 
@@ -31,26 +33,26 @@ app.use(securityHeaders);
 app.use(apiRateLimiter);
 app.use(sanitizeInput);
 
-// CORS configuration - allow explicitly configured frontend origins and Vercel deployments.
-const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
+// CORS configuration - strictly allows configured frontend origins and local dev
 app.use(cors({
   origin: (requestOrigin, callback) => {
     if (!requestOrigin) return callback(null, true);
 
-    if (allowedOrigins.includes('*') || allowedOrigins.includes(requestOrigin)) {
+    if (ALLOWED_ORIGINS.includes('*') || ALLOWED_ORIGINS.includes(requestOrigin)) {
       return callback(null, true);
     }
 
-    // Allow Vercel preview and production deployments
-    if (requestOrigin.endsWith('.vercel.app')) {
+    // Allow localhost in non-production environments
+    if (!IS_PRODUCTION && (requestOrigin.includes('localhost') || requestOrigin.includes('127.0.0.1'))) {
       return callback(null, true);
     }
 
-    return callback(new Error('Origin is not allowed by CORS'));
+    // Allow Vercel preview only if explicitly configured via env
+    if (process.env.ALLOW_VERCEL_PREVIEW === 'true' && requestOrigin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    return callback(new Error(`Origin '${requestOrigin}' is not allowed by CORS policy`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -61,7 +63,7 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
-// Request logging middleware (basic)
+// Request logging middleware
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
@@ -69,13 +71,13 @@ app.use((req, res, next) => {
 
 // ==================== Routes ====================
 
-// Root info endpoint (prevents 404 on backend root URL)
+// Root info endpoint
 app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'E-Study Corner API Gateway is active and operational.',
-    institution: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
-    version: '1.0.0',
+    institution: COLLEGE_NAME,
+    version: '2.0.0',
     timestamp: new Date().toISOString(),
     endpoints: {
       health: '/health',
@@ -94,7 +96,7 @@ app.get(['/health', '/api/health'], (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
-// API Routes - Mounted with both /api/* and root /* prefix for seamless cross-client compatibility
+// API Routes - Mounted with both /api/* and root /* prefix for backward compatibility
 app.use(['/api/public', '/public'], publicRoutes);
 app.use(['/api/auth', '/auth'], authRoutes);
 app.use(['/api/student', '/student'], studentRoutes);
@@ -103,34 +105,15 @@ app.use(['/api/admin', '/admin'], adminRoutes);
 app.use(['/api/system', '/system'], systemRoutes);
 
 // ==================== Error Handling ====================
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found',
-    path: req.path,
-  });
-});
-
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
-  });
-});
+app.use(notFoundHandler);
+app.use(globalErrorHandler);
 
 // ==================== Server Start ====================
-
-// Only start standalone HTTP server if not running in serverless environment (e.g. Vercel)
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`
 ╔══════════════════════════════════════╗
-║  E-Study Corner Backend              ║
+║  E-Study Corner Backend (V2 Arch)    ║
 ║  Server running on port ${PORT}      ║
 ║  Environment: ${process.env.NODE_ENV || 'development'}║
 ║  Timestamp: ${new Date().toISOString()}  ║

@@ -1,12 +1,10 @@
-// frontend/src/pages/Teacher/CreateCourse.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
-import { useAuth } from '../../contexts/AuthContext';
+import teacherService from '../../services/teacherService';
 
 const CreateCourse = () => {
   const navigate = useNavigate();
-  const { apiUrl } = useAuth();
   const [formData, setFormData] = useState({
     code: 'CS-401',
     title: '',
@@ -25,16 +23,7 @@ const CreateCourse = () => {
     setMessage(null);
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${apiUrl}/teacher/create-course`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-      const data = await res.json();
+      const data = await teacherService.createCourse(formData);
 
       if (data.success) {
         setMessage({ type: 'success', text: 'Course published successfully!' });
@@ -42,8 +31,8 @@ const CreateCourse = () => {
       } else {
         setMessage({ type: 'error', text: data.message });
       }
-    } catch {
-      setMessage({ type: 'error', text: 'Failed to create course. Try again.' });
+    } catch (err) {
+      setMessage({ type: 'error', text: err.parsedMessage || 'Failed to create course. Try again.' });
     } finally {
       setLoading(false);
     }

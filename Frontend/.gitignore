@@ -1,3 +1,12 @@
+# Dependencies
+node_modules/
+
+# Environment Variables
+.env
+.env.*
+.env.local
+!.env.example
+
 # Logs
 logs
 *.log
@@ -7,7 +16,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+# Build and Temp
 dist
 dist-ssr
 *.local

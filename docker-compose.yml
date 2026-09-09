@@ -25,9 +25,9 @@ services:
     environment:
       - PORT=3001
       - NODE_ENV=production
-      - MONGODB_URI=mongodb://mongodb:27017/e-study-corder
-      - JWT_SECRET=production_secret_key_estudy_2026
-      - FRONTEND_URL=http://localhost:80
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/e-study-corder}
+      - JWT_SECRET=${JWT_SECRET}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:80}
     depends_on:
       - mongodb
 

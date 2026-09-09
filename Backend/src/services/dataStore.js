@@ -1,5 +1,4 @@
 // backend/src/services/dataStore.js
-import mongoose from 'mongoose';
 import User from '../../models/User.js';
 import Course from '../../models/Course.js';
 import Lesson from '../../models/Lesson.js';
@@ -17,91 +16,41 @@ import Submission from '../../models/Submission.js';
 import SupportMessage from '../../models/SupportMessage.js';
 import Feedback from '../../models/Feedback.js';
 import TeacherQuestion from '../../models/TeacherQuestion.js';
+import Enrollment from '../../models/Enrollment.js';
 import { hashPassword, verifyPassword } from '../utils/password.js';
 import { getDefaultPermissions } from '../constants/permissions.js';
-import {
-  seedUsers,
-  seedCourses,
-  seedLessons,
-  seedQuizzes,
-  seedQuestions,
-  seedQuizAttempts,
-  seedNotes,
-  seedBookmarks,
-  seedProgress,
-  seedNotifications,
-  seedEnquiries,
-  seedStudyMaterials,
-  seedAssignments,
-  seedSubmissions,
-  seedSupportMessages,
-  seedFeedback,
-  seedTeacherQuestions
-} from '../../seed.js';
-
-// Initial Memory Store Seed Fallback
-let users = [...seedUsers];
-let courses = [...seedCourses];
-let lessons = [...seedLessons];
-let quizzes = [...seedQuizzes];
-let questions = [...seedQuestions];
-let quizAttempts = [...seedQuizAttempts];
-let notes = [...seedNotes];
-let bookmarks = [...seedBookmarks];
-let progressList = [...seedProgress];
-let notifications = [...seedNotifications];
-let enquiries = [...seedEnquiries];
-let studyMaterials = [...seedStudyMaterials];
-let assignments = [...seedAssignments];
-let submissions = [...seedSubmissions];
-let supportMessages = [...seedSupportMessages];
-let platformFeedback = [...seedFeedback];
-let teacherQuestions = [...seedTeacherQuestions];
-
-const isDBConnected = () => mongoose.connection.readyState === 1;
 
 export const dataStore = {
-  // --- USERS ---
+  // ==================== USERS ====================
   getUsers: async () => {
-    let list;
-    if (isDBConnected()) {
-      list = await User.find().lean();
-    } else {
-      list = users;
-    }
+    const list = await User.find().lean();
     return list.map(u => ({
       ...u,
       permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
     }));
   },
+
   getUserById: async (id) => {
-    let u;
-    if (isDBConnected()) {
-      u = await User.findOne({ id }).lean();
-    } else {
-      u = users.find(x => x.id === id);
-    }
+    const u = await User.findOne({ id }).lean();
     if (!u) return null;
     return {
       ...u,
       permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
     };
   },
+
   getUserByEmail: async (email) => {
-    let u;
-    if (isDBConnected()) {
-      u = await User.findOne({ email: email.toLowerCase() }).lean();
-    } else {
-      u = users.find(x => x.email.toLowerCase() === email.toLowerCase());
-    }
+    if (!email) return null;
+    const u = await User.findOne({ email: email.toLowerCase() }).lean();
     if (!u) return null;
     return {
       ...u,
       permissions: (u.permissions && u.permissions.length > 0) ? u.permissions : getDefaultPermissions(u.role)
     };
   },
+
   createUser: async (userData) => {
-    const newId = `user_${Date.now()}`;
+    const newId = userData.id || `user_${Date.now()}`;
     const userRole = userData.role || 'student';
     const permissions = (Array.isArray(userData.permissions) && userData.permissions.length > 0)
       ? userData.permissions
@@ -120,56 +69,34 @@ export const dataStore = {
       password: hashPassword(userData.password)
     };
 
-    if (isDBConnected()) {
-      const doc = await User.create(payload);
-      const resObj = doc.toObject();
-      return {
-        ...resObj,
-        permissions: (resObj.permissions && resObj.permissions.length > 0) ? resObj.permissions : permissions
-      };
-    }
+    const doc = await User.create(payload);
+    const resObj = doc.toObject ? doc.toObject() : doc;
+    return {
+      ...resObj,
+      permissions: (resObj.permissions && resObj.permissions.length > 0) ? resObj.permissions : permissions
+    };
+  },
 
-    users.push(payload);
-    return payload;
-  },
   updateUser: async (id, updates) => {
-    if (isDBConnected()) {
-      const doc = await User.findOneAndUpdate({ id }, { $set: updates }, { new: true }).lean();
-      if (!doc) return null;
-      return {
-        ...doc,
-        permissions: (doc.permissions && doc.permissions.length > 0) ? doc.permissions : getDefaultPermissions(doc.role)
-      };
-    }
-    const idx = users.findIndex(u => u.id === id);
-    if (idx !== -1) {
-      users[idx] = { ...users[idx], ...updates };
-      return users[idx];
-    }
-    return null;
+    const doc = await User.findOneAndUpdate({ id }, { $set: updates }, { new: true }).lean();
+    if (!doc) return null;
+    return {
+      ...doc,
+      permissions: (doc.permissions && doc.permissions.length > 0) ? doc.permissions : getDefaultPermissions(doc.role)
+    };
   },
+
   setResetOTP: async (email, resetCode) => {
     const expires = Date.now() + 15 * 60 * 1000;
-    if (isDBConnected()) {
-      return await User.findOneAndUpdate(
-        { email: email.toLowerCase() },
-        { $set: { resetCode, resetExpires: expires } },
-        { new: true }
-      ).lean();
-    }
-    const u = users.find(x => x.email.toLowerCase() === email.toLowerCase());
-    if (u) {
-      u.resetCode = resetCode;
-      u.resetExpires = expires;
-      return u;
-    }
-    return null;
+    return await User.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { $set: { resetCode, resetExpires: expires } },
+      { new: true }
+    ).lean();
   },
-  confirmResetOTP: async (email, resetCode, newPassword) => {
-    const user = isDBConnected()
-      ? await User.findOne({ email: email.toLowerCase() }).lean()
-      : users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
+  confirmResetOTP: async (email, resetCode, newPassword) => {
+    const user = await User.findOne({ email: email.toLowerCase() }).lean();
     if (!user) return { success: false, message: 'No account found with this email.' };
     if (!user.resetCode || user.resetCode !== resetCode) {
       return { success: false, message: 'Invalid 6-digit OTP reset code.' };
@@ -178,216 +105,153 @@ export const dataStore = {
       return { success: false, message: 'OTP code has expired. Please request a new one.' };
     }
 
-    if (isDBConnected()) {
-      await User.updateOne(
-        { email: email.toLowerCase() },
-        { $set: { password: hashPassword(newPassword), resetCode: null, resetExpires: null } }
-      );
-    } else {
-      user.password = hashPassword(newPassword);
-      user.resetCode = null;
-      user.resetExpires = null;
-    }
+    await User.updateOne(
+      { email: email.toLowerCase() },
+      { $set: { password: hashPassword(newPassword), resetCode: null, resetExpires: null } }
+    );
 
     return { success: true, message: 'Password reset successfully! You can now log in with your new password.' };
   },
-  changeUserPassword: async (id, currentPass, newPass) => {
-    const user = isDBConnected()
-      ? await User.findOne({ id }).lean()
-      : users.find(u => u.id === id);
 
+  changeUserPassword: async (id, currentPass, newPass) => {
+    const user = await User.findOne({ id }).lean();
     if (!user) return { success: false, message: 'User not found' };
     if (!verifyPassword(currentPass, user.password)) return { success: false, message: 'Current password is incorrect' };
 
-    if (isDBConnected()) {
-      await User.updateOne({ id }, { $set: { password: hashPassword(newPass) } });
-    } else {
-      user.password = hashPassword(newPass);
-    }
-
+    await User.updateOne({ id }, { $set: { password: hashPassword(newPass) } });
     return { success: true, message: 'Password updated successfully' };
   },
+
   deleteUser: async (id) => {
-    if (isDBConnected()) {
-      const res = await User.deleteOne({ id });
-      return res.deletedCount > 0;
-    }
-    const initialLen = users.length;
-    users = users.filter(u => u.id !== id);
-    return users.length < initialLen;
+    const res = await User.deleteOne({ id });
+    return res.deletedCount > 0;
   },
 
-  // --- NOTIFICATIONS ---
+  // ==================== NOTIFICATIONS ====================
   getNotifications: async () => {
-    if (isDBConnected()) return await Notification.find().sort({ createdAt: -1 }).lean();
-    return notifications;
+    return await Notification.find().sort({ createdAt: -1 }).lean();
   },
+
   createNotification: async (notiMessage) => {
     const text = typeof notiMessage === 'object' && notiMessage !== null
       ? (notiMessage.notiMessage || notiMessage.message || JSON.stringify(notiMessage))
       : String(notiMessage);
 
+    const count = await Notification.countDocuments();
     const payload = {
       id: `noti_${Date.now()}`,
-      notificationId: notifications.length + 101,
+      notificationId: count + 101,
       notiMessage: text,
       notiDt: new Date()
     };
-    if (isDBConnected()) {
-      const doc = await Notification.create(payload);
-      return doc.toObject();
-    }
-    notifications.unshift(payload);
-    return payload;
+    const doc = await Notification.create(payload);
+    return doc.toObject();
   },
+
   deleteNotification: async (id) => {
-    if (isDBConnected()) {
-      await Notification.deleteOne({ id });
-      return true;
-    }
-    notifications = notifications.filter(n => n.id !== id);
+    await Notification.deleteOne({ id });
     return true;
   },
 
-  // --- ENQUIRIES ---
+  // ==================== ENQUIRIES ====================
   getEnquiries: async () => {
-    if (isDBConnected()) return await Enquiry.find().sort({ createdAt: -1 }).lean();
-    return enquiries;
+    return await Enquiry.find().sort({ createdAt: -1 }).lean();
   },
+
   createEnquiry: async (enqData) => {
+    const count = await Enquiry.countDocuments();
     const payload = {
       id: `enq_${Date.now()}`,
-      enquiryId: enquiries.length + 1,
+      enquiryId: count + 1,
       enquiryDt: new Date(),
       ...enqData
     };
-    if (isDBConnected()) {
-      const doc = await Enquiry.create(payload);
-      return doc.toObject();
-    }
-    enquiries.unshift(payload);
-    return payload;
+    const doc = await Enquiry.create(payload);
+    return doc.toObject();
   },
+
   deleteEnquiry: async (id) => {
-    if (isDBConnected()) {
-      await Enquiry.deleteOne({ id });
-      return true;
-    }
-    enquiries = enquiries.filter(e => e.id !== id);
+    await Enquiry.deleteOne({ id });
     return true;
   },
 
-  // --- STUDY MATERIALS ---
+  // ==================== STUDY MATERIALS ====================
   getStudyMaterials: async () => {
-    if (isDBConnected()) return await StudyMaterial.find().sort({ createdAt: -1 }).lean();
-    return studyMaterials;
+    return await StudyMaterial.find().sort({ createdAt: -1 }).lean();
   },
+
   createStudyMaterial: async (matData) => {
+    const count = await StudyMaterial.countDocuments();
     const payload = {
       id: `mat_${Date.now()}`,
-      materialId: studyMaterials.length + 1,
+      materialId: count + 1,
       uploadDt: new Date(),
       fileUrl: matData.fileUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
       ...matData
     };
-    if (isDBConnected()) {
-      const doc = await StudyMaterial.create(payload);
-      return doc.toObject();
-    }
-    studyMaterials.unshift(payload);
-    return payload;
+    const doc = await StudyMaterial.create(payload);
+    return doc.toObject();
   },
+
   deleteStudyMaterial: async (id) => {
-    if (isDBConnected()) {
-      await StudyMaterial.deleteOne({ id });
-      return true;
-    }
-    studyMaterials = studyMaterials.filter(m => m.id !== id);
+    await StudyMaterial.deleteOne({ id });
     return true;
   },
 
-  // --- ASSIGNMENTS ---
+  // ==================== ASSIGNMENTS ====================
   getAssignments: async () => {
-    if (isDBConnected()) return await Assignment.find().sort({ createdAt: -1 }).lean();
-    return assignments;
+    return await Assignment.find().sort({ createdAt: -1 }).lean();
   },
+
   getAssignmentById: async (id) => {
-    if (isDBConnected()) return await Assignment.findOne({ id }).lean();
-    return assignments.find(a => a.id === id);
+    return await Assignment.findOne({ id }).lean();
   },
+
   createAssignment: async (asgData) => {
     const payload = {
-      id: `asg_${Date.now()}`,
+      id: asgData.id || `asg_${Date.now()}`,
       createdAt: new Date(),
       ...asgData
     };
-    if (isDBConnected()) {
-      const doc = await Assignment.create(payload);
-      return doc.toObject();
-    }
-    assignments.push(payload);
-    return payload;
+    const doc = await Assignment.create(payload);
+    return doc.toObject();
   },
+
   deleteAssignment: async (id) => {
-    if (isDBConnected()) {
-      await Assignment.deleteOne({ id });
-      await Submission.deleteMany({ assignmentId: id });
-      return true;
-    }
-    assignments = assignments.filter(a => a.id !== id);
-    submissions = submissions.filter(s => s.assignmentId !== id);
+    await Assignment.deleteOne({ id });
+    await Submission.deleteMany({ assignmentId: id });
     return true;
   },
 
-  // --- SUBMISSIONS ---
+  // ==================== SUBMISSIONS ====================
   getSubmissions: async () => {
-    if (isDBConnected()) return await Submission.find().sort({ createdAt: -1 }).lean();
-    return submissions;
+    return await Submission.find().sort({ createdAt: -1 }).lean();
   },
-  getSubmissionById: async (id) => {
-    if (isDBConnected()) return await Submission.findOne({ id }).lean();
-    return submissions.find(s => s.id === id);
-  },
-  getSubmissionsForStudent: async (studentId) => {
-    if (isDBConnected()) return await Submission.find({ studentId }).lean();
-    return submissions.filter(s => s.studentId === studentId);
-  },
-  getSubmissionsForAssignment: async (assignmentId) => {
-    if (isDBConnected()) return await Submission.find({ assignmentId }).lean();
-    return submissions.filter(s => s.assignmentId === assignmentId);
-  },
-  createSubmission: async (subData) => {
-    if (isDBConnected()) {
-      const existing = await Submission.findOne({ assignmentId: subData.assignmentId, studentId: subData.studentId });
-      if (existing) {
-        return await Submission.findOneAndUpdate(
-          { _id: existing._id },
-          { $set: { ...subData, submittedAt: new Date(), status: 'submitted' } },
-          { new: true }
-        ).lean();
-      }
-      const payload = {
-        id: `sub_${Date.now()}`,
-        submittedAt: new Date(),
-        status: 'submitted',
-        grade: null,
-        feedback: '',
-        gradedAt: null,
-        gradedBy: null,
-        ...subData
-      };
-      const doc = await Submission.create(payload);
-      return doc.toObject();
-    }
 
-    const existingIdx = submissions.findIndex(s => s.assignmentId === subData.assignmentId && s.studentId === subData.studentId);
-    if (existingIdx !== -1) {
-      submissions[existingIdx] = { ...submissions[existingIdx], ...subData, submittedAt: new Date().toISOString(), status: 'submitted' };
-      return submissions[existingIdx];
+  getSubmissionById: async (id) => {
+    return await Submission.findOne({ id }).lean();
+  },
+
+  getSubmissionsForStudent: async (studentId) => {
+    return await Submission.find({ studentId }).lean();
+  },
+
+  getSubmissionsForAssignment: async (assignmentId) => {
+    return await Submission.find({ assignmentId }).lean();
+  },
+
+  createSubmission: async (subData) => {
+    const existing = await Submission.findOne({ assignmentId: subData.assignmentId, studentId: subData.studentId });
+    if (existing) {
+      return await Submission.findOneAndUpdate(
+        { _id: existing._id },
+        { $set: { ...subData, submittedAt: new Date(), status: 'submitted' } },
+        { new: true }
+      ).lean();
     }
-    const newSub = {
+    const payload = {
       id: `sub_${Date.now()}`,
-      submittedAt: new Date().toISOString(),
+      submittedAt: new Date(),
       status: 'submitted',
       grade: null,
       feedback: '',
@@ -395,34 +259,23 @@ export const dataStore = {
       gradedBy: null,
       ...subData
     };
-    submissions.push(newSub);
-    return newSub;
-  },
-  gradeSubmission: async (submissionId, grade, feedback, teacherName) => {
-    if (isDBConnected()) {
-      return await Submission.findOneAndUpdate(
-        { id: submissionId },
-        { $set: { grade: Number(grade), feedback, status: 'graded', gradedAt: new Date(), gradedBy: teacherName } },
-        { new: true }
-      ).lean();
-    }
-    const sub = submissions.find(s => s.id === submissionId);
-    if (sub) {
-      sub.grade = Number(grade);
-      sub.feedback = feedback;
-      sub.status = 'graded';
-      sub.gradedAt = new Date().toISOString();
-      sub.gradedBy = teacherName;
-      return sub;
-    }
-    return null;
+    const doc = await Submission.create(payload);
+    return doc.toObject();
   },
 
-  // --- SUPPORT MESSAGES ---
-  getSupportMessages: async () => {
-    if (isDBConnected()) return await SupportMessage.find().sort({ createdAt: -1 }).lean();
-    return supportMessages;
+  gradeSubmission: async (submissionId, grade, feedback, teacherName) => {
+    return await Submission.findOneAndUpdate(
+      { id: submissionId },
+      { $set: { grade: Number(grade), feedback, status: 'graded', gradedAt: new Date(), gradedBy: teacherName } },
+      { new: true }
+    ).lean();
   },
+
+  // ==================== SUPPORT MESSAGES ====================
+  getSupportMessages: async () => {
+    return await SupportMessage.find().sort({ createdAt: -1 }).lean();
+  },
+
   createSupportMessage: async (msgData) => {
     const payload = {
       id: `msg_${Date.now()}`,
@@ -431,210 +284,252 @@ export const dataStore = {
       adminReply: '',
       ...msgData
     };
-    if (isDBConnected()) {
-      const doc = await SupportMessage.create(payload);
-      return doc.toObject();
-    }
-    supportMessages.push(payload);
-    return payload;
-  },
-  updateSupportMessageStatus: async (id, status, adminReply) => {
-    if (isDBConnected()) {
-      return await SupportMessage.findOneAndUpdate(
-        { id },
-        { $set: { status, adminReply } },
-        { new: true }
-      ).lean();
-    }
-    const msg = supportMessages.find(m => m.id === id);
-    if (msg) {
-      msg.status = status;
-      if (adminReply !== undefined) msg.adminReply = adminReply;
-      return msg;
-    }
-    return null;
+    const doc = await SupportMessage.create(payload);
+    return doc.toObject();
   },
 
-  // --- FEEDBACK ---
-  getPlatformFeedback: async () => {
-    if (isDBConnected()) return await Feedback.find().sort({ createdAt: -1 }).lean();
-    return platformFeedback;
+  updateSupportMessageStatus: async (id, status, adminReply) => {
+    return await SupportMessage.findOneAndUpdate(
+      { id },
+      { $set: { status, adminReply } },
+      { new: true }
+    ).lean();
   },
+
+  // ==================== FEEDBACK ====================
+  getPlatformFeedback: async () => {
+    return await Feedback.find().sort({ createdAt: -1 }).lean();
+  },
+
   createPlatformFeedback: async (fbData) => {
     const payload = {
       id: `fb_${Date.now()}`,
       createdAt: new Date(),
       ...fbData
     };
-    if (isDBConnected()) {
-      const doc = await Feedback.create(payload);
-      return doc.toObject();
-    }
-    platformFeedback.push(payload);
-    return payload;
+    const doc = await Feedback.create(payload);
+    return doc.toObject();
   },
 
-  // --- COURSES ---
+  // ==================== COURSES ====================
   getCourses: async () => {
-    if (isDBConnected()) return await Course.find().lean();
-    return courses;
+    return await Course.find().lean();
   },
+
+  getCourseById: async (id) => {
+    return await Course.findOne({ id }).lean();
+  },
+
   createCourse: async (courseData) => {
     const payload = {
-      id: `course_${Date.now()}`,
+      id: courseData.id || `course_${Date.now()}`,
       createdAt: new Date(),
       status: 'active',
       ...courseData
     };
-    if (isDBConnected()) {
-      const doc = await Course.create(payload);
-      return doc.toObject();
-    }
-    courses.unshift(payload);
-    return payload;
+    const doc = await Course.create(payload);
+    return doc.toObject();
   },
 
-  // --- LESSONS ---
+  // ==================== LESSONS ====================
   getLessonsForCourse: async (courseId) => {
-    if (isDBConnected()) return await Lesson.find({ courseId }).sort({ lessonOrder: 1 }).lean();
-    return lessons.filter(l => l.courseId === courseId);
+    return await Lesson.find({ courseId }).sort({ lessonOrder: 1 }).lean();
   },
 
-  // --- QUIZZES ---
+  // ==================== QUIZZES ====================
   getQuizzes: async () => {
-    if (isDBConnected()) return await Quiz.find().lean();
-    return quizzes;
-  },
-  getQuestionsForQuiz: async (quizId) => {
-    if (isDBConnected()) return await Question.find({ quizId }).lean();
-    return questions.filter(q => q.quizId === quizId);
-  },
-  saveQuizAttempt: async (attemptData) => {
-    if (isDBConnected()) {
-      const doc = await QuizAttempt.create(attemptData);
-      return doc.toObject();
-    }
-    quizAttempts.unshift(attemptData);
-    return attemptData;
-  },
-  getQuizAttempts: async (studentId) => {
-    if (isDBConnected()) {
-      return await QuizAttempt.find({ studentId }).sort({ attemptedAt: -1 }).lean();
-    }
-    return quizAttempts.filter(a => a.studentId === studentId);
+    return await Quiz.find().lean();
   },
 
-  // --- NOTES ---
+  getQuestionsForQuiz: async (quizId) => {
+    return await Question.find({ quizId }).lean();
+  },
+
+  saveQuizAttempt: async (attemptData) => {
+    const doc = await QuizAttempt.create(attemptData);
+    return doc.toObject ? doc.toObject() : doc;
+  },
+
+  getQuizAttempts: async (studentId) => {
+    return await QuizAttempt.find({ studentId }).sort({ attemptedAt: -1 }).lean();
+  },
+
+  // ==================== NOTES ====================
   getStudentNotes: async (studentId) => {
-    if (isDBConnected()) return await Note.find({ studentId }).sort({ isPinned: -1, updatedAt: -1 }).lean();
-    return notes.filter(n => n.studentId === studentId);
+    return await Note.find({ studentId }).sort({ isPinned: -1, updatedAt: -1 }).lean();
   },
+
   createNote: async (noteData) => {
-    if (isDBConnected()) {
-      const doc = await Note.create(noteData);
-      return doc.toObject();
-    }
-    notes.unshift(noteData);
-    return noteData;
+    const doc = await Note.create(noteData);
+    return doc.toObject ? doc.toObject() : doc;
   },
+
   updateNote: async (noteId, updates) => {
-    if (isDBConnected()) {
-      return await Note.findOneAndUpdate({ id: noteId }, { $set: updates }, { new: true }).lean();
-    }
-    const idx = notes.findIndex(n => n.id === noteId);
-    if (idx !== -1) {
-      notes[idx] = { ...notes[idx], ...updates };
-      return notes[idx];
-    }
-    return null;
+    return await Note.findOneAndUpdate({ id: noteId }, { $set: updates }, { new: true }).lean();
   },
+
   deleteNote: async (noteId) => {
-    if (isDBConnected()) {
-      await Note.deleteOne({ id: noteId });
-      return true;
-    }
-    notes = notes.filter(n => n.id !== noteId);
+    await Note.deleteOne({ id: noteId });
     return true;
   },
 
-  // --- BOOKMARKS ---
+  // ==================== BOOKMARKS ====================
   getStudentBookmarks: async (studentId) => {
-    if (isDBConnected()) return await Bookmark.find({ studentId }).lean();
-    return bookmarks.filter(b => b.studentId === studentId);
+    return await Bookmark.find({ studentId }).lean();
   },
+
   toggleBookmark: async (studentId, itemType, itemId, title, url) => {
-    if (isDBConnected()) {
-      const existing = await Bookmark.findOne({ studentId, itemId });
-      if (existing) {
-        await Bookmark.deleteOne({ _id: existing._id });
-        return { action: 'removed', bookmarked: false };
-      }
-      const doc = await Bookmark.create({
-        id: `bm_${Date.now()}`,
-        studentId,
-        itemType,
-        itemId,
-        title,
-        url: url || ''
-      });
-      return { action: 'added', bookmarked: true, bookmark: doc.toObject() };
-    }
-    const existingIdx = bookmarks.findIndex(b => b.studentId === studentId && b.itemId === itemId);
-    if (existingIdx !== -1) {
-      bookmarks.splice(existingIdx, 1);
+    const existing = await Bookmark.findOne({ studentId, itemId });
+    if (existing) {
+      await Bookmark.deleteOne({ _id: existing._id });
       return { action: 'removed', bookmarked: false };
     }
-    const bm = {
+    const doc = await Bookmark.create({
       id: `bm_${Date.now()}`,
       studentId,
       itemType,
       itemId,
       title,
       url: url || ''
-    };
-    bookmarks.unshift(bm);
-    return { action: 'added', bookmarked: true, bookmark: bm };
+    });
+    return { action: 'added', bookmarked: true, bookmark: doc.toObject() };
   },
+
   deleteBookmark: async (studentId, bookmarkId) => {
-    if (isDBConnected()) {
-      await Bookmark.deleteOne({ studentId, id: bookmarkId });
-      return true;
-    }
-    bookmarks = bookmarks.filter(b => !(b.studentId === studentId && b.id === bookmarkId));
+    await Bookmark.deleteOne({ studentId, id: bookmarkId });
     return true;
   },
 
-  // --- PROGRESS ---
+  // ==================== PROGRESS ====================
   getStudentProgress: async (studentId) => {
-    if (isDBConnected()) return await Progress.find({ studentId }).lean();
-    return progressList.filter(p => p.studentId === studentId);
-  },
-  updateStudentProgress: async (studentId, courseId, updates) => {
-    if (isDBConnected()) {
-      return await Progress.findOneAndUpdate(
-        { studentId, courseId },
-        { $set: updates },
-        { new: true, upsert: true }
-      ).lean();
-    }
-    const idx = progressList.findIndex(p => p.studentId === studentId && p.courseId === courseId);
-    if (idx !== -1) {
-      progressList[idx] = { ...progressList[idx], ...updates };
-      return progressList[idx];
-    }
-    const newProg = { id: `prog_${Date.now()}`, studentId, courseId, ...updates };
-    progressList.push(newProg);
-    return newProg;
+    return await Progress.find({ studentId }).lean();
   },
 
-  // --- TEACHER QUESTIONS & DIRECT STUDENT-TEACHER Q&A ---
-  getTeachersList: async () => {
-    let list;
-    if (isDBConnected()) {
-      list = await User.find({ role: { $in: ['teacher', 'superadmin'] } }).lean();
-    } else {
-      list = users.filter(u => u.role === 'teacher' || u.role === 'superadmin');
+  updateStudentProgress: async (studentId, courseId, updates) => {
+    return await Progress.findOneAndUpdate(
+      { studentId, courseId },
+      { $set: updates },
+      { new: true, upsert: true }
+    ).lean();
+  },
+
+  // ==================== ENROLLMENT & LESSON COMPLETION ====================
+  getEnrollment: async (studentId, courseId) => {
+    return await Enrollment.findOne({ studentId, courseId }).lean();
+  },
+
+  getStudentEnrollments: async (studentId) => {
+    return await Enrollment.find({ studentId }).lean();
+  },
+
+  enrollStudentInCourse: async (studentId, studentName, courseId, courseTitle) => {
+    const existing = await Enrollment.findOne({ studentId, courseId });
+    if (existing) {
+      return existing.toObject ? existing.toObject() : existing;
     }
+
+    const payload = {
+      id: `enr_${Date.now()}`,
+      studentId,
+      studentName: studentName || 'Student',
+      courseId,
+      courseTitle: courseTitle || '',
+      enrolledAt: new Date(),
+      status: 'enrolled',
+      progressPercentage: 0,
+      completedLessons: []
+    };
+
+    const doc = await Enrollment.create(payload);
+
+    // Increment enrolledCount on Course
+    await Course.updateOne({ id: courseId }, { $inc: { enrolledCount: 1 } });
+
+    // Ensure Progress record exists
+    await Progress.findOneAndUpdate(
+      { studentId, courseId },
+      {
+        $setOnInsert: {
+          id: `prog_${Date.now()}`,
+          studentId,
+          studentName: studentName || 'Student',
+          courseId,
+          courseTitle: courseTitle || '',
+          completedLessons: [],
+          percentage: 0
+        }
+      },
+      { upsert: true }
+    );
+
+    return doc.toObject ? doc.toObject() : doc;
+  },
+
+  completeStudentLesson: async (studentId, studentName, courseId, lessonId) => {
+    // 1. Fetch total lessons in this course
+    const totalLessons = await Lesson.countDocuments({ courseId });
+    const totalCount = totalLessons > 0 ? totalLessons : 1;
+
+    // 2. Find or create enrollment
+    let enrollment = await Enrollment.findOne({ studentId, courseId });
+    if (!enrollment) {
+      const course = await Course.findOne({ id: courseId }).lean();
+      enrollment = await Enrollment.create({
+        id: `enr_${Date.now()}`,
+        studentId,
+        studentName: studentName || 'Student',
+        courseId,
+        courseTitle: course ? course.title : '',
+        enrolledAt: new Date(),
+        status: 'enrolled',
+        progressPercentage: 0,
+        completedLessons: []
+      });
+      await Course.updateOne({ id: courseId }, { $inc: { enrolledCount: 1 } });
+    }
+
+    // 3. Add lessonId if not already completed
+    const completedSet = new Set(enrollment.completedLessons || []);
+    completedSet.add(lessonId);
+    const completedArray = Array.from(completedSet);
+
+    // 4. Calculate real percentage
+    const progressPercentage = Math.min(100, Math.round((completedArray.length / totalCount) * 100));
+    const isFinished = progressPercentage >= 100;
+
+    enrollment.completedLessons = completedArray;
+    enrollment.progressPercentage = progressPercentage;
+    if (isFinished) {
+      enrollment.status = 'completed';
+      enrollment.completedAt = new Date();
+    }
+    await enrollment.save();
+
+    // 5. Update Progress record synchronously
+    await Progress.findOneAndUpdate(
+      { studentId, courseId },
+      {
+        $set: {
+          completedLessons: completedArray,
+          percentage: progressPercentage,
+          lastActiveAt: new Date()
+        },
+        $inc: { totalStudyMinutes: 20 }
+      },
+      { upsert: true, new: true }
+    );
+
+    return {
+      success: true,
+      completedLessons: completedArray,
+      progressPercentage,
+      isFinished
+    };
+  },
+
+  // ==================== TEACHER QUESTIONS & DOUBTS ====================
+  getTeachersList: async () => {
+    const list = await User.find({ role: { $in: ['teacher', 'superadmin'] } }).lean();
     return list.map(t => ({
       id: t.id,
       name: t.name,
@@ -644,119 +539,83 @@ export const dataStore = {
       userpic: t.userpic || 'default.jpg'
     }));
   },
+
   getTeacherQuestionsForStudent: async (studentId) => {
-    if (isDBConnected()) {
-      return await TeacherQuestion.find({ studentId }).sort({ createdAt: -1 }).lean();
-    }
-    return teacherQuestions.filter(q => q.studentId === studentId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return await TeacherQuestion.find({ studentId }).sort({ createdAt: -1 }).lean();
   },
+
   getTeacherQuestionsForTeacher: async (teacherId) => {
-    if (isDBConnected()) {
-      return await TeacherQuestion.find({ teacherId }).sort({ createdAt: -1 }).lean();
-    }
-    return teacherQuestions.filter(q => q.teacherId === teacherId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return await TeacherQuestion.find({ teacherId }).sort({ createdAt: -1 }).lean();
   },
+
   createTeacherQuestion: async (data) => {
-    const newId = `tq_${Date.now()}`;
     const payload = {
-      id: newId,
+      id: `tq_${Date.now()}`,
       status: 'pending',
       teacherReply: '',
       repliedAt: null,
       createdAt: new Date(),
       ...data
     };
-    if (isDBConnected()) {
-      const doc = await TeacherQuestion.create(payload);
-      return doc.toObject();
-    }
-    teacherQuestions.unshift(payload);
-    return payload;
+    const doc = await TeacherQuestion.create(payload);
+    return doc.toObject ? doc.toObject() : doc;
   },
+
   replyTeacherQuestion: async (id, replyText, teacherId) => {
     const updates = {
       teacherReply: replyText,
       status: 'answered',
       repliedAt: new Date()
     };
-    if (isDBConnected()) {
-      return await TeacherQuestion.findOneAndUpdate(
-        { id, ...(teacherId ? { teacherId } : {}) },
-        { $set: updates },
-        { new: true }
-      ).lean();
-    }
-    const idx = teacherQuestions.findIndex(q => q.id === id && (!teacherId || q.teacherId === teacherId));
-    if (idx !== -1) {
-      teacherQuestions[idx] = { ...teacherQuestions[idx], ...updates };
-      return teacherQuestions[idx];
-    }
-    return null;
+    return await TeacherQuestion.findOneAndUpdate(
+      { id, ...(teacherId ? { teacherId } : {}) },
+      { $set: updates },
+      { new: true }
+    ).lean();
   },
+
   adminReplyTeacherQuestion: async (id, replyText, adminName = 'Platform Administrator') => {
     const updates = {
       teacherReply: `[Admin Resolution - ${adminName}]: ${replyText}`,
       status: 'answered',
       repliedAt: new Date()
     };
-    if (isDBConnected()) {
-      return await TeacherQuestion.findOneAndUpdate(
-        { id },
-        { $set: updates },
-        { new: true }
-      ).lean();
-    }
-    const idx = teacherQuestions.findIndex(q => q.id === id);
-    if (idx !== -1) {
-      teacherQuestions[idx] = { ...teacherQuestions[idx], ...updates };
-      return teacherQuestions[idx];
-    }
-    return null;
+    return await TeacherQuestion.findOneAndUpdate(
+      { id },
+      { $set: updates },
+      { new: true }
+    ).lean();
   },
+
   getAllTeacherQuestions: async () => {
-    if (isDBConnected()) {
-      return await TeacherQuestion.find().sort({ createdAt: -1 }).lean();
-    }
-    return teacherQuestions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return await TeacherQuestion.find().sort({ createdAt: -1 }).lean();
   },
+
   getAllQuizAttempts: async () => {
-    if (isDBConnected()) {
-      return await QuizAttempt.find().sort({ attemptedAt: -1 }).lean();
-    }
-    return quizAttempts;
+    return await QuizAttempt.find().sort({ attemptedAt: -1 }).lean();
   },
+
   getAllQuestions: async () => {
-    if (isDBConnected()) {
-      return await Question.find().lean();
-    }
-    return questions;
+    return await Question.find().lean();
   },
+
   getAllLessons: async () => {
-    if (isDBConnected()) {
-      return await Lesson.find().lean();
-    }
-    return lessons;
+    return await Lesson.find().lean();
   },
+
   getAllNotes: async () => {
-    if (isDBConnected()) {
-      return await Note.find().lean();
-    }
-    return notes;
+    return await Note.find().lean();
   },
+
   getAllBookmarks: async () => {
-    if (isDBConnected()) {
-      return await Bookmark.find().lean();
-    }
-    return bookmarks;
+    return await Bookmark.find().lean();
   },
+
   getAllProgress: async () => {
-    if (isDBConnected()) {
-      return await Progress.find().lean();
-    }
-    return progressList;
+    return await Progress.find().lean();
   },
+
   toggleUserStatus: async (id, status) => {
     return await dataStore.updateUser(id, { status });
   }
 };
-

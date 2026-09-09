@@ -14,4 +14,6 @@ const lessonSchema = new mongoose.Schema({
   isFreePreview: { type: Boolean, default: true }
 }, { timestamps: true });
 
+lessonSchema.index({ courseId: 1, lessonOrder: 1 });
+
 export default mongoose.model('Lesson', lessonSchema);

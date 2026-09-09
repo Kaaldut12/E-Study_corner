@@ -8,7 +8,7 @@ on:
 
 jobs:
   backend-test-and-build:
-    name: Backend Lint & Security Audit
+    name: Backend Lint & Entrypoint Verification
     runs-on: ubuntu-latest
 
     steps:
@@ -27,13 +27,15 @@ jobs:
           cd Backend
           npm ci
 
-      - name: Verify Backend Entrypoint
+      - name: Verify Backend Entrypoint & Seed Scripts
         run: |
           cd Backend
           node --check index.js
+          node --check seed.js
+          node --check src/services/dataStore.js
 
   frontend-test-and-build:
-    name: Frontend Production Build Verification
+    name: Frontend Lint & Production Build Verification
     runs-on: ubuntu-latest
 
     steps:
@@ -51,6 +53,11 @@ jobs:
         run: |
           cd Frontend
           npm ci
+
+      - name: Run Frontend Linting
+        run: |
+          cd Frontend
+          npm run lint
 
       - name: Build Production Frontend Assets
         run: |

@@ -23,31 +23,30 @@ const StudentQuestions = () => {
   const [assignmentTitle, setAssignmentTitle] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  // Load questions and teachers
-  const fetchData = async () => {
-    try {
-      const [qRes, tRes] = await Promise.all([
-        api.get('/student/questions'),
-        api.get('/student/teachers')
-      ]);
-
-      if (qRes.data.success) {
-        setQuestions(qRes.data.questions || []);
-      }
-      if (tRes.data.success) {
-        setTeachers(tRes.data.teachers || []);
-        if (tRes.data.teachers.length > 0 && !selectedTeacherId) {
-          setSelectedTeacherId(tRes.data.teachers[0].id);
-        }
-      }
-    } catch (err) {
-      console.warn('Error fetching questions:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [qRes, tRes] = await Promise.all([
+          api.get('/student/questions'),
+          api.get('/student/teachers')
+        ]);
+
+        if (qRes.data.success) {
+          setQuestions(qRes.data.questions || []);
+        }
+        if (tRes.data.success) {
+          setTeachers(tRes.data.teachers || []);
+          if (tRes.data.teachers.length > 0) {
+            setSelectedTeacherId(prev => prev || tRes.data.teachers[0].id);
+          }
+        }
+      } catch (err) {
+        console.warn('Error fetching questions:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
 

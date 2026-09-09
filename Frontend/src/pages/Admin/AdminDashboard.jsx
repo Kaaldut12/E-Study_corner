@@ -6,7 +6,7 @@ import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 
 const AdminDashboard = () => {
-  const { user, apiUrl } = useAuth();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionSuccess, setActionSuccess] = useState('');
@@ -147,7 +147,7 @@ const AdminDashboard = () => {
         showToast('Database collections synchronized & audited successfully!');
         fetchAdminData();
       }
-    } catch (err) {
+    } catch {
       showToast('Database re-sync failed', true);
     } finally {
       setResyncing(false);

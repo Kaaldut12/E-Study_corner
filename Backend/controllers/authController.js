@@ -5,9 +5,7 @@ import { sendPasswordResetEmail } from '../src/services/emailService.js';
 import { hashPassword, isBcryptHash, verifyPassword } from '../src/utils/password.js';
 
 import { getDefaultPermissions } from '../src/constants/permissions.js';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
-const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '24h';
+import { JWT_SECRET, JWT_EXPIRATION } from '../src/config/env.js';
 
 const toPublicUser = (user) => {
   const {

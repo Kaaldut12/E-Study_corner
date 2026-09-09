@@ -5,7 +5,7 @@ import SidebarLayout from '../../components/common/SidebarLayout';
 import { useAuth } from '../../contexts/AuthContext';
 
 const PlatformAnalytics = () => {
-  const { apiUrl, user } = useAuth();
+  const { apiUrl } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview'); // overview, academics, doubts, exams, helpdesk

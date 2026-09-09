@@ -132,7 +132,7 @@ export const deleteAssignment = async (req, res) => {
 
 export const getSubmissionsForAssignment = async (req, res) => {
   try {
-    const { assignmentId } = req.params;
+    const assignmentId = req.params.assignmentId || req.params.id;
     const assignment = await dataStore.getAssignmentById(assignmentId);
     if (!assignment) {
       return res.status(404).json({ success: false, message: 'Assignment not found.' });
@@ -153,7 +153,8 @@ export const getSubmissionsForAssignment = async (req, res) => {
 export const gradeSubmission = async (req, res) => {
   try {
     const teacherName = req.user.name;
-    const { submissionId, grade, feedback } = req.body;
+    const submissionId = req.params.id || req.body.submissionId;
+    const { grade, feedback } = req.body;
 
     if (!submissionId || grade === undefined || grade === '') {
       return res.status(400).json({ success: false, message: 'Submission ID and Grade score are required.' });

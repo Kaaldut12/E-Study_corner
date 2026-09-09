@@ -19,4 +19,8 @@ const courseSchema = new mongoose.Schema({
   status: { type: String, enum: ['active', 'draft', 'archived'], default: 'active' }
 }, { timestamps: true });
 
+courseSchema.index({ code: 1 });
+courseSchema.index({ teacherId: 1 });
+courseSchema.index({ subject: 1 });
+
 export default mongoose.model('Course', courseSchema);

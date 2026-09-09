@@ -71,7 +71,8 @@ export const submitAssignment = async (req, res) => {
   try {
     const studentId = req.user.id;
     const studentName = req.user.name;
-    const { assignmentId, submissionText, attachmentUrl, fileName, fileSize } = req.body;
+    const assignmentId = req.params.id || req.body.assignmentId;
+    const { submissionText, attachmentUrl, fileName, fileSize } = req.body;
 
     if (!assignmentId) {
       return res.status(400).json({ success: false, message: 'Assignment ID is required.' });
@@ -225,19 +226,27 @@ export const changePassword = async (req, res) => {
 
 // ==================== V1 FOUNDATION EXTENSIONS ====================
 
-// --- COURSES ---
+// --- COURSES & ENROLLMENT ---
 export const getStudentCourses = async (req, res) => {
   try {
     const studentId = req.user.id;
     const allCourses = await dataStore.getCourses();
     const userProgress = await dataStore.getStudentProgress(studentId);
+    const enrollments = await dataStore.getStudentEnrollments(studentId);
 
     const coursesWithProgress = allCourses.map(c => {
+      const enrollment = enrollments.find(e => e.courseId === c.id);
       const prog = userProgress.find(p => p.courseId === c.id);
+      const isEnrolled = !!enrollment;
+      const completedLessons = enrollment ? (enrollment.completedLessons || []) : (prog ? (prog.completedLessons || []) : []);
+      const progressPercentage = enrollment ? enrollment.progressPercentage : (prog ? prog.percentage : 0);
+
       return {
         ...c,
-        progressPercentage: prog ? prog.percentage : 0,
-        completedLessonsCount: prog ? (prog.completedLessons ? prog.completedLessons.length : 0) : 0
+        isEnrolled,
+        enrollmentStatus: enrollment ? enrollment.status : 'not_enrolled',
+        progressPercentage,
+        completedLessonsCount: completedLessons.length
       };
     });
 
@@ -262,14 +271,74 @@ export const getCourseDetails = async (req, res) => {
     }
 
     const lessons = await dataStore.getLessonsForCourse(courseId);
+    const enrollment = await dataStore.getEnrollment(studentId, courseId);
     const userProgress = await dataStore.getStudentProgress(studentId);
     const prog = userProgress.find(p => p.courseId === courseId);
 
+    const isEnrolled = !!enrollment;
+    const completedLessons = enrollment ? (enrollment.completedLessons || []) : (prog ? (prog.completedLessons || []) : []);
+    const percentage = enrollment ? enrollment.progressPercentage : (prog ? prog.percentage : 0);
+
     return res.status(200).json({
       success: true,
-      course,
+      course: {
+        ...course,
+        isEnrolled,
+        enrollmentStatus: enrollment ? enrollment.status : 'not_enrolled'
+      },
       lessons,
-      progress: prog || { percentage: 0, completedLessons: [] }
+      isEnrolled,
+      progress: {
+        percentage,
+        completedLessons
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const enrollCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const studentId = req.user.id;
+    const studentName = req.user.name;
+
+    const course = await dataStore.getCourseById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found' });
+    }
+
+    const enrollment = await dataStore.enrollStudentInCourse(studentId, studentName, courseId, course.title);
+
+    try {
+      await dataStore.createNotification(`Welcome to ${course.title}! You are successfully enrolled.`);
+    } catch (e) {
+      console.warn('Enrollment notification warning:', e.message);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Enrolled in ${course.title} successfully!`,
+      enrollment
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const completeLesson = async (req, res) => {
+  try {
+    const { courseId, lessonId } = req.params;
+    const studentId = req.user.id;
+    const studentName = req.user.name;
+
+    const result = await dataStore.completeStudentLesson(studentId, studentName, courseId, lessonId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Lesson marked as completed!',
+      ...result
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

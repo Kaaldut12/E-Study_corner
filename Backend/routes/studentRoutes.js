@@ -11,6 +11,8 @@ import {
   changePassword,
   getStudentCourses,
   getCourseDetails,
+  enrollCourse,
+  completeLesson,
   getNotes,
   createNote,
   updateNote,
@@ -32,6 +34,11 @@ import {
   askTeacherQuestion
 } from '../controllers/studentControllers.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
+import {
+  validateSubmission,
+  validateNote,
+  validateTeacherQuestion
+} from '../src/middleware/validationMiddleware.js';
 
 const router = express.Router();
 
@@ -39,31 +46,39 @@ router.use(verifyToken);
 router.use(requireRole(['student']));
 
 router.get('/dashboard', getStudentDashboard);
+
+// Assignments (REST + Legacy)
 router.get('/assignments', getStudentAssignments);
-router.post('/submit', submitAssignment);
+router.post('/assignments/:id/submissions', validateSubmission, submitAssignment);
+router.post('/submit', validateSubmission, submitAssignment);
+
 router.get('/feedback', getStudentFeedback);
 router.post('/contact-admin', sendContactMessage);
 
 // Direct Student-Teacher Q&A & Doubts
 router.get('/teachers', getAvailableTeachers);
 router.get('/questions', getStudentQuestions);
-router.post('/questions', askTeacherQuestion);
+router.post('/questions', validateTeacherQuestion, askTeacherQuestion);
 
-// Project Report Extensions
+// Study Material & Profile
 router.get('/study-material', getStudyMaterials);
 router.put('/profile', updateProfile);
 router.post('/change-password', changePassword);
 
-// V1 Foundation Routes
+// Course Discovery, Details, Enrollment & Lesson Completion
 router.get('/courses', getStudentCourses);
 router.get('/courses/:courseId', getCourseDetails);
+router.post('/courses/:courseId/enroll', enrollCourse);
+router.post('/courses/:courseId/lessons/:lessonId/complete', completeLesson);
+
+// Personal Notes
 router.get('/notes', getNotes);
-router.post('/notes', createNote);
-router.put('/notes/:noteId', updateNote);
+router.post('/notes', validateNote, createNote);
+router.put('/notes/:noteId', validateNote, updateNote);
 router.delete('/notes/:noteId', deleteNote);
 router.get('/search', searchAll);
 
-// V2 Learning System Routes
+// Quizzes & Bookmarks
 router.get('/quizzes', getStudentQuizzes);
 router.get('/quizzes/:quizId', getQuizQuestions);
 router.post('/quizzes/submit', submitQuizAttempt);
@@ -73,12 +88,9 @@ router.delete('/bookmarks/:bookmarkId', deleteBookmark);
 router.get('/progress', getStudentProgressStats);
 router.get('/notifications', getStudentNotifications);
 
-// V3 Advanced Learning Routes
+// AI Coach & Learning Analytics
 router.post('/ai-coach', askAICoach);
 router.get('/recommendations', getAIRecommendations);
 router.get('/weak-topics', getWeakTopicAnalysis);
 
 export default router;
-
-
-
