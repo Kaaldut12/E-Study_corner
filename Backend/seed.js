@@ -103,8 +103,56 @@ export const seedProgress = [];
 export const seedNotifications = [];
 export const seedEnquiries = [];
 export const seedStudyMaterials = [];
-export const seedAssignments = [];
-export const seedSubmissions = [];
+export const seedAssignments = [
+  {
+    id: 'asg_1',
+    title: 'Data Structures & Algorithms - Binary Search Trees Implementation',
+    subject: 'Computer Science',
+    description: 'Design and implement a robust Binary Search Tree (BST) supporting insertion, deletion of nodes with two children, in-order traversal, and height calculation. Include clear time-complexity analysis.',
+    teacherId: 'user_teacher_1',
+    teacherName: process.env.SEED_TEACHER_NAME || 'Faculty Lecturer',
+    dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    totalPoints: 100,
+    resourceLink: 'https://en.wikipedia.org/wiki/Binary_search_tree',
+    attachmentUrl: '',
+    attachmentName: '',
+    createdAt: new Date()
+  },
+  {
+    id: 'asg_2',
+    title: 'Operating Systems - Process Scheduling Simulator',
+    subject: 'Computer Science',
+    description: 'Implement Round Robin (RR) and Shortest Job First (SJF) process scheduling algorithms in Python, C++, or Java. Submit your code along with average waiting time and turnaround time calculations.',
+    teacherId: 'user_teacher_1',
+    teacherName: process.env.SEED_TEACHER_NAME || 'Faculty Lecturer',
+    dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+    totalPoints: 100,
+    resourceLink: '',
+    attachmentUrl: '',
+    attachmentName: '',
+    createdAt: new Date()
+  }
+];
+
+export const seedSubmissions = [
+  {
+    id: 'sub_demo_1',
+    assignmentId: 'asg_1',
+    studentId: 'user_student_1',
+    studentName: process.env.SEED_STUDENT_NAME || 'Student Scholar',
+    submissionText: 'Implemented full BinarySearchTree class in Python with insertion, deletion, and in-order traversal return array. Handled edge case where deleted root has two children.',
+    attachmentUrl: 'https://github.com/student-demo/bst-solution',
+    fileName: 'BST_Implementation.py',
+    fileSize: '45.2 KB',
+    submittedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    status: 'submitted',
+    grade: null,
+    totalPoints: 100,
+    feedback: '',
+    gradedAt: null,
+    gradedBy: null
+  }
+];
 export const seedSupportMessages = [];
 export const seedFeedback = [];
 

@@ -66,7 +66,7 @@ export const createAssignment = async (req, res) => {
   try {
     const teacherId = req.user.id;
     const teacherName = req.user.name;
-    const { title, subject, description, dueDate, totalPoints, resourceLink } = req.body;
+    const { title, subject, description, dueDate, totalPoints, resourceLink, attachmentUrl, attachmentName } = req.body;
 
     if (!title || !subject || !description || !dueDate) {
       return res.status(400).json({
@@ -83,8 +83,17 @@ export const createAssignment = async (req, res) => {
       teacherName,
       dueDate,
       totalPoints: Number(totalPoints) || 100,
-      resourceLink: resourceLink || ''
+      resourceLink: resourceLink || '',
+      attachmentUrl: attachmentUrl || '',
+      attachmentName: attachmentName || ''
     });
+
+    // Notify students about new assignment
+    try {
+      await dataStore.createNotification(`New coursework assigned: "${title}" by ${teacherName} (${subject})`);
+    } catch (e) {
+      console.warn('Notification post warning:', e.message);
+    }
 
     return res.status(201).json({
       success: true,
@@ -134,13 +143,25 @@ export const gradeSubmission = async (req, res) => {
     const teacherName = req.user.name;
     const { submissionId, grade, feedback } = req.body;
 
-    if (!submissionId || grade === undefined) {
+    if (!submissionId || grade === undefined || grade === '') {
       return res.status(400).json({ success: false, message: 'Submission ID and Grade score are required.' });
     }
 
-    const updatedSub = await dataStore.gradeSubmission(submissionId, grade, feedback || '', teacherName);
+    const numericGrade = Number(grade);
+    if (isNaN(numericGrade) || numericGrade < 0) {
+      return res.status(400).json({ success: false, message: 'Grade score must be a valid positive number.' });
+    }
+
+    const updatedSub = await dataStore.gradeSubmission(submissionId, numericGrade, feedback || '', teacherName);
     if (!updatedSub) {
       return res.status(404).json({ success: false, message: 'Submission not found.' });
+    }
+
+    // Post notification for student's record
+    try {
+      await dataStore.createNotification(`Grade updated: ${updatedSub.studentName} scored ${numericGrade} pts with feedback from ${teacherName}`);
+    } catch (e) {
+      console.warn('Notification post warning:', e.message);
     }
 
     return res.status(200).json({

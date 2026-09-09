@@ -8,6 +8,8 @@ const submissionSchema = new mongoose.Schema({
   studentName: { type: String, required: true },
   submissionText: { type: String, default: '' },
   attachmentUrl: { type: String, default: '' },
+  fileName: { type: String, default: '' },
+  fileSize: { type: String, default: '' },
   submittedAt: { type: Date, default: Date.now },
   status: { type: String, enum: ['submitted', 'graded'], default: 'submitted' },
   grade: { type: Number, default: null },

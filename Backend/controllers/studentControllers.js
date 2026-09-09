@@ -62,7 +62,7 @@ export const submitAssignment = async (req, res) => {
   try {
     const studentId = req.user.id;
     const studentName = req.user.name;
-    const { assignmentId, submissionText, attachmentUrl } = req.body;
+    const { assignmentId, submissionText, attachmentUrl, fileName, fileSize } = req.body;
 
     if (!assignmentId) {
       return res.status(400).json({ success: false, message: 'Assignment ID is required.' });
@@ -79,8 +79,17 @@ export const submitAssignment = async (req, res) => {
       studentName,
       submissionText: submissionText || '',
       attachmentUrl: attachmentUrl || '',
+      fileName: fileName || '',
+      fileSize: fileSize || '',
       totalPoints: assignment.totalPoints || 100
     });
+
+    // Post notification for student's record / activity feed
+    try {
+      await dataStore.createNotification(`Student ${studentName} turned in coursework for: ${assignment.title}`);
+    } catch (e) {
+      console.warn('Failed to post submission notification:', e.message);
+    }
 
     return res.status(200).json({
       success: true,

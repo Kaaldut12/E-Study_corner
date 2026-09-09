@@ -98,7 +98,7 @@ const LoginForm = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="e.g. student@estudy.com"
-              className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-brand-solid focus:ring-1 focus:ring-[var(--brand-t1)]/30 transition"
+              className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-brand-solid focus:ring-1 focus:ring-(--brand-t1)/30 transition"
             />
           </div>
 
@@ -117,7 +117,7 @@ const LoginForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 pr-12 bg-slate-900/90 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-brand-solid focus:ring-1 focus:ring-[var(--brand-t1)]/30 transition"
+                className="w-full px-4 py-3 pr-12 bg-slate-900/90 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-brand-solid focus:ring-1 focus:ring-(--brand-t1)/30 transition"
               />
               <button
                 type="button"

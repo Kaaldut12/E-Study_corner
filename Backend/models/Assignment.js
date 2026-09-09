@@ -11,6 +11,8 @@ const assignmentSchema = new mongoose.Schema({
   dueDate: { type: Date, required: true },
   totalPoints: { type: Number, default: 100 },
   resourceLink: { type: String, default: '' },
+  attachmentUrl: { type: String, default: '' },
+  attachmentName: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
