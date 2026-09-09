@@ -66,6 +66,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/registration" element={<Register />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
           {/* Student Routes - Protected */}

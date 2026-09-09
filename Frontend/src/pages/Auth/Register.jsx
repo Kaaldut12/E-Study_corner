@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { register as registerRequest } from '../../services/authService';
+import PublicNavbar from '../../components/common/PublicNavbar';
+import EnquiryModal from '../../components/common/EnquiryModal';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -49,23 +51,27 @@ const Register = () => {
         setTimeout(() => {
           navigate('/login');
         }, 1500);
+      } else {
+        setErrorMsg(res.data.message || 'Registration failed. Please check your details.');
       }
     } catch (err) {
-      console.warn('Registration offline fallback:', err);
-      setSuccessMsg('Registration submitted successfully! (Local Session)');
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
+      console.warn('Registration request error:', err);
+      const serverMsg = err.response?.data?.message || err.message || 'Registration failed. Please verify your details.';
+      setErrorMsg(serverMsg);
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-slate-950 flex flex-col font-sans relative overflow-x-hidden">
       <div className="absolute top-10 left-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="w-full max-w-2xl glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative z-10 my-8">
+      {/* Top Public Navigation Bar */}
+      <PublicNavbar />
+
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10 my-4 sm:my-8">
+        <div className="w-full max-w-2xl glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative z-10">
         <div className="text-center mb-6">
           <div className="w-12 h-12 bg-linear-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2 font-black text-white text-xl">
             E
@@ -280,6 +286,9 @@ const Register = () => {
           </div>
         </form>
       </div>
+      </div>
+
+      <EnquiryModal />
     </div>
   );
 };

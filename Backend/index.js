@@ -69,18 +69,38 @@ app.use((req, res, next) => {
 
 // ==================== Routes ====================
 
+// Root info endpoint (prevents 404 on backend root URL)
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'E-Study Corner API Gateway is active and operational.',
+    institution: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+    version: '1.0.0',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth',
+      student: '/api/student',
+      teacher: '/api/teacher',
+      admin: '/api/admin',
+      public: '/api/public',
+      system: '/api/system'
+    }
+  });
+});
+
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get(['/health', '/api/health'], (req, res) => {
   res.json({ status: 'Server is running', timestamp: new Date().toISOString() });
 });
 
-// API Routes
-app.use('/api/public', publicRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/student', studentRoutes);
-app.use('/api/teacher', teacherRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/system', systemRoutes);
+// API Routes - Mounted with both /api/* and root /* prefix for seamless cross-client compatibility
+app.use(['/api/public', '/public'], publicRoutes);
+app.use(['/api/auth', '/auth'], authRoutes);
+app.use(['/api/student', '/student'], studentRoutes);
+app.use(['/api/teacher', '/teacher'], teacherRoutes);
+app.use(['/api/admin', '/admin'], adminRoutes);
+app.use(['/api/system', '/system'], systemRoutes);
 
 // ==================== Error Handling ====================
 

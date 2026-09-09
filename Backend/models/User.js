@@ -29,7 +29,9 @@ userSchema.pre('save', function (next) {
   if (this.isModified('password') && !isBcryptHash(this.password)) {
     this.password = hashPassword(this.password);
   }
-  next();
+  if (typeof next === 'function') {
+    next();
+  }
 });
 
 export default mongoose.model('User', userSchema);
