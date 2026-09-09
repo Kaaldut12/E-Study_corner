@@ -137,6 +137,7 @@ function App() {
                   <Route path="/analytics" element={<PlatformAnalytics />} />
                   <Route path="/health" element={<SystemHealth />} />
                   <Route path="/users" element={<UserManagement />} />
+                  <Route path="/students" element={<ManageStudents />} />
                   <Route path="/notifications" element={<NotificationManagement />} />
                   <Route path="/enquiries" element={<EnquiryManagement />} />
                   <Route path="/study-material" element={<UploadStudyMaterial />} />

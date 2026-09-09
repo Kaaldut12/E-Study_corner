@@ -62,14 +62,14 @@ const PublicNavbar = () => {
         
         {/* Left: Brand Identity */}
         <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-2xl bg-linear-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-black text-white text-2xl shadow-lg shadow-indigo-500/30 border border-white/20 group-hover:scale-105 transition-transform">
-            E
+          <div className="w-11 h-11 rounded-2xl overflow-hidden border border-brand/40 shadow-brand group-hover:scale-105 group-hover:rotate-2 transition-all bg-slate-900 shrink-0">
+            <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
           </div>
           <div>
-            <span className="font-extrabold text-xl tracking-tight gradient-text-indigo block leading-tight">
+            <span className="font-black text-xl tracking-tight t-brand-grad font-display block leading-tight">
               E-Study Corner
             </span>
-            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest block truncate max-w-[220px] sm:max-w-none">
+            <span className="text-[10px] font-bold t-brand uppercase tracking-widest block truncate max-w-[220px] sm:max-w-none">
               {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}
             </span>
           </div>
@@ -147,7 +147,7 @@ const PublicNavbar = () => {
               </Link>
               <Link
                 to="/register"
-                className="py-2.5 px-4 rounded-xl btn-shimmer text-white text-xs font-bold shadow-lg shadow-indigo-600/40 hover:scale-105 transition-all"
+                className="py-2.5 px-4 rounded-xl btn-premium text-white text-xs font-bold transition-all"
               >
                 Student Registration
               </Link>
@@ -165,7 +165,7 @@ const PublicNavbar = () => {
 
               <Link
                 to={getDashboardPath()}
-                className="py-2 px-3 sm:px-4 rounded-xl btn-shimmer text-white text-xs font-bold shadow-md shadow-indigo-600/30 hover:scale-105 transition-all flex items-center gap-1.5"
+                className="py-2 px-3 sm:px-4 rounded-xl btn-premium text-white text-xs font-bold transition-all flex items-center gap-1.5"
               >
                 <span>Dashboard</span>
                 <span className="text-xs">→</span>

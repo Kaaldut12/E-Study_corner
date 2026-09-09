@@ -21,6 +21,7 @@ import {
   updateTeacherQuestionItem,
   deleteTeacherQuestionItem,
   getTeacherStudents,
+  getStudentFullDetails,
   getTeacherQuestions,
   replyTeacherQuestion
 } from '../controllers/teacherController.js';
@@ -37,10 +38,11 @@ import {
 const router = express.Router();
 
 router.use(verifyToken);
-router.use(requireRole(['teacher']));
+router.use(requireRole(['teacher', 'admin', 'superadmin']));
 
 router.get('/dashboard', getTeacherDashboard);
 router.get('/students', getTeacherStudents);
+router.get('/students/:studentId/details', getStudentFullDetails);
 
 // Course Management (Supports REST POST /courses and legacy POST /create-course)
 router.get('/courses', getTeacherCourses);

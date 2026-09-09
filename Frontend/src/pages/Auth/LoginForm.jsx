@@ -50,27 +50,35 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans text-slate-100">
+    <div className="min-h-screen bg-[#070a12] flex flex-col font-sans text-slate-100 relative overflow-hidden">
+      {/* Background Ambient Lighting Blobs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-1/4 left-1/4 w-[28rem] h-[28rem] bg-indigo-600/15 rounded-full blur-[140px] animate-float-slow" />
+        <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-purple-600/15 rounded-full blur-[150px] animate-float-reverse" />
+      </div>
+
       <PublicNavbar />
 
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
-        <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10">
+        <div className="w-full max-w-md glass-panel p-7 sm:p-9 shadow-2xl space-y-6 animate-slide-up">
           {/* Header */}
-          <div className="text-center space-y-1.5">
-            <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-3 font-bold text-xl text-white shadow-md shadow-indigo-600/30">
-              E
+          <div className="text-center space-y-2">
+            <div className="w-16 h-16 rounded-2xl overflow-hidden border border-brand/40 shadow-brand ring-2 ring-white/15 mx-auto mb-3 bg-slate-900 shrink-0">
+              <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
             </div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Sign In</h1>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-display">
+              Welcome Back
+            </h1>
             <p className="text-xs text-slate-400">
               Access your coursework, learning materials, and grades
             </p>
           </div>
 
           {/* Quick Demo Fill Pills */}
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-2.5">
-            <div className="flex items-center justify-between text-[11px] text-slate-400 mb-1.5 px-1">
-              <span>Quick demo login:</span>
-              <span className="text-[10px] text-slate-500 font-mono">Password: Admin@123</span>
+          <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3 shadow-inner">
+            <div className="flex items-center justify-between text-[11px] text-slate-400 mb-2 px-1">
+              <span className="font-semibold text-slate-300">⚡ One-click Demo Login:</span>
+              <span className="text-[10px] text-slate-400 font-mono bg-slate-900 px-2 py-0.5 rounded-md border border-slate-800">Pass: Admin@123</span>
             </div>
             <div className="grid grid-cols-3 gap-1.5">
               {DEMO_ACCOUNTS.map((demo) => (
@@ -78,10 +86,10 @@ const LoginForm = () => {
                   key={demo.role}
                   type="button"
                   onClick={() => handleQuickFill(demo)}
-                  className={`py-1.5 px-2 text-xs font-semibold rounded-lg transition border text-center ${
+                  className={`py-2 px-2 text-xs font-bold rounded-xl transition-all border text-center ${
                     role === demo.role && email === demo.email
-                      ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm'
-                      : 'bg-slate-900 text-slate-300 hover:text-white border-slate-800 hover:bg-slate-850'
+                      ? 'bg-brand text-white shadow-brand ring-1 ring-white/20'
+                      : 'bg-slate-900/90 text-slate-300 hover:text-white border-slate-800 hover:bg-slate-800'
                   }`}
                 >
                   {demo.label}
@@ -91,8 +99,8 @@ const LoginForm = () => {
           </div>
 
           {(localError || error) && (
-            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
-              <span className="font-bold">⚠</span>
+            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-fade-in">
+              <span className="font-bold text-base">⚠️</span>
               <span>{localError || error}</span>
             </div>
           )}
@@ -101,16 +109,18 @@ const LoginForm = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Role Switcher */}
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">I am a</label>
-              <div className="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+              <label className="block text-xs font-bold text-slate-300 mb-1.5 uppercase tracking-wider font-display">
+                I am signing in as
+              </label>
+              <div className="grid grid-cols-3 gap-1.5 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800/80">
                 {['student', 'teacher', 'admin'].map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setRole(r)}
-                    className={`py-2 text-xs font-semibold capitalize rounded-lg transition ${
+                    className={`py-2 text-xs font-bold capitalize rounded-lg transition-all ${
                       role === r
-                        ? 'bg-indigo-600 text-white shadow'
+                        ? 'bg-brand text-white shadow-brand ring-1 ring-white/20'
                         : 'text-slate-400 hover:text-white'
                     }`}
                   >
@@ -122,7 +132,7 @@ const LoginForm = () => {
 
             {/* Email */}
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
               <input
                 type="email"
                 required
@@ -130,16 +140,16 @@ const LoginForm = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@estudy.com"
-                className="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500 transition"
+                className="w-full px-4 py-3 bg-slate-950/80 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
               />
             </div>
 
             {/* Password */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-medium text-slate-300">Password</label>
-                <Link to="/reset-password" className="text-xs text-indigo-400 hover:underline">
-                  Forgot?
+                <label className="text-xs font-semibold text-slate-300">Password</label>
+                <Link to="/reset-password" className="text-xs t-brand hover:underline font-medium">
+                  Forgot Password?
                 </Link>
               </div>
               <div className="relative">
@@ -150,7 +160,7 @@ const LoginForm = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 pr-12 bg-slate-950 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500 transition"
+                  className="w-full px-4 py-3 pr-12 bg-slate-950/80 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
                 />
                 <button
                   type="button"
@@ -166,24 +176,24 @@ const LoginForm = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-md transition disabled:opacity-50 flex items-center justify-center gap-2 pt-3 pb-3"
+              className="w-full py-3.5 px-4 btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide flex items-center justify-center gap-2 mt-2"
             >
               {isSubmitting ? (
                 <>
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Signing in...</span>
+                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Authenticating...</span>
                 </>
               ) : (
-                <span>Sign In</span>
+                <span>Sign In to Portal →</span>
               )}
             </button>
           </form>
 
           {/* Footer */}
-          <div className="text-center pt-2 border-t border-slate-800 text-xs text-slate-400">
+          <div className="text-center pt-3 border-t border-slate-800/80 text-xs text-slate-400">
             <span>Don't have an account? </span>
-            <Link to="/register" className="font-semibold text-indigo-400 hover:underline">
-              Create an account
+            <Link to="/register" className="font-bold t-brand hover:underline">
+              Create student account
             </Link>
           </div>
         </div>

@@ -24,6 +24,7 @@ import {
   triggerDatabaseResync,
   adminReplyStudentQuestion
 } from '../controllers/adminController.js';
+import { getStudentFullDetails } from '../controllers/teacherController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -35,6 +36,7 @@ router.get('/dashboard', getAdminDashboard);
 router.get('/analytics', getAdminAnalytics);
 router.get('/permissions', getSystemPermissions);
 router.get('/users', getAllUsers);
+router.get('/students/:studentId/details', getStudentFullDetails);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);
 router.route('/users/:id/status')

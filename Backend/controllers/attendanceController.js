@@ -61,3 +61,50 @@ export const getAllAttendance = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const markStudentAttendance = async (req, res) => {
+  try {
+    const { studentId, date, status, notes } = req.body;
+    const markedBy = req.user.name || req.user.role;
+
+    if (!studentId) {
+      return res.status(400).json({ success: false, message: 'Student ID is required.' });
+    }
+
+    const record = await dataStore.markStudentAttendanceOverride({
+      studentId,
+      date,
+      status: status || 'present',
+      notes,
+      markedBy
+    });
+
+    if (!record) {
+      return res.status(404).json({ success: false, message: 'Student not found.' });
+    }
+
+    const stats = await dataStore.getUserAttendanceStats(studentId);
+
+    return res.status(200).json({
+      success: true,
+      message: `Student attendance has been recorded as ${status || 'present'}.`,
+      record,
+      stats
+    });
+  } catch (error) {
+    console.error('markStudentAttendance error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getStudentAttendance = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    const stats = await dataStore.getUserAttendanceStats(studentId);
+    return res.status(200).json({ success: true, stats });
+  } catch (error) {
+    console.error('getStudentAttendance error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+

@@ -9,7 +9,7 @@ const ViewAssignments = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('all');
-  const [filterCategory, setFilterCategory] = useState('all'); // 'all' | 'homework' | 'assignment' | 'project'
+  const [filterCategory, setFilterCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const fetchAssignments = async () => {
@@ -50,22 +50,22 @@ const ViewAssignments = () => {
     switch (asg.status) {
       case 'graded':
         return (
-          <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 shadow-xs">
             <span>✓</span>
             <span>Graded: {asg.submission?.grade ?? 'Done'} / {asg.totalPoints || 100} pts</span>
           </span>
         );
       case 'submitted':
         return (
-          <span className="px-3 py-1 text-xs font-bold rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-indigo-400"></span>
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 flex items-center gap-1.5 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-indigo-400" />
             <span>Submitted (Under Review)</span>
           </span>
         );
       default:
         return (
-          <span className="px-3 py-1 text-xs font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1.5 shadow-xs">
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
             <span>Pending Submission</span>
           </span>
         );
@@ -76,19 +76,26 @@ const ViewAssignments = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 shadow-2xl">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Student Academics</span>
-            <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">Coursework & Assignments</h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Access homework given by instructors, upload your solutions, and view teacher feedback.
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
+                Student Academics
+              </span>
+              <span className="text-xs text-slate-400">· Coursework Repository</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white mt-2 font-display">
+              Coursework & Assignments
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
+              Access homework given by instructors, download problem sheets, upload your solutions, and view evaluation feedback.
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 shrink-0">
             <Link
               to="/student/feedback"
-              className="py-2.5 px-4 bg-slate-900 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-xl border border-slate-800 transition flex items-center gap-2"
+              className="py-3 px-4 btn-secondary text-slate-200 text-xs font-bold rounded-xl flex items-center gap-2"
             >
               <span>📊 View All Grades & Feedback</span>
             </Link>
@@ -97,31 +104,31 @@ const ViewAssignments = () => {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="glass-panel p-5 rounded-2xl border border-slate-800">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Awaiting Submission</span>
-            <div className="text-2xl font-black text-amber-400 mt-1">{pendingCount}</div>
-            <span className="text-[11px] text-amber-400/80 font-medium">Pending tasks to complete</span>
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl animate-slide-up delay-75">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-display">Awaiting Submission</span>
+            <div className="text-3xl font-black text-amber-400 mt-1 font-display">{pendingCount}</div>
+            <span className="text-xs text-amber-400/80 font-medium">Pending tasks to complete</span>
           </div>
 
-          <div className="glass-panel p-5 rounded-2xl border border-slate-800">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Turned In</span>
-            <div className="text-2xl font-black text-indigo-400 mt-1">{submittedCount}</div>
-            <span className="text-[11px] text-slate-500">Submitted awaiting evaluation</span>
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl animate-slide-up delay-150">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-display">Turned In</span>
+            <div className="text-3xl font-black text-indigo-400 mt-1 font-display">{submittedCount}</div>
+            <span className="text-xs text-slate-400 font-medium">Submitted awaiting review</span>
           </div>
 
-          <div className="glass-panel p-5 rounded-2xl border border-slate-800">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Evaluated & Graded</span>
-            <div className="text-2xl font-black text-emerald-400 mt-1">{gradedCount}</div>
-            <span className="text-[11px] text-slate-500">Graded with teacher feedback</span>
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl animate-slide-up delay-225">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider font-display">Evaluated & Graded</span>
+            <div className="text-3xl font-black text-emerald-400 mt-1 font-display">{gradedCount}</div>
+            <span className="text-xs text-slate-400 font-medium">Graded with teacher feedback</span>
           </div>
         </div>
 
         {/* Filters and Search */}
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
               {[
-                { id: 'all', label: `All Statuses (${assignments.length})` },
+                { id: 'all', label: `All Tasks (${assignments.length})` },
                 { id: 'pending', label: `Pending (${pendingCount})` },
                 { id: 'submitted', label: `Submitted (${submittedCount})` },
                 { id: 'graded', label: `Graded (${gradedCount})` }
@@ -129,10 +136,10 @@ const ViewAssignments = () => {
                 <button
                   key={tab.id}
                   onClick={() => setFilterStatus(tab.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap ${
+                  className={`px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap ${
                     filterStatus === tab.id
-                      ? 'bg-indigo-600 text-white shadow'
-                      : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                      ? 'bg-brand text-white shadow-brand ring-1 ring-white/20'
+                      : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
                   }`}
                 >
                   {tab.label}
@@ -140,22 +147,22 @@ const ViewAssignments = () => {
               ))}
             </div>
 
-            <div className="w-full sm:w-72">
+            <div className="w-full sm:w-80">
               <input
                 type="text"
                 placeholder="Search coursework, homework, or subjects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3.5 py-2 bg-slate-900 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                className="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
               />
             </div>
           </div>
 
           {/* Category Pills */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mr-1">Type:</span>
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mr-1 font-display">Filter Type:</span>
             {[
-              { id: 'all', label: 'All Tasks' },
+              { id: 'all', label: 'All Types' },
               { id: 'homework', label: '📚 Homework Only' },
               { id: 'assignment', label: '📝 Assignments Only' },
               { id: 'project', label: '💻 Projects & Labs' }
@@ -163,10 +170,10 @@ const ViewAssignments = () => {
               <button
                 key={cat.id}
                 onClick={() => setFilterCategory(cat.id)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold transition whitespace-nowrap border ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition whitespace-nowrap border ${
                   filterCategory === cat.id
-                    ? 'bg-purple-600 text-white border-purple-500 shadow-sm'
-                    : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                    ? 'bg-purple-600 text-white border-purple-500 shadow-md shadow-purple-600/30'
+                    : 'bg-slate-950/70 text-slate-400 border-slate-800 hover:text-white'
                 }`}
               >
                 {cat.label}
@@ -177,24 +184,25 @@ const ViewAssignments = () => {
 
         {/* Assignment Cards Grid */}
         {loading ? (
-          <div className="flex justify-center py-16">
-            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="flex flex-col items-center justify-center py-20 space-y-3">
+            <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+            <p className="text-slate-400 text-xs">Loading Coursework Assignments...</p>
           </div>
         ) : filteredAssignments.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredAssignments.map((asg) => (
               <div
                 key={asg.id}
-                className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-indigo-500/40 transition duration-200 shadow-lg"
+                className="glass-panel glass-panel-hover p-6 sm:p-7 rounded-3xl flex flex-col justify-between space-y-4"
               >
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                      <span className="px-2.5 py-0.5 text-xs font-bold rounded-lg bg-brand-subtle text-indigo-300 border border-brand">
                         {asg.subject}
                       </span>
                       {asg.category && (
-                        <span className="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/20 uppercase tracking-wider">
+                        <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/30 uppercase tracking-wider">
                           {asg.category === 'homework' ? '📚 Homework' : asg.category}
                         </span>
                       )}
@@ -202,7 +210,7 @@ const ViewAssignments = () => {
                     {getStatusBadge(asg)}
                   </div>
 
-                  <h2 className="text-base font-bold text-white leading-snug">{asg.title}</h2>
+                  <h2 className="text-base font-bold text-white leading-snug font-display">{asg.title}</h2>
                   <p className="text-xs text-slate-300 leading-relaxed line-clamp-3">{asg.description}</p>
 
                   {/* Reference Material Link or Attachment */}
@@ -212,7 +220,7 @@ const ViewAssignments = () => {
                         href={asg.resourceLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-xs text-indigo-400 hover:underline inline-flex items-center gap-1 font-medium"
+                        className="text-xs text-indigo-400 hover:underline inline-flex items-center gap-1 font-semibold"
                       >
                         <span>🔗 Instructor Reference Resource</span>
                       </a>
@@ -229,11 +237,11 @@ const ViewAssignments = () => {
                             asg.attachmentName || `${asg.title.replace(/\s+/g, '_')}_Document.pdf`
                           )
                         }
-                        className="w-full sm:w-auto py-2 px-3.5 bg-purple-600/15 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-bold transition flex items-center justify-center sm:justify-start gap-2 shadow-sm hover:scale-[1.01] cursor-pointer"
+                        className="w-full sm:w-auto py-2.5 px-4 bg-purple-600/15 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-bold transition flex items-center justify-center sm:justify-start gap-2 shadow-xs hover:scale-[1.02] cursor-pointer"
                       >
-                        <span>📥</span>
+                        <span className="text-sm animate-bounce">📥</span>
                         <span>
-                          Download {asg.category === 'homework' ? 'Homework Document' : 'Problem Sheet'} (
+                          Download {asg.category === 'homework' ? 'Homework Sheet' : 'Problem Document'} (
                           {asg.attachmentName || 'Attached File'})
                         </span>
                       </button>
@@ -243,40 +251,34 @@ const ViewAssignments = () => {
 
                 <div className="pt-3 border-t border-slate-800/80 space-y-3">
                   <div className="flex items-center justify-between text-xs text-slate-400">
-                    <span>Instructor: <strong className="text-slate-300">{asg.teacherName}</strong></span>
-                    <span>Max Points: <strong className="text-indigo-400 font-mono">{asg.totalPoints || 100} pts</strong></span>
+                    <span>Instructor: <strong className="text-slate-300 font-semibold">{asg.teacherName}</strong></span>
+                    <span>Max Points: <strong className="text-indigo-400 font-mono font-bold">{asg.totalPoints || 100} pts</strong></span>
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
-                    <span className="text-[11px] text-slate-400">
-                      Due: <strong className="text-amber-400">{new Date(asg.dueDate).toLocaleDateString()}</strong>
+                    <span className="text-xs text-slate-400">
+                      Due: <strong className="text-amber-400 font-semibold">{new Date(asg.dueDate).toLocaleDateString()}</strong>
                     </span>
 
                     <div className="flex items-center gap-2">
                       <Link
                         to={`/student/questions?teacherId=${asg.teacherId || ''}&assignmentId=${asg.id}&assignmentTitle=${encodeURIComponent(asg.title)}&subject=${encodeURIComponent(asg.subject || '')}`}
-                        className="py-2 px-3 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 rounded-xl text-xs font-semibold transition flex items-center gap-1"
+                        className="py-2.5 px-3.5 btn-secondary rounded-xl text-xs font-bold flex items-center gap-1"
                         title="Directly ask instructor a doubt regarding this coursework"
                       >
-                        <span>💬 Ask Teacher</span>
+                        <span>💬 Ask</span>
                       </Link>
 
                       <Link
                         to={`/student/submit/${asg.id}`}
-                        className={`py-2 px-4 text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5 ${
-                          asg.status === 'graded'
-                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                            : asg.status === 'submitted'
-                            ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
-                            : 'bg-linear-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white'
-                        }`}
+                        className="py-2.5 px-4 btn-premium text-white text-xs font-bold flex items-center gap-1.5"
                       >
                         {asg.status === 'graded' ? (
-                          <span>View Evaluation & Work →</span>
+                          <span>Evaluation →</span>
                         ) : asg.status === 'submitted' ? (
-                          <span>Review / Update Work →</span>
+                          <span>Review Work →</span>
                         ) : (
-                          <span>Upload & Submit Work →</span>
+                          <span>Submit Work →</span>
                         )}
                       </Link>
                     </div>
@@ -286,13 +288,13 @@ const ViewAssignments = () => {
             ))}
           </div>
         ) : (
-          <div className="glass-panel p-16 text-center text-slate-400 rounded-3xl border border-slate-800 space-y-3">
-            <div className="text-4xl">📚</div>
-            <h3 className="text-lg font-bold text-white">No assignments found</h3>
+          <div className="glass-panel p-16 text-center text-slate-400 rounded-3xl space-y-3">
+            <div className="text-5xl">📚</div>
+            <h3 className="text-lg font-bold text-white font-display">No assignments found</h3>
             <p className="text-xs text-slate-400">
               {searchQuery || filterStatus !== 'all'
-                ? 'Try clearing your search or switching to all assignments.'
-                : 'Your instructors have not assigned any coursework yet.'}
+                ? 'Try clearing your search query or switching the status filter.'
+                : 'Your instructors have not published any coursework yet.'}
             </p>
           </div>
         )}

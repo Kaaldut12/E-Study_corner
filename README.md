@@ -1,77 +1,125 @@
-# 📚 E-Study Corner (v2.1 Architecture & Stability Release)
+# 📚 E-Study Corner (v2.2 Production & Governance Release)
 
-> A High-Performance, Production-Hardened E-Learning Platform built for **National Institute of Technology & Advanced Studies** — featuring role-based access control, zero-dependency testing, centralized service layers, and multi-tier security defenses.
+> A High-Performance, Full-Stack E-Learning & Academic Governance Platform built for **National Institute of Technology & Advanced Studies** — featuring role-based access control, coursework file upload/download streaming, automated attendance tracking with faculty overrides, multi-tier leave management, universal student action governance, dynamic multi-theme glassmorphic styling, and zero-dependency integration testing.
 
 [![CI Pipeline](https://github.com/Kaaldut12/E-Study_corder/actions/workflows/ci.yml/badge.svg)](https://github.com/Kaaldut12/E-Study_corder/actions)
 ![Node Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)
 ![React Version](https://img.shields.io/badge/react-19-blue)
+![Vite Version](https://img.shields.io/badge/vite-7-purple)
 ![Express Version](https://img.shields.io/badge/express-5.x-lightgrey)
-![Tests](https://img.shields.io/badge/tests-53%20passed-success)
+![Tests](https://img.shields.io/badge/tests-53%2B%20passed-success)
 
 ---
 
-## 🏗️ Architectural Overview (v2.1)
+## 🌟 What's New in v2.2
 
-E-Study Corner v2.1 adopts an **Independent Multi-Tier Application** architecture:
-- **Root Repository**: Clean orchestration layer without nested monorepo workspace conflicts.
-- **Backend Application (`/Backend`)**: Independent Node.js / Express 5 API with its own isolated `package-lock.json`, native `node:test` runner, Mongoose database indexes, and hardened security guards.
-- **Frontend Application (`/Frontend`)**: Independent React 19 + Vite 7 SPA with centralized Axios API abstraction services, Tailwind CSS styling, dynamic theme engine, and zero direct HTTP leaks from UI components.
+1. **Coursework File Upload & Download System**:
+   - Instructors attach homework and assignment reference files (`.pdf`, `.docx`, `.zip`, `.png`, `.jpg`).
+   - Students upload completed coursework solutions with live client-side progress bars.
+   - Secure server-side streaming download pipeline (`/api/student/assignments/download/:filename` and `/api/teacher/submissions/:id/file`) with path traversal guards and MIME detection.
+
+2. **Real-Time Attendance Engine & Daily Check-In**:
+   - One-click **"Mark as Attendance"** widget on student and faculty dashboards with interactive flame streak counters (`🔥 Xd`).
+   - Real-time monthly attendance rate computation and historical calendar logs.
+   - **Faculty & Admin Attendance Overrides**: Instructors and administrators can record or update student attendance for any date (`Present`, `Absent`, `Excused`) with official administrative remarks.
+
+3. **Multi-Tier Campus Leave Management**:
+   - Students apply for academic, medical, or casual leave (`/student/leave`).
+   - Faculty members apply for official leaves (`/teacher/leave`).
+   - Dedicated review hubs with live filters (`Pending`, `Approved`, `Rejected`), search query capabilities, and custom decision remarks for Teachers and Administrators.
+
+4. **Universal Student Action Governance Hub**:
+   - Unified 4-tab Governance Console in `ManageStudents.jsx` accessible by both **Teachers** (`/teacher/students`) and **Administrators** (`/admin/students`):
+     1. 🏖️ **Leaves**: Audit and approve/reject student leave requests.
+     2. 📝 **Coursework**: Preview submissions, download solution files, and grade with numeric scores and qualitative feedback.
+     3. 📅 **Attendance**: View streaks, rates, and record manual date/status overrides.
+     4. 💬 **Doubts (Q&A)**: Review student academic queries and publish official solutions.
+   - Deep-linking from the Admin User Directory (`/admin/users`) via direct **`⚡ Manage Actions`** shortcuts.
+
+5. **Ultra-Modern UI & Layout Architecture**:
+   - **True Fixed Sidebar**: Permanently anchored on desktop (`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)]`) with `lg:pl-64` content offset and internal scrollbar, ensuring zero page-scroll displacement.
+   - **Dynamic 4-Color Theme Engine**: Real-time switching between Indigo, Emerald, Amber, and Rose with dynamic CSS variables, ambient gradient blobs, and glassmorphic cards.
+   - **Modern Typography**: Google Fonts `Outfit` (headings) and `Inter` (body and data tables).
+
+---
+
+## 🏗️ Architectural Overview
+
+E-Study Corner adopts an **Independent Multi-Tier Application** architecture:
 
 ```
 E-Study_corder/
 │
-├── Backend/                    # Standalone Backend Application
-│   ├── controllers/            # Auth, Admin, Teacher, Student controllers
+├── Backend/                    # Standalone Express 5 & Node.js Backend Application
+│   ├── controllers/            # Auth, Admin, Teacher, Student, Attendance, Leaves
 │   ├── models/                 # Mongoose schemas with high-performance indexes
+│   │   ├── User.js, Course.js, Assignment.js, Submission.js,
+│   │   ├── Attendance.js, Leave.js, TeacherQuestion.js, etc.
 │   ├── routes/                 # Express 5 route definitions with role middleware
+│   │   ├── authRoutes.js, studentRoutes.js, teacherRoutes.js,
+│   │   ├── adminRoutes.js, attendanceRoutes.js, leaveRoutes.js
 │   ├── src/
 │   │   ├── config/             # Environment (env.js) & DB connection (db.js)
-│   │   ├── constants/          # Role permissions & access matrix
-│   │   ├── middleware/         # Auth, Role guards, Rate limiter, Security headers
-│   │   ├── services/           # DataStore hybrid engine, email service
+│   │   ├── constants/          # Role permissions & access control matrix
+│   │   ├── middleware/         # Auth, Role guards, Validation, Rate limiter
+│   │   ├── services/           # DataStore hybrid engine, emailService, file storage
 │   │   └── utils/              # Bcrypt hashing, SHA-256 OTP hashing
-│   ├── test/                   # 53 Automated tests across 4 workflow suites
+│   ├── test/                   # 53+ Automated integration tests
 │   ├── index.js                # Express app entry & CORS configuration
-│   ├── package.json            # Isolated dependencies
-│   └── package-lock.json       # Clean lockfile (no zombie dependencies)
+│   └── package.json            # Isolated backend dependencies
 │
-├── Frontend/                   # Standalone Frontend Application
+├── Frontend/                   # Standalone React 19 + Vite 7 SPA
 │   ├── src/
-│   │   ├── services/           # Centralized API service layer (api.js, auth, admin, etc.)
-│   │   ├── pages/              # Role-partitioned pages (Student, Teacher, Admin, Auth)
-│   │   ├── components/         # Reusable UI widgets, Navbars, Modals
-│   │   ├── contexts/           # AuthContext & ThemeContext
-│   │   └── index.css           # Modern design system tokens & themes
-│   ├── package.json            # Isolated dependencies
-│   └── package-lock.json       # Clean lockfile
+│   │   ├── components/         # Reusable UI widgets, Navbars, SidebarLayout, Modals
+│   │   │   ├── common/         # AttendanceWidget, SidebarLayout, ErrorBoundary
+│   │   │   └── Navbar.jsx      # Sticky top-0 z-50 navigation bar with theme picker
+│   │   ├── contexts/           # AuthContext & Theme state
+│   │   ├── pages/              # Role-partitioned page components
+│   │   │   ├── Student/        # StudentDashboard, ViewAssignments, SubmitAssignment,
+│   │   │   │                   # ApplyLeave, AICoach, Quizzes, Courses, Progress
+│   │   │   ├── Teacher/        # TeacherDashboard, ManageStudents, CreateAssignment,
+│   │   │   │                   # ViewSubmissions, TeacherLeaves, TeacherQuestions
+│   │   │   ├── Admin/          # AdminDashboard, UserManagement, LeaveManagement,
+│   │   │   │                   # PlatformAnalytics, NotificationManagement, SystemHealth
+│   │   │   └── Auth/           # LoginForm, Register, ResetPassword
+│   │   ├── services/           # Centralized Axios API abstraction layer
+│   │   ├── utils/              # fileDownload.js (streaming downloader)
+│   │   └── index.css           # Modern design system tokens, animations & themes
+│   ├── package.json            # Isolated frontend dependencies
+│   └── vite.config.js          # Vite 7 build configuration
 │
-├── .github/workflows/ci.yml    # Independent CI/CD build, lint & test matrix
-├── vercel.json                 # Cloud build orchestration
+├── docs/                       # Complete project documentation repository
+│   ├── 01_Project-Overview/    # Vision, core features, roadmap
+│   ├── 02_Product-Requirements/# PRD, user stories, user roles matrix
+│   ├── 03_UI-UX/               # Design system, themes, navigation structure
+│   ├── 04_System-Architecture/ # Architecture diagrams, dataflow
+│   ├── 08_API-Documentation/   # Comprehensive REST API specifications
+│   ├── 09_Features/            # Feature deep dives (Leaves, Attendance, Governance)
+│   └── 10_Admin-Panel/         # Admin command center & user governance
+├── docker-compose.yml          # Containerized orchestration
 └── README.md                   # System documentation
 ```
 
 ---
 
-## 🔐 Security & Hardening Features
+## 🔐 Security & Hardening
 
-1. **Strict Field Whitelisting**: `updateUser` strictly whitelists allowable profile modifications, blocking role escalation and unauthorized privilege elevation.
+1. **Role-Based Access Control (RBAC)**: Enforced via `requireRole(['student', 'teacher', 'admin', 'superadmin'])` with automatic hierarchical privileges for superadmins.
 2. **Double-Hashed Passwords & OTPs**:
-   - Passwords always hashed via `bcryptjs` with auto-encryption pre-save hooks and fallback protections.
-   - 6-digit password reset OTPs are securely hashed using `SHA-256` before storage, preventing memory/database OTP inspection attacks.
-3. **Restricted CORS Policy**:
-   - Wildcard origins eliminated.
-   - Production requests are restricted strictly to configured domains (`ALLOWED_ORIGINS`) and verified project domains (`e-study-corner*.vercel.app`).
-4. **Zero Fake Numbers**: All diagnostics, overall scores, weak topics, and analytics are calculated directly from verified quiz attempts and submissions without `Math.random()` or hardcoded estimates.
-5. **Database Indexing**: High-frequency queries (student enrollments, bookmarks, quiz attempts, progress, and teacher questions) are indexed across MongoDB collections for $O(1)$/$O(\log N)$ retrieval speeds.
+   - User passwords encrypted via `bcryptjs` with auto-hashing pre-save hooks.
+   - 6-digit password reset OTPs hashed with `SHA-256` prior to database storage, preventing memory/database inspection attacks.
+3. **Whitelisted User Modifications**: `updateUser` strictly blocks unauthorized privilege elevation and role escalation.
+4. **Restricted CORS Policy**: Production requests restricted to configured origins (`ALLOWED_ORIGINS`).
+5. **Safe File Uploads & Streaming**: File uploads validate MIME types and file extensions, while downloads stream through sanitized path resolvers preventing directory traversal.
 
 ---
 
 ## 🧪 Automated Testing Suite (`node:test`)
 
-The backend includes 53 comprehensive integration tests utilizing Node's native test runner (zero external test dependencies required, sub-4 second execution time):
+The backend includes 53+ automated integration tests executing directly on Node's native test runner (zero external testing dependencies, executes in under 3 seconds):
 
 ```bash
-# Run all backend test suites
+# Run all backend test suites from repository root:
 npm run test:backend
 
 # Or from the Backend directory:
@@ -80,18 +128,19 @@ npm test
 ```
 
 ### Test Suites Included:
-- **`test/auth.test.js`** (11 tests): Student self-registration, privilege escalation prevention, duplicate checks, login authentication, invalid credential rejection, token validation, and password reset OTP workflows.
-- **`test/student.test.js`** (15 tests): Course discovery, enrollment verification, lesson completion tracking, streak calculation, quiz attempts scoring without question leaks, real weak-topic diagnostics, personal notes CRUD, and bookmark toggling.
-- **`test/teacher.test.js`** (12 tests): Teacher authorization guards, dashboard metrics, course/lesson/quiz/assignment creation, score validation (rejecting negative scores and out-of-range points), and answering academic doubts.
-- **`test/admin.test.js`** (15 tests): Admin authorization barriers, aggregate dashboard counters, platform analytics, user whitelisting, active/suspended status toggling, superadmin protection, support ticket resolution, and study material management.
+- **`test/auth.test.js`**: Registration, login, duplicate email prevention, role escalation barriers, token verification, and OTP reset flows.
+- **`test/student.test.js`**: Course discovery, enrollment verification, lesson progress tracking, streak counting, quiz evaluation without answer leaks, weak-topic diagnostics, and notes CRUD.
+- **`test/teacher.test.js`**: Authorization guards, dashboard metrics, course/lesson/quiz/assignment creation, out-of-range grade rejection, and academic doubts resolution.
+- **`test/admin.test.js`**: Platform analytics, user directory management, status toggling (active/suspended), superadmin safeguards, and helpdesk triage.
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js `>= 20.x`
-- MongoDB `>= 6.x` (or use built-in hybrid memory store for local testing)
+- **Node.js**: `>= 20.x`
+- **npm**: `>= 10.x`
+- **MongoDB**: `>= 6.x` (or built-in hybrid data store for zero-setup local testing)
 
 ### 1. Installation
 Install dependencies for both projects:
@@ -104,6 +153,7 @@ npm run install:frontend
 ```
 
 ### 2. Configure Environment Variables
+
 Create `Backend/.env`:
 ```env
 PORT=3001
@@ -122,7 +172,6 @@ VITE_API_URL=http://localhost:3001/api
 ```
 
 ### 3. Running Development Servers
-You can run services independently or via root orchestration scripts:
 ```bash
 # Start Backend dev server (http://localhost:3001)
 npm run dev:backend
@@ -131,34 +180,28 @@ npm run dev:backend
 npm run dev:frontend
 ```
 
-### 4. Database Seeder
-Seed initial courses, lessons, quizzes, assignments, and test accounts:
-```bash
-npm run seed:backend
-```
-
 ---
 
-## 🔐 Default Platform Accounts
+## 🔑 Default Platform Accounts
 
-| Role | Email | Password | Permissions & Capabilities |
+| Role | Email | Password | Primary Capabilities |
 |---|---|---|---|
-| **Super Admin** | `superadmin@estudy.com` | `SuperAdmin@123` | Master governance, role elevation, platform-wide purge |
-| **Admin** | `admin@estudy.com` | `Admin@123` | Department management, study material, ticket resolution |
-| **Teacher** | `teacher@estudy.com` | `Admin@123` | Course authoring, assignment grading, doubt resolutions |
-| **Student** | `student@estudy.com` | `Admin@123` | Course learning, quiz exams, note-taking, submissions |
+| **Super Admin** | `superadmin@estudy.com` | `SuperAdmin@123` | Platform-wide master governance, full role & permission configuration |
+| **Admin** | `admin@estudy.com` | `Admin@123` | Institutional dashboard, student action governance, leave approvals, user audits |
+| **Teacher** | `teacher@estudy.com` | `Admin@123` | Course authoring, student action console, coursework grading, leave review |
+| **Student** | `student@estudy.com` | `Admin@123` | Course learning, coursework submission & downloads, daily check-in, leave application |
 
 ---
 
 ## 🎨 Design System & Theme Engine
 
-Switch between curated themes in real-time via the top navigation bar:
-- 🟣 **Indigo** *(Default)*: Slate / Indigo / Violet modern aesthetic
-- 🟢 **Emerald**: Emerald / Teal / Cyan high-contrast palette
-- 🟠 **Amber**: Amber / Orange / Warm dark mode
-- 🌹 **Rose**: Rose / Fuchsia / Magenta vibrant dark mode
+Switch between 4 themes dynamically via the top navigation bar:
+- 🟣 **Indigo** *(Default)*: Slate / Indigo / Electric Violet modern aesthetic
+- 🟢 **Emerald**: Cybernetic Teal / Emerald / Cyan high-contrast palette
+- 🟠 **Amber**: Solar Amber / Gold / Warm dark mode
+- 🌹 **Rose**: Neon Rose / Crimson / Magenta vibrant dark mode
 
 ---
 
 ## 📄 License
-ISC License — E-Study Corner Portal
+ISC License — E-Study Corner Platform

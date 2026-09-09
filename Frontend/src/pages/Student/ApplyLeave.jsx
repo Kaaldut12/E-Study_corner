@@ -98,7 +98,7 @@ const ApplyLeave = () => {
         {/* Toast Alert */}
         {toast && (
           <div
-            className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl text-xs font-bold shadow-2xl transition-all ${
+            className={`fixed top-5 right-5 z-50 px-5 py-3.5 rounded-2xl text-xs font-bold shadow-2xl transition-all animate-slide-up ${
               toast.isError
                 ? 'bg-rose-600 text-white border border-rose-400 shadow-rose-900/40'
                 : 'bg-emerald-600 text-white border border-emerald-400 shadow-emerald-900/40'
@@ -110,32 +110,39 @@ const ApplyLeave = () => {
         )}
 
         {/* Header Banner */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Campus Records</span>
-            <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">Leave Application & Tracking</h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Submit planned absences, medical leaves, or academic exemptions for faculty and admin approval.
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
+                Campus Attendance & Leave
+              </span>
+              <span className="text-xs text-slate-400">· Official Exemption Portal</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white mt-2 font-display">
+              Leave Application & Tracking
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
+              Submit planned absences, medical leaves, or academic exemptions for faculty and administrative approval.
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Apply For Leave Form (1 col on desktop) */}
-          <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-5">
-            <div className="border-b border-slate-800 pb-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">New Request</span>
-              <h2 className="text-lg font-bold text-white">Apply for Leave</h2>
+          <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-5 shadow-2xl">
+            <div className="border-b border-slate-800/80 pb-3">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-400 font-display">New Request</span>
+              <h2 className="text-lg font-bold text-white font-display">Apply for Leave</h2>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Leave Type Selector */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Leave Category</label>
+                <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">Leave Category</label>
                 <select
                   value={leaveType}
                   onChange={(e) => setLeaveType(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-rose-500"
+                  className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
                 >
                   {LEAVE_TYPES.map((t) => (
                     <option key={t.id} value={t.id}>
@@ -148,32 +155,32 @@ const ApplyLeave = () => {
               {/* Start Date & End Date */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">From Date</label>
+                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">From Date</label>
                   <input
                     type="date"
                     required
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">To Date</label>
+                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">To Date</label>
                   <input
                     type="date"
                     required
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-rose-500"
+                    className="w-full px-3 py-2.5 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
                   />
                 </div>
               </div>
 
               {/* Duration indicator */}
               {startDate && endDate && (
-                <div className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs flex items-center justify-between">
                   <span className="text-slate-400">Total Duration:</span>
-                  <span className={`font-bold ${totalDays > 0 ? 'text-indigo-400' : 'text-rose-400'}`}>
+                  <span className={`font-black font-display ${totalDays > 0 ? 'text-indigo-400' : 'text-rose-400'}`}>
                     {totalDays > 0 ? `${totalDays} Day(s)` : 'Invalid dates'}
                   </span>
                 </div>
@@ -181,21 +188,21 @@ const ApplyLeave = () => {
 
               {/* Reason */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300">Reason for Absence</label>
+                <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">Reason for Absence</label>
                 <textarea
                   rows={4}
                   required
                   placeholder="Describe reason for leave (e.g. medical recovery, hospital appointment, family emergency)..."
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-rose-500 resize-none"
+                  className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-none transition leading-relaxed"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 bg-gradient-to-r from-rose-600 to-indigo-600 hover:from-rose-500 hover:to-indigo-500 text-white text-xs font-black rounded-xl shadow-lg shadow-rose-600/20 hover:opacity-95 transition flex items-center justify-center gap-2 disabled:opacity-50"
+                className="w-full py-3.5 btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide flex items-center justify-center gap-2 mt-2"
               >
                 {submitting ? 'Submitting...' : 'Submit Leave Request →'}
               </button>
@@ -205,19 +212,20 @@ const ApplyLeave = () => {
           {/* Leave History List (2 cols on desktop) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <h2 className="text-base font-bold text-white flex items-center gap-2 font-display">
                 <span>📋</span> My Leave Applications ({leaves.length})
               </h2>
             </div>
 
             {loading ? (
-              <div className="flex justify-center py-16">
-                <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="flex flex-col items-center justify-center py-20 space-y-3">
+                <div className="w-8 h-8 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+                <p className="text-slate-400 text-xs">Loading Leave Records...</p>
               </div>
             ) : leaves.length === 0 ? (
-              <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-2">
-                <span className="text-4xl">🏖️</span>
-                <h3 className="text-base font-bold text-white">No leave applications found</h3>
+              <div className="glass-panel p-12 rounded-3xl text-center space-y-2">
+                <span className="text-5xl">🏖️</span>
+                <h3 className="text-base font-bold text-white font-display">No leave applications found</h3>
                 <p className="text-xs text-slate-400">
                   You haven't submitted any leave requests. Fill out the form on the left whenever you need time off.
                 </p>
@@ -231,12 +239,12 @@ const ApplyLeave = () => {
                   return (
                     <div
                       key={leave.id}
-                      className="glass-panel p-5 rounded-3xl border border-slate-800 space-y-3 hover:border-slate-700 transition"
+                      className="glass-panel glass-panel-hover p-5 sm:p-6 rounded-3xl space-y-3.5"
                     >
                       {/* Header row: category + dates + status */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold uppercase tracking-wider bg-slate-900 px-2.5 py-0.5 rounded-lg border border-slate-750 text-indigo-300">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <span className="text-xs font-bold uppercase tracking-wider bg-brand-subtle px-3 py-1 rounded-xl border border-brand text-indigo-300 font-display">
                             {leave.leaveType} leave
                           </span>
                           <span className="text-xs text-slate-400">
@@ -245,7 +253,7 @@ const ApplyLeave = () => {
                         </div>
 
                         <span
-                          className={`px-3 py-1 text-xs font-bold rounded-full border inline-flex items-center gap-1.5 self-start sm:self-auto ${
+                          className={`px-3 py-1 text-xs font-bold rounded-full border inline-flex items-center gap-1.5 self-start sm:self-auto shadow-xs ${
                             isApproved
                               ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                               : isRejected
@@ -259,13 +267,13 @@ const ApplyLeave = () => {
                       </div>
 
                       {/* Reason */}
-                      <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-3 rounded-xl border border-slate-800/50">
+                      <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800/80">
                         "{leave.reason}"
                       </p>
 
                       {/* Reviewer feedback if reviewed */}
                       {leave.reviewedBy && (
-                        <div className="p-3 rounded-xl bg-indigo-950/20 border border-indigo-500/20 text-xs text-slate-300 space-y-1">
+                        <div className="p-3.5 rounded-2xl bg-indigo-950/20 border border-indigo-500/20 text-xs text-slate-300 space-y-1">
                           <div className="flex items-center justify-between text-[11px] text-indigo-400 font-bold">
                             <span>Reviewed by: {leave.reviewedBy}</span>
                             <span>{new Date(leave.reviewedAt).toLocaleDateString()}</span>

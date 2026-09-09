@@ -194,6 +194,13 @@ const AdminDashboard = () => {
 
             <div className="flex flex-wrap gap-2.5 shrink-0">
               <Link
+                to="/admin/students"
+                className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2"
+              >
+                <span>🎓</span>
+                <span>Student Actions Hub</span>
+              </Link>
+              <Link
                 to="/admin/analytics"
                 className="py-2.5 px-4 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center gap-2"
               >
@@ -242,7 +249,7 @@ const AdminDashboard = () => {
             <span className="text-[11px] font-mono text-indigo-400">Direct Execution Mode</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {/* Action 1: Broadcast */}
             <button
               onClick={() => setShowBroadcastModal(true)}
@@ -256,7 +263,37 @@ const AdminDashboard = () => {
               <p className="text-[11px] text-slate-400">Post instant announcement to student & teacher dashboards.</p>
             </button>
 
-            {/* Action 2: Resolve Support */}
+            {/* Action 2: Student Actions Hub */}
+            <Link
+              to="/admin/students"
+              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-emerald-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-emerald-400 block"
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-xl">🎓</span>
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider group-hover:underline">Manage →</span>
+              </div>
+              <h3 className="text-xs font-bold text-white group-hover:text-emerald-300 transition">Student Actions Console</h3>
+              <p className="text-[11px] text-slate-400">Grade coursework, manage student leaves, override attendance & answer doubts.</p>
+            </Link>
+
+            {/* Action 3: Leave Approvals */}
+            <Link
+              to="/admin/leaves"
+              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-purple-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-purple-400 block"
+            >
+              <div className="flex justify-between items-center">
+                <span className="text-xl">🏖️</span>
+                {(stats.pendingLeavesCount || 0) > 0 && (
+                  <span className="px-1.5 py-0.5 bg-purple-500 text-white text-[10px] font-extrabold rounded-full animate-pulse">
+                    {stats.pendingLeavesCount} PENDING
+                  </span>
+                )}
+              </div>
+              <h3 className="text-xs font-bold text-white group-hover:text-purple-300 transition">Leave Approvals</h3>
+              <p className="text-[11px] text-slate-400">Review & evaluate student & faculty leave applications campus-wide.</p>
+            </Link>
+
+            {/* Action 4: Resolve Support */}
             <button
               onClick={() => {
                 if (data?.recentSupportMessages?.length > 0) {
@@ -279,7 +316,7 @@ const AdminDashboard = () => {
               <p className="text-[11px] text-slate-400">Review pending inquiries & dispatch official solutions.</p>
             </button>
 
-            {/* Action 3: Triage Doubts */}
+            {/* Action 5: Triage Doubts */}
             <button
               onClick={() => {
                 if (data?.recentPendingQuestions?.length > 0) {
@@ -302,18 +339,18 @@ const AdminDashboard = () => {
               <p className="text-[11px] text-slate-400">Answer unanswered questions sent to course teachers.</p>
             </button>
 
-            {/* Action 4: Resync DB */}
+            {/* Action 6: Resync DB */}
             <button
               onClick={handleTriggerResync}
               disabled={resyncing}
-              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-emerald-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-emerald-400 disabled:opacity-50"
+              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-teal-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-teal-400 disabled:opacity-50"
             >
               <div className="flex justify-between items-center">
                 <span className={`text-xl ${resyncing ? 'animate-spin' : ''}`}>🔄</span>
-                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider group-hover:underline">Audit →</span>
+                <span className="text-[10px] font-bold text-teal-400 uppercase tracking-wider group-hover:underline">Audit →</span>
               </div>
-              <h3 className="text-xs font-bold text-white group-hover:text-emerald-300 transition">Database Integrity Audit</h3>
-              <p className="text-[11px] text-slate-400">Verify MongoDB Atlas connection & refresh all 17 collections.</p>
+              <h3 className="text-xs font-bold text-white group-hover:text-teal-300 transition">Database Integrity Audit</h3>
+              <p className="text-[11px] text-slate-400">Verify MongoDB Atlas connection & refresh all collections.</p>
             </button>
           </div>
         </div>

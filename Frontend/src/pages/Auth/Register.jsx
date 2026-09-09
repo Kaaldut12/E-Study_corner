@@ -64,19 +64,23 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans relative overflow-x-hidden">
-      <div className="absolute top-10 left-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen bg-[#070a12] flex flex-col font-sans relative overflow-hidden">
+      {/* Background Ambient Lighting Blobs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-1/4 left-1/4 w-[30rem] h-[30rem] bg-indigo-600/15 rounded-full blur-[140px] animate-float-slow" />
+        <div className="absolute bottom-1/4 right-1/4 w-[32rem] h-[32rem] bg-purple-600/15 rounded-full blur-[150px] animate-float-reverse" />
+      </div>
 
       {/* Top Public Navigation Bar */}
       <PublicNavbar />
 
       <div className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10 my-4 sm:my-8">
-        <div className="w-full max-w-2xl glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-2xl relative z-10">
+        <div className="w-full max-w-2xl glass-panel p-7 sm:p-10 shadow-2xl relative z-10 animate-slide-up">
         <div className="text-center mb-6">
-          <div className="w-12 h-12 bg-linear-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2 font-black text-white text-xl">
-            E
+          <div className="w-16 h-16 rounded-2xl overflow-hidden border border-brand/40 shadow-brand ring-2 ring-white/15 mx-auto mb-3 bg-slate-900 shrink-0">
+            <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Student Registration Portal</h1>
+          <h1 className="text-2xl sm:text-3xl font-black text-white font-display">Student Registration Portal</h1>
           <p className="text-xs text-slate-400 mt-1">
             {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'} · Academic Student Registration
           </p>
@@ -273,9 +277,9 @@ const Register = () => {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 px-4 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50 mt-2"
+            className="w-full py-3.5 px-4 btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide mt-3"
           >
-            {submitting ? 'Registering Student...' : 'Complete Registration'}
+            {submitting ? 'Registering Student...' : 'Complete Registration →'}
           </button>
 
           <div className="text-center pt-2">

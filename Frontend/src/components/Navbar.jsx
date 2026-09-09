@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const THEMES = [
@@ -35,19 +36,19 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   const roleBadge = {
-    student: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    teacher: 'badge-brand border',
-    admin:   'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    student: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+    teacher: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
+    admin:   'bg-amber-500/10 text-amber-300 border-amber-500/30',
     superadmin: 'bg-rose-500/15 text-rose-300 border-rose-500/30 font-bold',
   };
 
   return (
-    <header className="h-16 border-b border-slate-800/70 bg-slate-900/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 transition-all">
+    <header className="h-16 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between sticky top-0 z-50 transition-all shadow-md">
       {/* Left — Menu + Logo */}
       <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+          className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all"
           aria-label="Toggle menu"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -55,21 +56,28 @@ const Navbar = ({ toggleSidebar }) => {
           </svg>
         </button>
 
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center font-bold text-white text-sm shadow-brand transition-all">
-            E
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-brand/40 shadow-brand group-hover:scale-105 group-hover:rotate-2 transition-all bg-slate-900 shrink-0">
+            <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
           </div>
-          <span className="font-extrabold text-base tracking-tight t-brand-grad hidden sm:inline-block">
-            E-Study Corner
-          </span>
-        </div>
+          <div className="flex flex-col">
+            <span className="font-extrabold text-base tracking-tight t-brand-grad font-display leading-tight">
+              E-Study Corner
+            </span>
+            <span className="text-[10px] text-slate-400 font-medium hidden sm:inline-block">
+              Smart Technical Learning
+            </span>
+          </div>
+        </Link>
       </div>
 
-      {/* Right — Theme switcher + User */}
+      {/* Right — Theme switcher + User Profile */}
       <div className="flex items-center gap-3 sm:gap-4">
-
         {/* Theme Palette Switcher */}
-        <div className="flex items-center gap-1.5 px-2 py-1.5 bg-slate-950/80 rounded-xl border border-slate-800/80" title="Switch Theme">
+        <div
+          className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-900/90 rounded-xl border border-slate-800/90 shadow-inner"
+          title="Switch Color Theme"
+        >
           {THEMES.map((t) => (
             <button
               key={t.id}
@@ -77,10 +85,10 @@ const Navbar = ({ toggleSidebar }) => {
               title={`${t.label} theme`}
               aria-label={`${t.label} theme`}
               style={{ backgroundColor: t.hex }}
-              className={`w-4 h-4 rounded-full transition-all duration-200 ${
+              className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${
                 currentTheme === t.id
-                  ? 'ring-2 ring-white ring-offset-1 ring-offset-slate-950 scale-110'
-                  : 'opacity-50 hover:opacity-90 hover:scale-105'
+                  ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-950 scale-125 shadow-md shadow-white/20'
+                  : 'opacity-40 hover:opacity-100 hover:scale-110'
               }`}
             />
           ))}
@@ -88,23 +96,23 @@ const Navbar = ({ toggleSidebar }) => {
 
         {user && (
           <>
-            <span className={`px-2.5 py-1 text-xs font-semibold rounded-full border capitalize hidden sm:inline-block ${roleBadge[user.role] || 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
+            <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border capitalize hidden sm:inline-block shadow-xs ${roleBadge[user.role] || 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
               {user.role === 'superadmin' ? '👑 Super Admin' : user.role}
             </span>
 
-            <div className="flex items-center gap-2.5 pl-2 border-l border-slate-800">
-              <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand">
+            <div className="flex items-center gap-2.5 pl-2 border-l border-slate-800/80">
+              <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand ring-1 ring-white/20">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="hidden md:flex flex-col leading-tight">
-                <span className="text-sm font-semibold text-slate-200">{user.name}</span>
-                <span className="text-xs text-slate-500">{user.email}</span>
+                <span className="text-xs font-bold text-slate-200">{user.name}</span>
+                <span className="text-[10px] text-slate-400 truncate max-w-[140px]">{user.email}</span>
               </div>
             </div>
 
             <button
               onClick={logout}
-              className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+              className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
               title="Logout"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

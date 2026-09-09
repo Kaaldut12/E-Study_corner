@@ -14,11 +14,14 @@ export const getAdminDashboard = async (req, res) => {
     const enquiries = await dataStore.getEnquiries();
     const studyMaterials = await dataStore.getStudyMaterials();
     const teacherQuestions = await dataStore.getAllTeacherQuestions();
+    const allLeaves = await dataStore.getAllLeaves();
 
     const pendingQuestions = teacherQuestions.filter(q => q.status === 'pending');
     const pendingSubmissions = submissions.filter(s => s.status === 'pending');
     const pendingSupport = supportMessages.filter(m => m.status === 'pending');
     const suspendedUsers = users.filter(u => u.status === 'suspended');
+    const pendingLeaves = allLeaves.filter(l => l.status === 'pending');
+    const pendingStudentLeaves = allLeaves.filter(l => l.status === 'pending' && l.userRole === 'student');
 
     const stats = {
       totalUsers: users.length,
@@ -37,7 +40,10 @@ export const getAdminDashboard = async (req, res) => {
       totalEnquiries: enquiries.length,
       totalStudyMaterials: studyMaterials.length,
       totalTeacherQuestions: teacherQuestions.length,
-      pendingTeacherQuestions: pendingQuestions.length
+      pendingTeacherQuestions: pendingQuestions.length,
+      totalLeaves: allLeaves.length,
+      pendingLeavesCount: pendingLeaves.length,
+      pendingStudentLeavesCount: pendingStudentLeaves.length
     };
 
     return res.status(200).json({
@@ -47,7 +53,8 @@ export const getAdminDashboard = async (req, res) => {
       recentSupportMessages: supportMessages.slice(-5).reverse(),
       recentEnquiries: enquiries.slice(-5),
       recentPendingQuestions: pendingQuestions.slice(0, 5),
-      recentPendingSubmissions: pendingSubmissions.slice(0, 5)
+      recentPendingSubmissions: pendingSubmissions.slice(0, 5),
+      recentLeaves: allLeaves.slice(-5).reverse()
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

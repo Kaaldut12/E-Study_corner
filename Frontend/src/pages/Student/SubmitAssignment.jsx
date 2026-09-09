@@ -116,8 +116,9 @@ const SubmitAssignment = () => {
   if (loading) {
     return (
       <SidebarLayout>
-        <div className="flex justify-center py-20">
-          <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="py-24 flex flex-col items-center justify-center text-center space-y-3">
+          <div className="w-10 h-10 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+          <p className="text-slate-400 text-xs">Loading Coursework Briefing...</p>
         </div>
       </SidebarLayout>
     );
@@ -128,9 +129,9 @@ const SubmitAssignment = () => {
       <SidebarLayout>
         <div className="glass-panel p-10 rounded-3xl text-center max-w-lg mx-auto border border-slate-800 space-y-3">
           <div className="text-4xl">⚠️</div>
-          <h2 className="text-xl font-bold text-white">Assignment Not Found</h2>
+          <h2 className="text-xl font-bold text-white font-display">Assignment Not Found</h2>
           <p className="text-sm text-slate-400">The requested coursework could not be located or may have been deleted.</p>
-          <Link to="/student/assignments" className="inline-block pt-2 text-xs font-bold text-indigo-400 hover:underline">
+          <Link to="/student/assignments" className="inline-block pt-2 text-xs font-bold t-brand hover:underline">
             ← Return to All Assignments
           </Link>
         </div>
@@ -148,35 +149,35 @@ const SubmitAssignment = () => {
       <div className="max-w-3xl mx-auto space-y-6">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center gap-2 text-xs text-slate-400">
-          <Link to="/student/assignments" className="hover:text-indigo-400">Assignments</Link>
+          <Link to="/student/assignments" className="hover:text-indigo-400 transition">Assignments</Link>
           <span>/</span>
-          <span className="text-slate-200">Submit Coursework</span>
+          <span className="text-slate-200 font-semibold">Submit Coursework</span>
         </div>
 
         {/* Graded Evaluation Banner (If Graded) */}
         {isGraded && (
-          <div className="glass-panel p-6 rounded-3xl border border-emerald-500/30 bg-emerald-950/20 space-y-3 shadow-xl">
+          <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-emerald-500/30 bg-emerald-950/20 space-y-3.5 shadow-2xl animate-slide-up">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-500/20 pb-3">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🏆</span>
-                <h3 className="text-base font-extrabold text-white">Evaluation Results & Score</h3>
+                <span className="text-2xl">🏆</span>
+                <h3 className="text-base font-black text-white font-display">Evaluation Results & Score</h3>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-black text-emerald-400">
-                  {existingSub.grade} <span className="text-xs text-slate-400 font-normal">/ {maxPts} pts</span>
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl font-black text-emerald-400 font-display">
+                  {existingSub.grade} <span className="text-xs text-slate-400 font-normal font-sans">/ {maxPts} pts</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold">
+                <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-black font-display">
                   {scorePct}%
                 </span>
               </div>
             </div>
 
             {existingSub.feedback && (
-              <div className="space-y-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-300">
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-300 font-display">
                   Instructor Commentary ({existingSub.gradedBy || 'Instructor'}):
                 </span>
-                <div className="p-3.5 rounded-2xl bg-slate-900/80 border border-emerald-500/20 text-slate-200 text-xs leading-relaxed italic">
+                <div className="p-4 rounded-2xl bg-slate-900/80 border border-emerald-500/20 text-slate-200 text-xs leading-relaxed italic">
                   "{existingSub.feedback}"
                 </div>
               </div>
@@ -185,34 +186,41 @@ const SubmitAssignment = () => {
         )}
 
         {/* Assignment Briefing Header */}
-        <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-slate-800 space-y-4 shadow-lg">
+        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl space-y-4 shadow-2xl">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="px-3 py-1 text-xs font-bold rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-              {assignment.subject}
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 text-xs font-bold rounded-xl bg-brand-subtle text-indigo-300 border border-brand">
+                {assignment.subject}
+              </span>
+              {assignment.category && (
+                <span className="px-2.5 py-0.5 text-[10px] font-bold rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/30 uppercase tracking-wider">
+                  {assignment.category === 'homework' ? '📚 Homework' : assignment.category}
+                </span>
+              )}
+            </div>
             <span className="text-xs font-semibold text-slate-400">
-              Maximum Points: <strong className="text-indigo-400 font-mono">{maxPts} pts</strong>
+              Maximum Points: <strong className="text-indigo-400 font-mono font-bold">{maxPts} pts</strong>
             </span>
           </div>
 
           <div>
-            <h1 className="text-xl sm:text-2xl font-black text-white">{assignment.title}</h1>
-            <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed bg-slate-900/70 p-4 rounded-2xl border border-slate-800">
+            <h1 className="text-xl sm:text-2xl font-black text-white font-display">{assignment.title}</h1>
+            <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
               {assignment.description}
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-400 pt-2 border-t border-slate-800">
-            <span>Instructor: <strong className="text-slate-200">{assignment.teacherName}</strong></span>
+            <span>Instructor: <strong className="text-slate-200 font-semibold">{assignment.teacherName}</strong></span>
             <div className="flex items-center gap-3">
               <Link
                 to={`/student/questions?teacherId=${assignment.teacherId || ''}&assignmentId=${assignment.id}&assignmentTitle=${encodeURIComponent(assignment.title)}&subject=${encodeURIComponent(assignment.subject || '')}`}
-                className="text-indigo-400 hover:text-indigo-300 font-bold inline-flex items-center gap-1 transition"
+                className="t-brand hover:opacity-80 font-bold inline-flex items-center gap-1 transition"
               >
-                <span>💬 Ask Instructor Doubt</span>
+                <span>💬 Ask Doubt</span>
               </Link>
               <span>
-                Due Date: <strong className="text-amber-400">{new Date(assignment.dueDate).toLocaleString()}</strong>
+                Due Date: <strong className="text-amber-400 font-semibold">{new Date(assignment.dueDate).toLocaleString()}</strong>
               </span>
             </div>
           </div>
@@ -225,7 +233,7 @@ const SubmitAssignment = () => {
                   href={assignment.resourceLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-indigo-400 hover:underline inline-flex items-center gap-1 font-medium"
+                  className="text-indigo-400 hover:underline inline-flex items-center gap-1 font-semibold"
                 >
                   <span>🔗 Reference Documentation</span>
                 </a>
@@ -234,7 +242,7 @@ const SubmitAssignment = () => {
                 <button
                   type="button"
                   onClick={() => downloadFile(assignment.attachmentUrl, assignment.attachmentName || `${assignment.title}_Problem_Sheet.pdf`)}
-                  className="py-1.5 px-3 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-semibold transition inline-flex items-center gap-1.5 cursor-pointer"
+                  className="py-2 px-3.5 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-xl text-xs font-bold transition inline-flex items-center gap-1.5 cursor-pointer shadow-xs hover:scale-[1.02]"
                 >
                   <span>📥 Download Question Sheet / Homework Document</span>
                 </button>
@@ -244,28 +252,28 @@ const SubmitAssignment = () => {
         </div>
 
         {/* Submission Form */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl space-y-5">
+        <div className="glass-panel p-6 sm:p-8 rounded-3xl space-y-5 shadow-2xl">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="text-lg font-bold text-white font-display">
               {existingSub ? (isGraded ? 'Your Submitted Solution' : 'Update Your Submission') : 'Submit Your Solution'}
             </h2>
             {existingSub && !isGraded && (
-              <span className="text-[11px] font-bold text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
+              <span className="text-[11px] font-bold text-indigo-400 bg-brand-subtle px-3 py-1 rounded-full border border-brand">
                 Submitted on {new Date(existingSub.submittedAt).toLocaleDateString()}
               </span>
             )}
           </div>
 
           {successMsg && (
-            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-semibold flex items-center gap-2">
+            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-bold flex items-center gap-2 animate-fade-in">
               <span>✓</span>
               <span>{successMsg}</span>
             </div>
           )}
 
           {errorMsg && (
-            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm flex items-center gap-2">
-              <span>⚠</span>
+            <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm flex items-center gap-2 animate-fade-in">
+              <span>⚠️</span>
               <span>{errorMsg}</span>
             </div>
           )}
@@ -273,7 +281,7 @@ const SubmitAssignment = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Written Answer or Code */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 font-display">
                 Written Response / Source Code Implementation / Explanation
               </label>
               <textarea
@@ -281,13 +289,13 @@ const SubmitAssignment = () => {
                 value={submissionText}
                 onChange={(e) => setSubmissionText(e.target.value)}
                 placeholder="Type your solution, algorithm implementation, code snippets, or written findings here..."
-                className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-500 text-xs font-mono focus:outline-none focus:border-indigo-500 leading-relaxed transition"
+                className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-2xl text-slate-100 placeholder-slate-500 text-xs font-mono focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand leading-relaxed transition"
               />
             </div>
 
             {/* Document File Uploader */}
             <div className="space-y-2">
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 font-display">
                 Upload Assignment Document / Project File (PDF, DOCX, ZIP, Source Code, Images)
               </label>
 
@@ -299,7 +307,7 @@ const SubmitAssignment = () => {
                 onDragLeave={() => setIsDragOver(false)}
                 onDrop={handleDrop}
                 className={`border-2 border-dashed rounded-2xl p-6 text-center transition bg-slate-900/60 relative ${
-                  isDragOver ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-800 hover:border-indigo-500/50'
+                  isDragOver ? 'border-indigo-400 bg-indigo-500/10 scale-[1.01]' : 'border-slate-800 hover:border-indigo-500/50'
                 }`}
               >
                 <input
@@ -310,9 +318,9 @@ const SubmitAssignment = () => {
                 />
 
                 {fileName ? (
-                  <div className="flex items-center justify-between p-3.5 bg-slate-950 rounded-2xl border border-indigo-500/30 text-left">
+                  <div className="flex items-center justify-between p-3.5 bg-slate-950/80 rounded-2xl border border-indigo-500/30 text-left">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-indigo-500/20 text-indigo-400 font-black flex items-center justify-center text-xl shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-brand flex items-center justify-center text-xl text-white font-black shadow-brand shrink-0">
                         📄
                       </div>
                       <div>
@@ -330,7 +338,7 @@ const SubmitAssignment = () => {
                           onClick={() => downloadFile(attachmentUrl, fileName || 'My_Submitted_Work.pdf')}
                           className="text-xs text-indigo-400 hover:text-indigo-300 font-bold underline px-2 cursor-pointer"
                         >
-                          Download My File
+                          Download
                         </button>
                       )}
                       <button
@@ -349,7 +357,7 @@ const SubmitAssignment = () => {
                   </div>
                 ) : (
                   <div className="space-y-2 pointer-events-none">
-                    <div className="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-indigo-500/20">
+                    <div className="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-2xl flex items-center justify-center text-2xl mx-auto border border-indigo-500/20 shadow-xs">
                       📥
                     </div>
                     <div>
@@ -365,7 +373,7 @@ const SubmitAssignment = () => {
 
             {/* External Cloud Link */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 font-display">
                 Or Attach External Project URL / GitHub Repository
               </label>
               <input
@@ -373,7 +381,7 @@ const SubmitAssignment = () => {
                 value={attachmentUrl && !attachmentUrl.startsWith('data:') ? attachmentUrl : ''}
                 onChange={(e) => setAttachmentUrl(e.target.value)}
                 placeholder="https://github.com/username/project-repo or https://drive.google.com/..."
-                className="w-full px-4 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500 transition"
+                className="w-full px-4 py-3 bg-slate-900/90 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
               />
             </div>
 
@@ -381,22 +389,22 @@ const SubmitAssignment = () => {
             <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
               <Link
                 to="/student/assignments"
-                className="py-2.5 px-5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 transition"
+                className="py-3 px-5 rounded-xl btn-secondary text-xs font-bold"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={submitting}
-                className="py-2.5 px-7 bg-linear-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50 flex items-center gap-2"
+                className="py-3 px-7 btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide flex items-center gap-2"
               >
                 {submitting ? (
                   <>
-                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>Submitting Work...</span>
                   </>
                 ) : (
-                  <span>{existingSub ? 'Update & Re-Submit Assignment' : 'Turn In Assignment'}</span>
+                  <span>{existingSub ? 'Update & Re-Submit Assignment' : 'Turn In Assignment →'}</span>
                 )}
               </button>
             </div>

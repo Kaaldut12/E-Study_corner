@@ -1,5 +1,6 @@
 // frontend/src/pages/Admin/UserManagement.jsx
 import { useEffect, useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import api from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
@@ -476,6 +477,17 @@ const UserManagement = () => {
                         {/* Actions */}
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
+                            {u.role === 'student' && (
+                              <Link
+                                to={`/admin/students?studentId=${u.id}`}
+                                className="px-3 py-1.5 bg-emerald-600/15 text-emerald-300 hover:bg-emerald-600/25 border border-emerald-500/30 text-xs font-semibold rounded-lg transition flex items-center gap-1 shadow-xs"
+                                title="Manage student leaves, coursework, attendance, and doubts"
+                              >
+                                <span>⚡</span>
+                                <span>Manage Actions</span>
+                              </Link>
+                            )}
+
                             <button
                               onClick={() => openEditModal(u)}
                               className="px-3 py-1.5 bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 border border-indigo-500/20 text-xs font-semibold rounded-lg transition flex items-center gap-1"

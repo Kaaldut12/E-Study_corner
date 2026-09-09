@@ -2030,6 +2030,46 @@ export const dataStore = {
     return records;
   },
 
+  markStudentAttendanceOverride: async ({ studentId, date, status, notes, markedBy }) => {
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    const users = await dataStore.getUsers();
+    const student = users.find(u => u.id === studentId);
+    if (!student) return null;
+
+    const payload = {
+      id: `att_${crypto.randomUUID()}`,
+      userId: studentId,
+      userName: student.name || 'Student',
+      userRole: student.role || 'student',
+      date: targetDate,
+      checkInTime: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+      status: status || 'present',
+      notes: notes || `Recorded by ${markedBy || 'Teacher/Admin'}`
+    };
+
+    if (isDBConnected()) {
+      try {
+        const doc = await Attendance.findOneAndUpdate(
+          { userId: studentId, date: targetDate },
+          { $set: payload },
+          { upsert: true, new: true }
+        ).lean();
+        return doc;
+      } catch (err) {
+        console.warn('[dataStore] DB markStudentAttendanceOverride error:', err.message);
+      }
+    }
+
+    const idx = memAttendance.findIndex(a => a.userId === studentId && a.date === targetDate);
+    if (idx !== -1) {
+      memAttendance[idx] = { ...memAttendance[idx], ...payload };
+      return memAttendance[idx];
+    } else {
+      memAttendance.unshift(payload);
+      return payload;
+    }
+  },
+
   // ==================== LEAVE MANAGEMENT ====================
   applyLeave: async (leaveData) => {
     const payload = {

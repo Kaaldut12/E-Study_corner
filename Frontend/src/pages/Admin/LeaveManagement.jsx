@@ -6,8 +6,8 @@ import api from '../../services/api';
 const LeaveManagement = () => {
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterRole, setFilterRole] = useState('all'); // 'all' | 'student' | 'teacher'
-  const [filterStatus, setFilterStatus] = useState('all'); // 'all' | 'pending' | 'approved' | 'rejected'
+  const [filterRole, setFilterRole] = useState('all');
+  const [filterStatus, setFilterStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [toast, setToast] = useState(null);
 
@@ -86,7 +86,7 @@ const LeaveManagement = () => {
         {/* Toast Alert */}
         {toast && (
           <div
-            className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-2xl text-xs font-bold shadow-2xl transition-all ${
+            className={`fixed top-5 right-5 z-50 px-5 py-3.5 rounded-2xl text-xs font-bold shadow-2xl transition-all animate-slide-up ${
               toast.isError
                 ? 'bg-rose-600 text-white border border-rose-400 shadow-rose-900/40'
                 : 'bg-emerald-600 text-white border border-emerald-400 shadow-emerald-900/40'
@@ -98,73 +98,78 @@ const LeaveManagement = () => {
         )}
 
         {/* Header */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Institutional Governance</span>
-            <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">Campus Leave Approvals</h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
-              Centrally review and audit leave applications across faculty members and enrolled students.
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
+                Institutional Governance
+              </span>
+              <span className="text-xs text-slate-400">· Leave Approvals Console</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white mt-2 font-display">Campus Leave Approvals</h1>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
+              Centrally audit, evaluate, and approve leave requests across faculty members and enrolled students.
             </p>
           </div>
         </div>
 
         {/* KPI Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Applications</span>
-            <div className="text-2xl font-black text-white">{leaves.length}</div>
-            <p className="text-[10px] text-slate-500">Across all departments</p>
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl space-y-1 animate-slide-up delay-75">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display">Total Applications</span>
+            <div className="text-3xl font-black text-white font-display">{leaves.length}</div>
+            <p className="text-[11px] text-slate-500">Across all departments</p>
           </div>
 
-          <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">Pending Review</span>
-            <div className="text-2xl font-black text-amber-400">{totalPending}</div>
-            <p className="text-[10px] text-slate-500">Awaiting administrative action</p>
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl space-y-1 animate-slide-up delay-150">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 font-display">Pending Review</span>
+            <div className="text-3xl font-black text-amber-400 font-display">{totalPending}</div>
+            <p className="text-[11px] text-slate-500">Awaiting administrative action</p>
           </div>
 
-          <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">Approved Leaves</span>
-            <div className="text-2xl font-black text-emerald-400">{totalApproved}</div>
-            <p className="text-[10px] text-slate-500">Active and archived grants</p>
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl space-y-1 animate-slide-up delay-225">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 font-display">Approved Leaves</span>
+            <div className="text-3xl font-black text-emerald-400 font-display">{totalApproved}</div>
+            <p className="text-[11px] text-slate-500">Active and archived grants</p>
           </div>
 
-          <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400">Rejected Requests</span>
-            <div className="text-2xl font-black text-rose-400">{totalRejected}</div>
-            <p className="text-[10px] text-slate-500">Declined applications</p>
+          <div className="glass-panel glass-panel-hover p-5 rounded-2xl space-y-1 animate-slide-up delay-300">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-rose-400 font-display">Rejected Requests</span>
+            <div className="text-3xl font-black text-rose-400 font-display">{totalRejected}</div>
+            <p className="text-[11px] text-slate-500">Declined applications</p>
           </div>
         </div>
 
         {/* Search & Filters */}
-        <div className="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="glass-panel p-4 sm:p-5 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-3 shadow-md">
           <div className="relative w-full md:w-80">
             <input
               type="text"
               placeholder="Search applicant name, email, or reason..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition"
             />
-            <span className="absolute left-3 top-2.5 text-xs text-slate-500">🔍</span>
+            <span className="absolute left-3.5 top-3 text-xs text-slate-500">🔍</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
             {/* Role Filter */}
             <select
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
-              className="px-3 py-1.5 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-indigo-500"
+              className="px-3.5 py-2 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-brand transition"
             >
               <option value="all">All Roles</option>
-              <option value="student">Students</option>
-              <option value="teacher">Teachers</option>
+              <option value="student">Students Only</option>
+              <option value="teacher">Teachers Only</option>
             </select>
 
             {/* Status Filter */}
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="px-3 py-1.5 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-indigo-500"
+              className="px-3.5 py-2 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-300 focus:outline-none focus:border-brand transition"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -176,13 +181,14 @@ const LeaveManagement = () => {
 
         {/* Leave Requests Grid */}
         {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-9 h-9 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="flex flex-col items-center justify-center py-20 space-y-3">
+            <div className="w-9 h-9 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+            <p className="text-slate-400 text-xs">Loading Campus Leave Applications...</p>
           </div>
         ) : filteredLeaves.length === 0 ? (
-          <div className="glass-panel p-16 rounded-3xl border border-slate-800 text-center space-y-3">
-            <span className="text-4xl">📋</span>
-            <h3 className="text-base font-bold text-white">No leave requests match your filters</h3>
+          <div className="glass-panel p-16 rounded-3xl text-center space-y-3">
+            <span className="text-5xl">📋</span>
+            <h3 className="text-base font-bold text-white font-display">No leave requests match your filters</h3>
             <p className="text-xs text-slate-400">Try clearing your search query or selecting all statuses.</p>
           </div>
         ) : (
@@ -195,14 +201,14 @@ const LeaveManagement = () => {
               return (
                 <div
                   key={leave.id}
-                  className="glass-panel p-5 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 hover:border-slate-700 transition"
+                  className="glass-panel glass-panel-hover p-5 sm:p-6 rounded-3xl flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-3">
                     {/* Applicant & Status Header */}
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-10 h-10 rounded-xl font-black text-xs flex items-center justify-center text-white shadow ${
+                          className={`w-10 h-10 rounded-xl font-black text-xs flex items-center justify-center text-white shadow-brand ${
                             isTeacher
                               ? 'bg-gradient-to-br from-indigo-600 to-purple-600'
                               : 'bg-gradient-to-br from-rose-600 to-amber-600'
@@ -211,10 +217,10 @@ const LeaveManagement = () => {
                           {leave.userName?.charAt(0).toUpperCase() || 'U'}
                         </div>
                         <div>
-                          <h3 className="text-sm font-bold text-white leading-tight">{leave.userName}</h3>
+                          <h3 className="text-sm font-bold text-white leading-tight font-display">{leave.userName}</h3>
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <span
-                              className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.2 rounded ${
+                              className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
                                 isTeacher
                                   ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20'
                                   : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
@@ -228,7 +234,7 @@ const LeaveManagement = () => {
                       </div>
 
                       <span
-                        className={`px-2.5 py-1 text-xs font-bold rounded-full border shrink-0 ${
+                        className={`px-3 py-1 text-xs font-bold rounded-full border shrink-0 shadow-xs ${
                           isApproved
                             ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
                             : isRejected
@@ -241,23 +247,23 @@ const LeaveManagement = () => {
                     </div>
 
                     {/* Category & Period */}
-                    <div className="text-xs text-indigo-300 font-semibold bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between">
-                      <span className="capitalize">{leave.leaveType} Leave</span>
-                      <span>
+                    <div className="text-xs text-indigo-300 font-semibold bg-slate-900/60 p-3 rounded-2xl border border-slate-800 flex items-center justify-between">
+                      <span className="capitalize font-bold font-display">{leave.leaveType} Leave</span>
+                      <span className="text-slate-300">
                         {leave.startDate} → {leave.endDate} ({leave.totalDays} Day{leave.totalDays > 1 ? 's' : ''})
                       </span>
                     </div>
 
                     {/* Reason */}
-                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/40 p-3 rounded-xl border border-slate-800/60">
+                    <p className="text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800/80">
                       "{leave.reason}"
                     </p>
 
                     {/* Review comments */}
                     {leave.reviewedBy && (
-                      <div className="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800 space-y-0.5">
+                      <div className="text-[11px] text-slate-400 bg-slate-900/50 p-3 rounded-2xl border border-slate-800 space-y-0.5">
                         <span className="font-semibold text-slate-300 block">
-                          Reviewed by {leave.reviewedBy} on {new Date(leave.reviewedAt).toLocaleDateString()}
+                          Reviewed by <strong className="text-white">{leave.reviewedBy}</strong> on {new Date(leave.reviewedAt).toLocaleDateString()}
                         </span>
                         {leave.reviewerNotes && <p className="italic">"{leave.reviewerNotes}"</p>}
                       </div>
@@ -265,8 +271,8 @@ const LeaveManagement = () => {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
-                    <span className="text-[10px] text-slate-500">
+                  <div className="pt-3 border-t border-slate-800 flex items-center justify-between">
+                    <span className="text-[11px] text-slate-500">
                       Applied: {new Date(leave.createdAt).toLocaleDateString()}
                     </span>
                     <button
@@ -275,7 +281,7 @@ const LeaveManagement = () => {
                         setReviewStatus(leave.status === 'pending' ? 'approved' : leave.status);
                         setReviewerNotes(leave.reviewerNotes || '');
                       }}
-                      className="py-1.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow transition"
+                      className="py-2 px-4 btn-premium text-white text-xs font-bold shadow-brand"
                     >
                       {leave.status === 'pending' ? 'Take Decision →' : 'Update Status'}
                     </button>
@@ -288,19 +294,19 @@ const LeaveManagement = () => {
 
         {/* Modal */}
         {selectedLeave && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 max-w-md w-full space-y-4 shadow-2xl">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="text-base font-bold text-white">Administrative Leave Review</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+            <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-slate-800 max-w-md w-full space-y-4 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                <h3 className="text-base font-bold text-white font-display">Administrative Leave Review</h3>
                 <button
                   onClick={() => setSelectedLeave(null)}
-                  className="p-1 rounded-lg bg-slate-900 text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="text-xs space-y-1 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
+              <div className="text-xs space-y-1 bg-slate-950/60 p-3.5 rounded-2xl border border-slate-800">
                 <p><strong>Applicant:</strong> {selectedLeave.userName} ({selectedLeave.userRole})</p>
                 <p><strong>Period:</strong> {selectedLeave.startDate} to {selectedLeave.endDate} ({selectedLeave.totalDays} Days)</p>
                 <p><strong>Reason:</strong> {selectedLeave.reason}</p>
@@ -308,7 +314,7 @@ const LeaveManagement = () => {
 
               <form onSubmit={handleReviewSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Official Decision</label>
+                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">Official Decision</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
@@ -336,13 +342,13 @@ const LeaveManagement = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Administrative Remarks</label>
+                  <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">Administrative Remarks</label>
                   <textarea
                     rows={3}
                     placeholder="Enter official remarks or conditions..."
                     value={reviewerNotes}
                     onChange={(e) => setReviewerNotes(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-indigo-500 resize-none"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-750 rounded-xl text-xs text-slate-200 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand resize-none transition"
                   />
                 </div>
 
@@ -350,14 +356,14 @@ const LeaveManagement = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedLeave(null)}
-                    className="px-4 py-2 bg-slate-900 text-slate-300 hover:text-white text-xs font-semibold rounded-xl"
+                    className="px-4 py-2 btn-secondary text-xs font-bold rounded-xl"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={reviewing}
-                    className="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow transition"
+                    className="px-5 py-2 btn-premium text-white text-xs font-bold rounded-xl shadow-brand"
                   >
                     {reviewing ? 'Saving...' : 'Save Decision'}
                   </button>

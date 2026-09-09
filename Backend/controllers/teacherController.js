@@ -19,6 +19,9 @@ export const getTeacherDashboard = async (req, res) => {
     const allUsers = await dataStore.getUsers();
     const totalStudents = allUsers.filter(u => u.role === 'student').length;
 
+    const studentLeaves = await dataStore.getAllLeaves({ userRole: 'student' });
+    const pendingStudentLeavesCount = studentLeaves.filter(l => l.status === 'pending').length;
+
     const enrichedPending = teacherSubmissions
       .filter(s => s.status === 'submitted')
       .slice(0, 5)
@@ -38,7 +41,8 @@ export const getTeacherDashboard = async (req, res) => {
         totalSubmissions: teacherSubmissions.length,
         pendingGradingCount,
         gradedCount,
-        totalStudents
+        totalStudents,
+        pendingStudentLeavesCount
       },
       recentAssignments: teacherAssignments.slice(-4).reverse(),
       pendingGradingSubmissions: enrichedPending
@@ -647,5 +651,60 @@ export const deleteTeacherQuestionItem = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// ==================== STUDENT ACTIONS INSPECTOR ====================
+
+export const getStudentFullDetails = async (req, res) => {
+  try {
+    const studentId = req.params.studentId || req.params.id;
+    const users = await dataStore.getUsers();
+    const student = users.find(u => u.id === studentId);
+    if (!student) {
+      return res.status(404).json({ success: false, message: 'Student not found.' });
+    }
+
+    // 1. All submissions made by this student
+    const allSubs = await dataStore.getSubmissions();
+    const allAsgs = await dataStore.getAssignments();
+    const studentSubs = allSubs
+      .filter(s => s.studentId === studentId)
+      .map(s => {
+        const asg = allAsgs.find(a => a.id === s.assignmentId) || {};
+        return {
+          ...s,
+          assignmentTitle: asg.title || 'Coursework Assignment',
+          subject: asg.subject || 'Academic',
+          category: asg.category || 'assignment',
+          totalPoints: asg.totalPoints || 100,
+          dueDate: asg.dueDate
+        };
+      });
+
+    // 2. All leave requests made by this student
+    const studentLeaves = await dataStore.getUserLeaves(studentId);
+
+    // 3. Complete attendance stats & logs for this student
+    const attendanceStats = await dataStore.getUserAttendanceStats(studentId);
+
+    // 4. Questions / doubts submitted by this student
+    const questions = await dataStore.getTeacherQuestionsForTeacher('');
+    const studentQuestions = questions.filter(q => q.studentId === studentId);
+
+    const { password, ...safeStudent } = student;
+
+    return res.status(200).json({
+      success: true,
+      student: safeStudent,
+      submissions: studentSubs,
+      leaves: studentLeaves,
+      attendance: attendanceStats,
+      questions: studentQuestions
+    });
+  } catch (error) {
+    console.error('getStudentFullDetails error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 
 
