@@ -120,6 +120,18 @@ export const createAssignment = async (req, res) => {
 export const deleteAssignment = async (req, res) => {
   try {
     const { id } = req.params;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
+    const assignment = await dataStore.getAssignmentById(id);
+    if (!assignment) {
+      return res.status(404).json({ success: false, message: 'Assignment not found.' });
+    }
+
+    if (!isAdmin && assignment.teacherId !== teacherId) {
+      return res.status(403).json({ success: false, message: 'Unauthorized: You can only delete your own assignments.' });
+    }
+
     const success = await dataStore.deleteAssignment(id);
     if (success) {
       return res.status(200).json({ success: true, message: 'Assignment deleted successfully.' });
@@ -133,9 +145,16 @@ export const deleteAssignment = async (req, res) => {
 export const getSubmissionsForAssignment = async (req, res) => {
   try {
     const assignmentId = req.params.assignmentId || req.params.id;
+    const teacherId = req.user.id;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
+
     const assignment = await dataStore.getAssignmentById(assignmentId);
     if (!assignment) {
       return res.status(404).json({ success: false, message: 'Assignment not found.' });
+    }
+
+    if (!isAdmin && assignment.teacherId !== teacherId) {
+      return res.status(403).json({ success: false, message: 'Unauthorized: You can only view submissions for your own assignments.' });
     }
 
     const submissions = await dataStore.getSubmissionsForAssignment(assignmentId);
@@ -152,7 +171,9 @@ export const getSubmissionsForAssignment = async (req, res) => {
 
 export const gradeSubmission = async (req, res) => {
   try {
+    const teacherId = req.user.id;
     const teacherName = req.user.name;
+    const isAdmin = ['admin', 'superadmin'].includes(req.user.role);
     const submissionId = req.params.id || req.body.submissionId;
     const { grade, feedback } = req.body;
 
@@ -163,6 +184,19 @@ export const gradeSubmission = async (req, res) => {
     const numericGrade = Number(grade);
     if (isNaN(numericGrade) || numericGrade < 0) {
       return res.status(400).json({ success: false, message: 'Grade score must be a valid positive number.' });
+    }
+
+    const submission = await dataStore.getSubmissionById(submissionId);
+    if (!submission) {
+      return res.status(404).json({ success: false, message: 'Submission not found.' });
+    }
+
+    // Verify teacher owns the assignment (or is admin/superadmin)
+    if (!isAdmin) {
+      const assignment = await dataStore.getAssignmentById(submission.assignmentId);
+      if (assignment && assignment.teacherId !== teacherId) {
+        return res.status(403).json({ success: false, message: 'Unauthorized: You can only grade submissions for your own assignments.' });
+      }
     }
 
     const updatedSub = await dataStore.gradeSubmission(submissionId, numericGrade, feedback || '', teacherName);

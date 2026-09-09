@@ -182,7 +182,18 @@ export const getStudyMaterials = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const studentId = req.user.id;
-    const updates = req.body;
+    
+    // Security: Only allow updating safe profile attributes, never permissions, role, email, password, or id
+    const ALLOWED_PROFILE_FIELDS = [
+      'name', 'firstName', 'lastName', 'gender', 'mobileNo',
+      'dob', 'addressP', 'course', 'courseYear', 'userpic'
+    ];
+    const updates = {};
+    ALLOWED_PROFILE_FIELDS.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
 
     const updated = await dataStore.updateUser(studentId, updates);
     if (!updated) {
@@ -402,9 +413,10 @@ export const updateNote = async (req, res) => {
   try {
     const { noteId } = req.params;
     const updates = req.body;
-    const note = await dataStore.updateNote(noteId, { ...updates, updatedAt: new Date() });
+    const studentId = req.user.id;
+    const note = await dataStore.updateNote(noteId, { ...updates, updatedAt: new Date() }, studentId);
     if (!note) {
-      return res.status(404).json({ success: false, message: 'Note not found' });
+      return res.status(404).json({ success: false, message: 'Note not found or unauthorized' });
     }
     return res.status(200).json({
       success: true,
@@ -419,7 +431,11 @@ export const updateNote = async (req, res) => {
 export const deleteNote = async (req, res) => {
   try {
     const { noteId } = req.params;
-    await dataStore.deleteNote(noteId);
+    const studentId = req.user.id;
+    const deleted = await dataStore.deleteNote(noteId, studentId);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: 'Note not found or unauthorized' });
+    }
     return res.status(200).json({
       success: true,
       message: 'Note deleted successfully.'
@@ -513,10 +529,13 @@ export const getQuizQuestions = async (req, res) => {
     }
 
     const questions = await dataStore.getQuestionsForQuiz(quizId);
+    // Security: Strip correctOptionIndex and explanation so answer keys are not leaked to students over the wire
+    const sanitizedQuestions = questions.map(({ correctOptionIndex, explanation, ...rest }) => rest);
+
     return res.status(200).json({
       success: true,
       quiz,
-      questions
+      questions: sanitizedQuestions
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

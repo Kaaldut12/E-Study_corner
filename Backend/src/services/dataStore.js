@@ -859,16 +859,17 @@ export const dataStore = {
     return payload;
   },
 
-  updateNote: async (noteId, updates) => {
+  updateNote: async (noteId, updates, studentId = null) => {
+    const filter = studentId ? { id: noteId, studentId } : { id: noteId };
     if (isDBConnected()) {
       try {
-        const doc = await Note.findOneAndUpdate({ id: noteId }, { $set: updates }, { new: true }).lean();
+        const doc = await Note.findOneAndUpdate(filter, { $set: updates }, { new: true }).lean();
         if (doc) return doc;
       } catch (err) {
         console.warn('[dataStore] DB updateNote error:', err.message);
       }
     }
-    const idx = memNotes.findIndex(n => n.id === noteId);
+    const idx = memNotes.findIndex(n => n.id === noteId && (!studentId || n.studentId === studentId));
     if (idx !== -1) {
       memNotes[idx] = { ...memNotes[idx], ...updates, updatedAt: new Date() };
       return memNotes[idx];
@@ -876,17 +877,22 @@ export const dataStore = {
     return null;
   },
 
-  deleteNote: async (noteId) => {
+  deleteNote: async (noteId, studentId = null) => {
+    const filter = studentId ? { id: noteId, studentId } : { id: noteId };
     if (isDBConnected()) {
       try {
-        await Note.deleteOne({ id: noteId });
+        const res = await Note.deleteOne(filter);
+        if (res.deletedCount > 0) return true;
       } catch (err) {
         console.warn('[dataStore] DB deleteNote error:', err.message);
       }
     }
-    const idx = memNotes.findIndex(n => n.id === noteId);
-    if (idx !== -1) memNotes.splice(idx, 1);
-    return true;
+    const idx = memNotes.findIndex(n => n.id === noteId && (!studentId || n.studentId === studentId));
+    if (idx !== -1) {
+      memNotes.splice(idx, 1);
+      return true;
+    }
+    return false;
   },
 
   // ==================== BOOKMARKS ====================

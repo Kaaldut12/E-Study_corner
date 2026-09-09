@@ -25,17 +25,8 @@ export const AuthProvider = ({ children }) => {
             setUser(res.data.user);
           }
         } catch (err) {
-          console.warn('Failed to verify token with API, using cached session if available', err);
-          const savedUser = localStorage.getItem('user_data');
-          if (savedUser) {
-            try {
-              setUser(JSON.parse(savedUser));
-            } catch {
-              logout();
-            }
-          } else {
-            logout();
-          }
+          console.warn('Session token verification failed, terminating invalid session:', err?.response?.data?.message || err?.message);
+          logout();
         }
       }
       setLoading(false);

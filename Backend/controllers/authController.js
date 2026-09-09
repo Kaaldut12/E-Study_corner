@@ -1,4 +1,5 @@
 // backend/controllers/authController.js
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { dataStore } from '../src/services/dataStore.js';
 import { sendPasswordResetEmail } from '../src/services/emailService.js';
@@ -177,21 +178,26 @@ export const resetPassword = async (req, res) => {
     if (!email) {
       return res.status(400).json({ success: false, message: 'Email address is required.' });
     }
-    const user = await dataStore.getUserByEmail(email);
+    const cleanEmail = email.trim().toLowerCase();
+    const user = await dataStore.getUserByEmail(cleanEmail);
     if (!user) {
-      return res.status(404).json({ success: false, message: 'No account found with this email address.' });
+      // Security: Prevent account enumeration by returning a uniform success message
+      return res.status(200).json({
+        success: true,
+        message: 'If an account exists with this email address, a password reset code has been sent.'
+      });
     }
 
-    // Generate 6-digit random OTP code
-    const resetOTP = Math.floor(100000 + Math.random() * 900000).toString();
-    await dataStore.setResetOTP(email, resetOTP);
+    // Generate 6-digit cryptographically secure OTP code
+    const resetOTP = crypto.randomInt(100000, 1000000).toString();
+    await dataStore.setResetOTP(cleanEmail, resetOTP);
 
     // Send email with reset OTP
-    await sendPasswordResetEmail(email, user.name, resetOTP);
+    await sendPasswordResetEmail(cleanEmail, user.name, resetOTP);
 
     return res.status(200).json({
       success: true,
-      message: `Password reset OTP code sent to ${email}.`
+      message: 'If an account exists with this email address, a password reset code has been sent.'
     });
   } catch (error) {
     console.error('Reset password error:', error);
