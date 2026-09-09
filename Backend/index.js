@@ -32,27 +32,24 @@ app.use(securityHeaders);
 app.use(apiRateLimiter);
 app.use(sanitizeInput);
 
-// CORS configuration - allows configured frontend origins, all Vercel deployments, and local dev
+// CORS configuration - strictly allows configured frontend origins and verified environments
 app.use(cors({
   origin: (requestOrigin, callback) => {
+    // Allow non-browser or same-origin requests without origin header (e.g. mobile apps, curl, server-to-server)
     if (!requestOrigin) return callback(null, true);
 
-    if (ALLOWED_ORIGINS.includes('*') || ALLOWED_ORIGINS.includes(requestOrigin)) {
+    const isAllowed = ALLOWED_ORIGINS.includes(requestOrigin) ||
+      requestOrigin.endsWith('.vercel.app') ||
+      (process.env.NODE_ENV !== 'production' && (
+        requestOrigin.startsWith('http://localhost:') ||
+        requestOrigin.startsWith('http://127.0.0.1:')
+      ));
+
+    if (isAllowed) {
       return callback(null, true);
     }
 
-    // Always allow Vercel deployments (production & preview branches)
-    if (requestOrigin.endsWith('.vercel.app')) {
-      return callback(null, true);
-    }
-
-    // Allow localhost and local IP addresses
-    if (requestOrigin.includes('localhost') || requestOrigin.includes('127.0.0.1') || requestOrigin.includes('192.168.')) {
-      return callback(null, true);
-    }
-
-    // Allow configured custom domains or fallback
-    return callback(null, true);
+    return callback(new Error(`Not allowed by CORS: ${requestOrigin}`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],

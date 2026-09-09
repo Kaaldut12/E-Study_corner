@@ -344,7 +344,40 @@ export const completeLesson = async (req, res) => {
     const studentId = req.user.id;
     const studentName = req.user.name;
 
+    // 1. Verify Course exists
+    const course = await dataStore.getCourseById(courseId);
+    if (!course) {
+      return res.status(404).json({ success: false, message: 'Course not found.' });
+    }
+
+    // 2. Verify Lesson exists
+    const lesson = await dataStore.getLessonById(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ success: false, message: 'Lesson not found.' });
+    }
+
+    // 3. Verify Lesson belongs to Course
+    if (lesson.courseId !== courseId) {
+      return res.status(400).json({ success: false, message: 'Lesson does not belong to this course.' });
+    }
+
+    // 4. Verify Student is actively enrolled in Course (do NOT auto-enroll)
+    const enrollment = await dataStore.getEnrollment(studentId, courseId);
+    if (!enrollment) {
+      return res.status(403).json({
+        success: false,
+        message: 'You must enroll in this course first.'
+      });
+    }
+
+    // 5. Complete lesson and recalculate progress based on actual course lessons
     const result = await dataStore.completeStudentLesson(studentId, studentName, courseId, lessonId);
+    if (!result) {
+      return res.status(403).json({
+        success: false,
+        message: 'You must enroll in this course first.'
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -521,12 +554,27 @@ export const getStudentQuizzes = async (req, res) => {
 export const getQuizQuestions = async (req, res) => {
   try {
     const { quizId } = req.params;
+    const studentId = req.user.id;
     const quizzes = await dataStore.getQuizzes();
     const quiz = quizzes.find(q => q.id === quizId);
 
     if (!quiz) {
       return res.status(404).json({ success: false, message: 'Quiz not found' });
     }
+
+    // Enrollment check: verify student is enrolled in the course that this quiz belongs to
+    if (quiz.courseId) {
+      const enrollment = await dataStore.getEnrollment(studentId, quiz.courseId);
+      if (!enrollment) {
+        return res.status(403).json({
+          success: false,
+          message: 'You must be enrolled in this course to access this quiz.'
+        });
+      }
+    }
+
+    // Record server-side start time for elapsed time verification
+    dataStore.startQuizSession(studentId, quizId);
 
     const questions = await dataStore.getQuestionsForQuiz(quizId);
     // Security: Strip correctOptionIndex and explanation so answer keys are not leaked to students over the wire
@@ -552,6 +600,27 @@ export const submitQuizAttempt = async (req, res) => {
     const quiz = quizzes.find(q => q.id === quizId);
     if (!quiz) {
       return res.status(404).json({ success: false, message: 'Quiz not found' });
+    }
+
+    // Enrollment check: verify student is enrolled in the course that this quiz belongs to
+    if (quiz.courseId) {
+      const enrollment = await dataStore.getEnrollment(studentId, quiz.courseId);
+      if (!enrollment) {
+        return res.status(403).json({
+          success: false,
+          message: 'You must be enrolled in this course to submit quiz attempts.'
+        });
+      }
+    }
+
+    // Server-side timing calculation & verification
+    const quizSession = dataStore.getQuizSession(studentId, quizId);
+    let verifiedElapsedSeconds = typeof timeTakenSeconds === 'number' && timeTakenSeconds > 0 ? timeTakenSeconds : 180;
+    if (quizSession && quizSession.startTime) {
+      const serverElapsed = Math.round((Date.now() - quizSession.startTime) / 1000);
+      if (serverElapsed > 0) {
+        verifiedElapsedSeconds = serverElapsed;
+      }
     }
 
     const questions = await dataStore.getQuestionsForQuiz(quizId);
@@ -584,17 +653,29 @@ export const submitQuizAttempt = async (req, res) => {
       totalPoints: maxScore,
       percentage,
       passed,
-      timeTakenSeconds: timeTakenSeconds || 180,
+      timeTakenSeconds: verifiedElapsedSeconds,
       answers: processedAnswers,
       attemptedAt: new Date()
     };
 
     const savedAttempt = await dataStore.saveQuizAttempt(attemptRecord);
 
+    // Sanitize student response: do not leak internal correctOptionIndex keys
+    const sanitizedStudentAnswers = processedAnswers.map(({ questionId, selectedOption, isCorrect, explanation }) => ({
+      questionId,
+      selectedOption,
+      isCorrect,
+      explanation
+    }));
+
     return res.status(200).json({
       success: true,
       message: passed ? 'Congratulations! You passed the quiz.' : 'Quiz completed. Keep practicing to improve your score!',
-      attempt: savedAttempt
+      attempt: {
+        ...savedAttempt,
+        timeTakenSeconds: verifiedElapsedSeconds,
+        answers: sanitizedStudentAnswers
+      }
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });

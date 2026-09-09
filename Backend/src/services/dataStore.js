@@ -59,6 +59,7 @@ const memSupportMessages = [...seedSupportMessages];
 const memFeedback = [...seedFeedback];
 const memTeacherQuestions = [...seedTeacherQuestions];
 const memEnrollments = [];
+const memQuizSessions = new Map();
 
 const isDBConnected = () => mongoose.connection.readyState === 1;
 
@@ -782,6 +783,18 @@ export const dataStore = {
     return memLessons.filter(l => l.courseId === courseId);
   },
 
+  getLessonById: async (lessonId) => {
+    if (isDBConnected()) {
+      try {
+        const doc = await Lesson.findOne({ id: lessonId }).lean();
+        if (doc) return doc;
+      } catch (err) {
+        console.warn('[dataStore] DB getLessonById error:', err.message);
+      }
+    }
+    return memLessons.find(l => l.id === lessonId) || null;
+  },
+
   // ==================== QUIZZES ====================
   getQuizzes: async () => {
     if (isDBConnected()) {
@@ -1069,54 +1082,97 @@ export const dataStore = {
     return payload;
   },
 
-  completeStudentLesson: async (studentId, studentName, courseId, lessonId) => {
-    const lessonsForCourse = memLessons.filter(l => l.courseId === courseId);
-    const totalCount = lessonsForCourse.length > 0 ? lessonsForCourse.length : 1;
+  getEnrollment: async (studentId, courseId) => {
+    if (isDBConnected()) {
+      try {
+        const doc = await Enrollment.findOne({ studentId, courseId }).lean();
+        if (doc) return doc;
+      } catch (err) {
+        console.warn('[dataStore] DB getEnrollment error:', err.message);
+      }
+    }
+    return memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId) || null;
+  },
 
-    let enrollment = memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId);
+  startQuizSession: (studentId, quizId) => {
+    const key = `${studentId}_${quizId}`;
+    const session = {
+      startTime: Date.now()
+    };
+    memQuizSessions.set(key, session);
+    return session;
+  },
+
+  getQuizSession: (studentId, quizId) => {
+    const key = `${studentId}_${quizId}`;
+    return memQuizSessions.get(key) || null;
+  },
+
+  completeStudentLesson: async (studentId, studentName, courseId, lessonId) => {
+    // 1. Fetch active enrollment - do NOT auto-enroll!
+    let enrollment = null;
+    if (isDBConnected()) {
+      try {
+        enrollment = await Enrollment.findOne({ studentId, courseId });
+      } catch (err) {
+        console.warn('[dataStore] DB lookup enrollment error:', err.message);
+      }
+    }
     if (!enrollment) {
-      const course = memCourses.find(c => c.id === courseId);
-      enrollment = {
-        id: `enr_${Date.now()}`,
-        studentId,
-        studentName: studentName || 'Student',
-        courseId,
-        courseTitle: course ? course.title : '',
-        enrolledAt: new Date(),
-        status: 'enrolled',
-        progressPercentage: 0,
-        completedLessons: []
-      };
-      memEnrollments.push(enrollment);
+      enrollment = memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId);
     }
 
-    const completedSet = new Set(enrollment.completedLessons || []);
+    if (!enrollment) {
+      return null;
+    }
+
+    // 2. Fetch actual course lessons from database to calculate accurate progress
+    let courseLessons = [];
+    if (isDBConnected()) {
+      try {
+        courseLessons = await Lesson.find({ courseId }).lean();
+      } catch (err) {
+        console.warn('[dataStore] DB lessons lookup error:', err.message);
+      }
+    }
+    if (!courseLessons || courseLessons.length === 0) {
+      courseLessons = memLessons.filter(l => l.courseId === courseId);
+    }
+    const totalCount = courseLessons.length > 0 ? courseLessons.length : 1;
+
+    // 3. Mark lesson complete and calculate progress percentage
+    const currentCompleted = Array.isArray(enrollment.completedLessons) ? enrollment.completedLessons : [];
+    const completedSet = new Set(currentCompleted);
     completedSet.add(lessonId);
     const completedArray = Array.from(completedSet);
     const progressPercentage = Math.min(100, Math.round((completedArray.length / totalCount) * 100));
     const isFinished = progressPercentage >= 100;
 
-    enrollment.completedLessons = completedArray;
-    enrollment.progressPercentage = progressPercentage;
-    if (isFinished) {
-      enrollment.status = 'completed';
-      enrollment.completedAt = new Date();
+    // 4. Update in-memory cache
+    const memEnrollment = memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId);
+    if (memEnrollment) {
+      memEnrollment.completedLessons = completedArray;
+      memEnrollment.progressPercentage = progressPercentage;
+      if (isFinished) {
+        memEnrollment.status = 'completed';
+        memEnrollment.completedAt = new Date();
+      }
     }
 
+    // 5. Update MongoDB Enrollment & Progress
     if (isDBConnected()) {
       try {
-        let dbEnrollment = await Enrollment.findOne({ studentId, courseId });
-        if (!dbEnrollment) {
-          dbEnrollment = await Enrollment.create(enrollment);
-        } else {
-          dbEnrollment.completedLessons = completedArray;
-          dbEnrollment.progressPercentage = progressPercentage;
-          if (isFinished) {
-            dbEnrollment.status = 'completed';
-            dbEnrollment.completedAt = new Date();
+        await Enrollment.updateOne(
+          { studentId, courseId },
+          {
+            $set: {
+              completedLessons: completedArray,
+              progressPercentage,
+              ...(isFinished ? { status: 'completed', completedAt: new Date() } : {})
+            }
           }
-          await dbEnrollment.save();
-        }
+        );
+
         await Progress.findOneAndUpdate(
           { studentId, courseId },
           {
