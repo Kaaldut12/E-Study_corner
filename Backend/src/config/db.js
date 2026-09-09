@@ -18,6 +18,12 @@ export const connectDB = async () => {
     return cached.conn;
   }
 
+  // On Vercel, if MONGODB_URI points to localhost / 127.0.0.1, skip attempting cloud connection to localhost
+  if (process.env.VERCEL && (MONGODB_URI.includes('127.0.0.1') || MONGODB_URI.includes('localhost'))) {
+    console.warn('[MongoDB] Notice: Running on Vercel with localhost MONGODB_URI. Operating with in-memory hybrid store.');
+    return null;
+  }
+
   if (!cached.promise) {
     const opts = {
       serverSelectionTimeoutMS: 2500,

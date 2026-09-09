@@ -32,17 +32,37 @@ app.use(securityHeaders);
 app.use(apiRateLimiter);
 app.use(sanitizeInput);
 
-// CORS configuration - strictly allows only configured origins in ALLOWED_ORIGINS
+// CORS configuration - allows configured origins in ALLOWED_ORIGINS, any project Vercel preview domain, and local dev
 app.use(cors({
   origin: (requestOrigin, callback) => {
     // Allow non-browser or same-origin requests without origin header (e.g. mobile apps, curl, server-to-server)
     if (!requestOrigin) return callback(null, true);
 
+    // 1. Explicitly configured origins
     if (ALLOWED_ORIGINS.includes(requestOrigin)) {
       return callback(null, true);
     }
 
-    return callback(new Error(`Not allowed by CORS: ${requestOrigin}`));
+    // 2. All e-study-corner preview and deployment domains on Vercel
+    const isAppVercelDomain = /^https:\/\/(e-study-corner[a-z0-9-]*|.*kaaldut12[a-z0-9-]*)\.vercel\.app$/i.test(requestOrigin);
+    if (isAppVercelDomain) {
+      return callback(null, true);
+    }
+
+    // 3. Any .vercel.app domain when deployed on Vercel
+    if (process.env.VERCEL && requestOrigin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+
+    // 4. Local development origins
+    if (process.env.NODE_ENV !== 'production') {
+      if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin)) {
+        return callback(null, true);
+      }
+    }
+
+    // Reject unrecognized origins cleanly without crashing server
+    return callback(null, false);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -68,14 +88,14 @@ app.use(async (req, res, next) => {
   try {
     await connectDB();
   } catch (err) {
-    if (process.env.DATA_STORE_MODE !== 'memory') {
+    if (process.env.DATA_STORE_MODE === 'strict') {
       return res.status(503).json({
         success: false,
         message: 'Database service is currently unavailable. Please try again later.',
         code: 'DATABASE_UNAVAILABLE'
       });
     }
-    console.warn('[Database Connection Notice]: Running with DATA_STORE_MODE=memory fallback');
+    console.warn('[Database Connection Notice]: Operating in resilient hybrid dataStore fallback mode:', err.message);
   }
   next();
 });
