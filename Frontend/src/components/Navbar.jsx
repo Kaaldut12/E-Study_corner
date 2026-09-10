@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Sun, Moon, Settings, LogOut, Menu, Crown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -19,12 +20,10 @@ const Navbar = ({ toggleSidebar }) => {
       <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all"
+          className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all cursor-pointer"
           aria-label="Toggle menu"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
+          <Menu className="w-5 h-5" />
         </button>
 
         <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group">
@@ -53,31 +52,33 @@ const Navbar = ({ toggleSidebar }) => {
               title={mode === 'dark' ? 'Switch to Lite Theme' : 'Switch to Dark Theme'}
               aria-label="Toggle theme mode"
             >
-              <span>{mode === 'dark' ? '☀️' : '🌙'}</span>
+              {mode === 'dark' ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-indigo-500" />
+              )}
               <span className="hidden sm:inline-block">{mode === 'dark' ? 'Lite' : 'Dark'}</span>
             </button>
 
             {/* Settings Link Button */}
             <Link
               to={`/${user.role === 'superadmin' ? 'admin' : user.role}/settings`}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-800/90 transition shadow-sm text-xs font-semibold group"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-800/90 transition shadow-sm text-xs font-semibold group cursor-pointer"
               title="Settings (Profile, Themes & Password)"
             >
-              <svg className="w-4 h-4 text-brand group-hover:rotate-45 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <Settings className="w-4 h-4 text-brand group-hover:rotate-45 transition-transform duration-300" />
               <span className="hidden sm:inline-block">Settings</span>
             </Link>
 
-            <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border capitalize hidden sm:inline-block shadow-xs ${roleBadge[user.role] || 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
-              {user.role === 'superadmin' ? '👑 Super Admin' : user.role}
+            <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border capitalize hidden sm:inline-flex items-center gap-1 shadow-xs ${roleBadge[user.role] || 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
+              {user.role === 'superadmin' && <Crown className="w-3 h-3 text-amber-400 shrink-0" />}
+              <span>{user.role === 'superadmin' ? 'Super Admin' : user.role}</span>
             </span>
 
             {/* User Profile Card linked to Settings */}
             <Link
               to={`/${user.role === 'superadmin' ? 'admin' : user.role}/settings`}
-              className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2 border-l border-slate-800/80 hover:opacity-90 transition group"
+              className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2 border-l border-slate-800/80 hover:opacity-90 transition group cursor-pointer"
               title="View Profile & Settings"
             >
               <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand ring-1 ring-white/20 group-hover:scale-105 transition-transform">
@@ -91,12 +92,11 @@ const Navbar = ({ toggleSidebar }) => {
 
             <button
               onClick={logout}
-              className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all"
+              className="p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
               title="Logout"
+              aria-label="Logout"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
+              <LogOut className="w-4 h-4" />
             </button>
           </>
         )}

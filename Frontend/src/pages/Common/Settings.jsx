@@ -1,6 +1,20 @@
 // frontend/src/pages/Common/Settings.jsx
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import {
+  User,
+  Palette,
+  ShieldCheck,
+  Sun,
+  Moon,
+  Check,
+  Sparkles,
+  Settings as SettingsIcon,
+  Save,
+  KeyRound,
+  Eye,
+  EyeOff
+} from 'lucide-react';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -167,10 +181,7 @@ const Settings = () => {
         <div className="flex flex-col gap-1">
           <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
             <span className="p-2 rounded-xl bg-brand/10 text-brand border border-brand/20">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <SettingsIcon className="w-5 h-5 text-brand" />
             </span>
             Account Settings & Preferences
           </h1>
@@ -183,44 +194,38 @@ const Settings = () => {
         <div className="flex items-center gap-2 p-1.5 bg-slate-900/90 rounded-2xl border border-slate-800/80 overflow-x-auto scrollbar-none">
           <button
             onClick={() => handleTabChange('profile')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               activeTab === 'profile'
                 ? 'bg-brand text-white shadow-brand font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
+            <User className="w-4 h-4" />
             <span>Profile Details</span>
           </button>
 
           <button
             onClick={() => handleTabChange('themes')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               activeTab === 'themes'
                 ? 'bg-brand text-white shadow-brand font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
-            </svg>
+            <Palette className="w-4 h-4" />
             <span>Appearance & Themes</span>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           </button>
 
           <button
             onClick={() => handleTabChange('security')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all shrink-0 cursor-pointer ${
               activeTab === 'security'
                 ? 'bg-brand text-white shadow-brand font-bold'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
             }`}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+            <ShieldCheck className="w-4 h-4" />
             <span>Security & Password</span>
           </button>
         </div>
@@ -406,9 +411,10 @@ const Settings = () => {
                   <button
                     type="submit"
                     disabled={profileSaving}
-                    className="w-full sm:w-auto py-2.5 px-6 btn-premium text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 text-center"
+                    className="w-full sm:w-auto py-2.5 px-6 btn-premium text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 text-center flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    {profileSaving ? 'Saving Changes...' : 'Save Profile Details'}
+                    <Save className="w-4 h-4" />
+                    <span>{profileSaving ? 'Saving Changes...' : 'Save Profile Details'}</span>
                   </button>
                 </div>
               </form>
@@ -452,7 +458,11 @@ const Settings = () => {
                                 : 'bg-indigo-500/20 text-indigo-400'
                             }`}
                           >
-                            {m.icon}
+                            {m.id === 'light' ? (
+                              <Sun className="w-5 h-5 text-amber-500" />
+                            ) : (
+                              <Moon className="w-5 h-5 text-indigo-400" />
+                            )}
                           </div>
                           <div>
                             <h3 className="text-sm sm:text-base font-bold">
@@ -530,8 +540,8 @@ const Settings = () => {
                         </div>
 
                         {isSelected ? (
-                          <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-white text-slate-950 shadow-xs">
-                            ✓
+                          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-white text-slate-950 shadow-xs">
+                            <Check className="w-3 h-3 stroke-[3]" />
                           </span>
                         ) : (
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold text-slate-400 bg-slate-800/80 group-hover:bg-slate-700 transition">
@@ -637,10 +647,10 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={() => setShowCurrentPass(!showCurrentPass)}
-                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 text-xs"
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-200 text-xs cursor-pointer"
                       aria-label="Toggle password view"
                     >
-                      {showCurrentPass ? '🙈' : '👁️'}
+                      {showCurrentPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -659,10 +669,10 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={() => setShowNewPass(!showNewPass)}
-                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 text-xs"
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-200 text-xs cursor-pointer"
                       aria-label="Toggle password view"
                     >
-                      {showNewPass ? '🙈' : '👁️'}
+                      {showNewPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -681,10 +691,10 @@ const Settings = () => {
                     <button
                       type="button"
                       onClick={() => setShowConfPass(!showConfPass)}
-                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 text-xs"
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-200 text-xs cursor-pointer"
                       aria-label="Toggle password view"
                     >
-                      {showConfPass ? '🙈' : '👁️'}
+                      {showConfPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -706,9 +716,10 @@ const Settings = () => {
                   <button
                     type="submit"
                     disabled={passwordSaving}
-                    className="w-full sm:w-auto py-2.5 px-6 btn-premium text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 text-center"
+                    className="w-full sm:w-auto py-2.5 px-6 btn-premium text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 text-center flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    {passwordSaving ? 'Updating Password...' : 'Update Password'}
+                    <KeyRound className="w-4 h-4" />
+                    <span>{passwordSaving ? 'Updating Password...' : 'Update Password'}</span>
                   </button>
                 </div>
               </form>

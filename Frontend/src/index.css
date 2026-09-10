@@ -125,33 +125,82 @@ html.light,
 
 html.light body,
 [data-mode="light"] body,
+html.light #root,
+[data-mode="light"] #root,
 html.light .min-h-screen,
 [data-mode="light"] .min-h-screen {
   background-color: #f8fafc !important;
   color: #0f172a !important;
 }
 
+html.light main,
+[data-mode="light"] main {
+  color: #0f172a !important;
+}
+
 html.light header,
 [data-mode="light"] header {
-  background-color: rgba(255, 255, 255, 0.94) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
   border-bottom-color: #e2e8f0 !important;
-  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05) !important;
+}
+
+html.light header button,
+[data-mode="light"] header button,
+html.light header a,
+[data-mode="light"] header a {
+  color: #334155 !important;
+}
+
+html.light header button:hover,
+[data-mode="light"] header button:hover,
+html.light header a:hover,
+[data-mode="light"] header a:hover {
+  color: #0f172a !important;
 }
 
 html.light aside,
 [data-mode="light"] aside {
-  background-color: rgba(255, 255, 255, 0.96) !important;
+  background-color: rgba(255, 255, 255, 0.98) !important;
   border-right-color: #e2e8f0 !important;
   box-shadow: 4px 0 25px -4px rgba(0, 0, 0, 0.05) !important;
 }
 
+html.light aside nav a:not(.bg-brand),
+[data-mode="light"] aside nav a:not(.bg-brand) {
+  color: #475569 !important;
+}
+
+html.light aside nav a:not(.bg-brand):hover,
+[data-mode="light"] aside nav a:not(.bg-brand):hover {
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+
+html.light aside nav a:not(.bg-brand) svg,
+[data-mode="light"] aside nav a:not(.bg-brand) svg {
+  color: #64748b !important;
+}
+
+html.light aside nav a:not(.bg-brand):hover svg,
+[data-mode="light"] aside nav a:not(.bg-brand):hover svg {
+  color: #0f172a !important;
+}
+
+html.light aside nav a.bg-brand,
+[data-mode="light"] aside nav a.bg-brand,
+html.light aside nav a.bg-brand *,
+[data-mode="light"] aside nav a.bg-brand * {
+  color: #ffffff !important;
+}
+
 html.light .glass-panel,
 [data-mode="light"] .glass-panel {
-  background: rgba(255, 255, 255, 0.92) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid #e2e8f0 !important;
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.02) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.02) !important;
   color: #0f172a !important;
 }
 
@@ -159,7 +208,7 @@ html.light .glass-panel-hover:hover,
 [data-mode="light"] .glass-panel-hover:hover {
   background: #ffffff !important;
   border-color: var(--brand-2) !important;
-  box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.1), 0 0 20px -5px var(--brand-glow) !important;
+  box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08), 0 0 20px -5px var(--brand-glow) !important;
 }
 
 html.light h1, html.light h2, html.light h3, html.light h4, html.light h5, html.light h6,
@@ -168,9 +217,45 @@ html.light h1, html.light h2, html.light h3, html.light h4, html.light h5, html.
   color: #0f172a !important;
 }
 
-html.light .text-white,
-[data-mode="light"] .text-white {
+html.light p,
+[data-mode="light"] p {
+  color: #334155;
+}
+
+/* Ensure text-white turns dark ONLY when NOT on top of a vibrant/colored button or badge */
+html.light h1.text-white,
+html.light h2.text-white,
+html.light h3.text-white,
+html.light h4.text-white,
+html.light p.text-white,
+html.light span.text-white:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *):not([class*="bg-purple"] *):not([class*="bg-sky"] *):not([class*="bg-blue"] *):not([class*="bg-red"] *),
+[data-mode="light"] h1.text-white,
+[data-mode="light"] h2.text-white,
+[data-mode="light"] h3.text-white,
+[data-mode="light"] h4.text-white,
+[data-mode="light"] p.text-white,
+[data-mode="light"] span.text-white:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *):not([class*="bg-purple"] *):not([class*="bg-sky"] *):not([class*="bg-blue"] *):not([class*="bg-red"] *) {
   color: #0f172a !important;
+}
+
+/* Explicitly preserve crisp white text on colored buttons and active brand badges */
+html.light .btn-premium,
+[data-mode="light"] .btn-premium,
+html.light .btn-premium *,
+[data-mode="light"] .btn-premium *,
+html.light .btn-shimmer,
+[data-mode="light"] .btn-shimmer,
+html.light .btn-shimmer *,
+[data-mode="light"] .btn-shimmer *,
+html.light .bg-brand,
+[data-mode="light"] .bg-brand,
+html.light .bg-brand *,
+[data-mode="light"] .bg-brand *,
+html.light header .bg-brand,
+[data-mode="light"] header .bg-brand,
+html.light aside .bg-brand,
+[data-mode="light"] aside .bg-brand {
+  color: #ffffff !important;
 }
 
 html.light .text-slate-100,
@@ -190,6 +275,68 @@ html.light .text-slate-400,
 html.light .text-slate-500,
 [data-mode="light"] .text-slate-500 {
   color: #94a3b8 !important;
+}
+
+/* High-contrast status accents in daylight mode */
+html.light .text-indigo-400,
+[data-mode="light"] .text-indigo-400 {
+  color: #4f46e5 !important;
+}
+
+html.light .text-emerald-400,
+[data-mode="light"] .text-emerald-400 {
+  color: #059669 !important;
+}
+
+html.light .text-amber-400,
+[data-mode="light"] .text-amber-400 {
+  color: #d97706 !important;
+}
+
+html.light .text-rose-400,
+[data-mode="light"] .text-rose-400 {
+  color: #e11d48 !important;
+}
+
+html.light .text-purple-400,
+[data-mode="light"] .text-purple-400 {
+  color: #9333ea !important;
+}
+
+html.light .text-sky-400,
+[data-mode="light"] .text-sky-400 {
+  color: #0284c7 !important;
+}
+
+/* Light Mode Pill Badges */
+html.light .bg-emerald-500\/10,
+[data-mode="light"] .bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+  border-color: #a7f3d0 !important;
+}
+
+html.light .bg-indigo-500\/10,
+[data-mode="light"] .bg-indigo-500\/10 {
+  background-color: #eef2ff !important;
+  color: #4338ca !important;
+  border-color: #c7d2fe !important;
+}
+
+html.light .bg-amber-500\/10,
+[data-mode="light"] .bg-amber-500\/10 {
+  background-color: #fffbeb !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+}
+
+html.light .bg-rose-500\/10,
+html.light .bg-rose-500\/15,
+[data-mode="light"] .bg-rose-500\/10,
+[data-mode="light"] .bg-rose-500\/15 {
+  background-color: #fff1f2 !important;
+  color: #be123c !important;
+  border-color: #fecdd3 !important;
 }
 
 html.light .t-brand-grad,
@@ -214,6 +361,13 @@ html.light textarea,
   color: #0f172a !important;
 }
 
+html.light input::placeholder,
+html.light textarea::placeholder,
+[data-mode="light"] input::placeholder,
+[data-mode="light"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
 html.light input:focus,
 html.light select:focus,
 html.light textarea:focus,
@@ -234,15 +388,19 @@ html.light .bg-slate-950,
 }
 
 html.light .bg-slate-900\/50,
+html.light .bg-slate-900\/60,
 html.light .bg-slate-900\/80,
 html.light .bg-slate-900\/90,
 html.light .bg-slate-950\/50,
+html.light .bg-slate-950\/60,
 html.light .bg-slate-950\/80,
 html.light .bg-slate-950\/85,
 [data-mode="light"] .bg-slate-900\/50,
+[data-mode="light"] .bg-slate-900\/60,
 [data-mode="light"] .bg-slate-900\/80,
 [data-mode="light"] .bg-slate-900\/90,
 [data-mode="light"] .bg-slate-950\/50,
+[data-mode="light"] .bg-slate-950\/60,
 [data-mode="light"] .bg-slate-950\/80,
 [data-mode="light"] .bg-slate-950\/85 {
   background-color: rgba(255, 255, 255, 0.94) !important;
@@ -252,9 +410,20 @@ html.light .bg-slate-950\/85,
 html.light .border-slate-800,
 html.light .border-slate-800\/80,
 html.light .border-slate-800\/60,
+html.light .border-slate-800\/40,
+html.light .border-slate-700,
 [data-mode="light"] .border-slate-800,
 [data-mode="light"] .border-slate-800\/80,
-[data-mode="light"] .border-slate-800\/60 {
+[data-mode="light"] .border-slate-800\/60,
+[data-mode="light"] .border-slate-800\/40,
+[data-mode="light"] .border-slate-700 {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .divide-slate-800,
+html.light .divide-slate-800\/60,
+[data-mode="light"] .divide-slate-800,
+[data-mode="light"] .divide-slate-800\/60 {
   border-color: #e2e8f0 !important;
 }
 
@@ -269,6 +438,51 @@ html.light .btn-secondary:hover,
 [data-mode="light"] .btn-secondary:hover {
   background: #e2e8f0 !important;
   color: #0f172a !important;
+}
+
+/* Light Mode Tables */
+html.light thead,
+[data-mode="light"] thead,
+html.light thead tr,
+[data-mode="light"] thead tr,
+html.light thead th,
+[data-mode="light"] thead th {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  border-color: #e2e8f0 !important;
+}
+
+html.light tbody tr,
+[data-mode="light"] tbody tr {
+  border-color: #e2e8f0 !important;
+  color: #1e293b !important;
+}
+
+html.light tbody tr:hover,
+[data-mode="light"] tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Light Mode Skeleton Shimmer */
+html.light .skeleton-shimmer,
+[data-mode="light"] .skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    #e2e8f0 0%,
+    #cbd5e1 50%,
+    #e2e8f0 100%
+  ) !important;
+  background-size: 200% 100% !important;
+}
+
+html.light .skeleton-glow::after,
+[data-mode="light"] .skeleton-glow::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, 0.04),
+    transparent
+  ) !important;
 }
 
 html.light ::-webkit-scrollbar-track,
@@ -288,7 +502,7 @@ html.light ::-webkit-scrollbar-thumb:hover,
 
 html.light .pointer-events-none div,
 [data-mode="light"] .pointer-events-none div {
-  opacity: 0.12 !important;
+  opacity: 0.08 !important;
 }
 
 /* ============================================================
