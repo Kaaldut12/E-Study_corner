@@ -1242,6 +1242,91 @@ form button[type="submit"]:not(.btn-secondary):not([class*="bg-rose"]):not([clas
 }
 
 /* ============================================================
+   SLIDING OVERLAY BUTTON ENGINE (Update Password Button)
+   Default: #4F46E5 | Hover: #4338CA with sliding overlay | Active: #3730A3 + scale(0.95)
+   ============================================================ */
+
+.btn-update-password,
+.btn-sliding-hover {
+  position: relative;
+  overflow: hidden;
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+  border-radius: 8px;
+  font-weight: 700;
+  border: 1px solid transparent !important;
+  box-shadow: 0 4px 14px -2px rgba(79, 70, 229, 0.4);
+  transition: all 0.25s ease !important;
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* ::before sliding overlay positioned off-screen to the left */
+.btn-update-password::before,
+.btn-sliding-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background-color: #4338ca;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+/* On hover: slide the ::before overlay smoothly over the button (left: 0) */
+.btn-update-password:hover::before,
+.btn-sliding-hover:hover::before {
+  left: 0;
+}
+
+.btn-update-password:hover,
+.btn-sliding-hover:hover {
+  background-color: #4338ca !important;
+  box-shadow: 0 8px 20px -2px rgba(79, 70, 229, 0.5), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-1px);
+  color: #ffffff !important;
+}
+
+/* On active / clicked: darken to #3730a3 and scale down */
+.btn-update-password:active,
+.btn-sliding-hover:active {
+  background-color: #3730a3 !important;
+  transform: scale(0.95) !important;
+  box-shadow: 0 2px 6px -1px rgba(79, 70, 229, 0.6) !important;
+  color: #ffffff !important;
+}
+
+.btn-update-password:active::before,
+.btn-sliding-hover:active::before {
+  background-color: #3730a3 !important;
+}
+
+/* Ensure button label and icon stay on top using z-index */
+.btn-update-password > *,
+.btn-sliding-hover > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Light mode protection for sliding overlay button */
+html.light .btn-update-password,
+html.light .btn-update-password *,
+html.light .btn-update-password:hover,
+html.light .btn-update-password:hover *,
+html.light .btn-update-password:active,
+html.light .btn-update-password:active *,
+[data-mode="light"] .btn-update-password,
+[data-mode="light"] .btn-update-password *,
+[data-mode="light"] .btn-update-password:hover,
+[data-mode="light"] .btn-update-password:hover *,
+[data-mode="light"] .btn-update-password:active,
+[data-mode="light"] .btn-update-password:active * {
+  color: #ffffff !important;
+}
+
+/* ============================================================
    SCROLLBAR & SELECTION
    ============================================================ */
 

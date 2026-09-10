@@ -763,10 +763,10 @@ const Settings = () => {
                   <button
                     type="submit"
                     disabled={passwordSaving}
-                    className="w-full sm:w-auto py-2.5 px-6 btn-premium text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 text-center flex items-center justify-center gap-2 cursor-pointer"
+                    className="btn-update-password btn-sliding-hover w-full sm:w-auto py-2.5 px-6 bg-indigo-600 hover:bg-indigo-700 hover:shadow-md transition-all duration-200 active:scale-95 active:bg-indigo-800 text-white text-xs font-bold rounded-xl disabled:opacity-50 text-center flex items-center justify-center gap-2 cursor-pointer relative overflow-hidden group shadow-sm"
                   >
-                    <KeyRound className="w-4 h-4" />
-                    <span>{passwordSaving ? 'Updating Password...' : 'Update Password'}</span>
+                    <KeyRound className="w-4 h-4 relative z-10 transition-transform duration-200 group-hover:rotate-12" />
+                    <span className="relative z-10">{passwordSaving ? 'Updating Password...' : 'Update Password'}</span>
                   </button>
                 </div>
               </form>
