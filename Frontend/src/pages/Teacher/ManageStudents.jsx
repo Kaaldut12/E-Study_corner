@@ -43,7 +43,8 @@ const ManageStudents = () => {
 
   const fetchTeacherStudents = async () => {
     try {
-      const res = await api.get('/teacher/students');
+      const endpoint = currentUser?.role === 'admin' || currentUser?.role === 'superadmin' ? '/admin/students' : '/teacher/students';
+      const res = await api.get(endpoint);
       if (res.data.success) {
         setStudents(res.data.students || []);
       }
@@ -53,6 +54,22 @@ const ManageStudents = () => {
       setLoading(false);
     }
   };
+
+  const openStudentConsole = useCallback(async (student) => {
+    setSelectedStudent(student);
+    setDetailsLoading(true);
+    setActiveConsoleTab('leaves');
+    try {
+      const res = await api.get(`/teacher/students/${student.id}/details`);
+      if (res.data.success) {
+        setStudentDetails(res.data);
+      }
+    } catch (err) {
+      showToast(err.response?.data?.message || 'Failed to load student activity details', true);
+    } finally {
+      setDetailsLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchTeacherStudents();
@@ -72,22 +89,6 @@ const ManageStudents = () => {
       }
     }
   }, [students, searchParams, openStudentConsole]);
-
-  const openStudentConsole = useCallback(async (student) => {
-    setSelectedStudent(student);
-    setDetailsLoading(true);
-    setActiveConsoleTab('leaves');
-    try {
-      const res = await api.get(`/teacher/students/${student.id}/details`);
-      if (res.data.success) {
-        setStudentDetails(res.data);
-      }
-    } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to load student activity details', true);
-    } finally {
-      setDetailsLoading(false);
-    }
-  }, []);
 
   // 1. Action: Manage Student Leave (Approve / Reject)
   const handleLeaveDecision = async (leaveId, status) => {

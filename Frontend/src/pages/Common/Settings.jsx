@@ -441,7 +441,7 @@ const Settings = () => {
                     <div
                       key={m.id}
                       onClick={() => setMode(m.id)}
-                      className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-[-2px] ${
+                      className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-0.5 ${
                         isModeActive
                           ? m.id === 'light'
                             ? 'bg-white text-slate-900 border-indigo-500 ring-2 ring-indigo-500/40 shadow-xl'
@@ -511,7 +511,7 @@ const Settings = () => {
                     <div
                       key={t.id}
                       onClick={() => changeTheme(t.id)}
-                      className={`p-4 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-[-2px] ${
+                      className={`p-4 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-0.5 ${
                         isSelected
                           ? `${t.borderCol} ring-2 ring-white/30 shadow-xl bg-slate-900/90`
                           : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
@@ -521,7 +521,7 @@ const Settings = () => {
                       }}
                     >
                       {/* Top Decorative Gradient Line */}
-                      <div className={`h-1.5 w-full bg-gradient-to-r ${t.accentGrad} rounded-full mb-3`} />
+                      <div className={`h-1.5 w-full bg-linear-to-r ${t.accentGrad} rounded-full mb-3`} />
 
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2.5">
@@ -541,7 +541,7 @@ const Settings = () => {
 
                         {isSelected ? (
                           <span className="w-5 h-5 rounded-full flex items-center justify-center bg-white text-slate-950 shadow-xs">
-                            <Check className="w-3 h-3 stroke-[3]" />
+                            <Check className="w-3 h-3 stroke-3" />
                           </span>
                         ) : (
                           <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-200/80 dark:bg-slate-800/80 group-hover:bg-slate-300 dark:group-hover:bg-slate-700 group-hover:text-slate-950 dark:group-hover:text-white transition">
