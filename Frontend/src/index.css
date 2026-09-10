@@ -209,6 +209,27 @@ html.light .glass-panel-hover:hover,
   background: #ffffff !important;
   border-color: var(--brand-2) !important;
   box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.08), 0 0 20px -5px var(--brand-glow) !important;
+  color: #0f172a !important;
+}
+
+html.light .glass-panel-hover:hover h1,
+html.light .glass-panel-hover:hover h2,
+html.light .glass-panel-hover:hover h3,
+html.light .glass-panel-hover:hover h4,
+html.light .glass-panel-hover:hover h5,
+html.light .glass-panel-hover:hover h6,
+[data-mode="light"] .glass-panel-hover:hover h1,
+[data-mode="light"] .glass-panel-hover:hover h2,
+[data-mode="light"] .glass-panel-hover:hover h3,
+[data-mode="light"] .glass-panel-hover:hover h4,
+[data-mode="light"] .glass-panel-hover:hover h5,
+[data-mode="light"] .glass-panel-hover:hover h6 {
+  color: #0f172a !important;
+}
+
+html.light .glass-panel-hover:hover p,
+[data-mode="light"] .glass-panel-hover:hover p {
+  color: #334155 !important;
 }
 
 html.light h1, html.light h2, html.light h3, html.light h4, html.light h5, html.light h6,
@@ -236,6 +257,92 @@ html.light span.text-white:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand
 [data-mode="light"] p.text-white,
 [data-mode="light"] span.text-white:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *):not([class*="bg-purple"] *):not([class*="bg-sky"] *):not([class*="bg-blue"] *):not([class*="bg-red"] *) {
   color: #0f172a !important;
+}
+
+/* ============================================================
+   LIGHT MODE HOVER CONTRAST & READABILITY ENGINE
+   Prevents text and background colors from matching on hover in light mode
+   ============================================================ */
+
+/* 1. Neutral hover backgrounds in light mode (replaces dark slate hovers with clean daylight slate-100) */
+html.light [class*="hover:bg-slate-"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):hover,
+[data-mode="light"] [class*="hover:bg-slate-"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):hover {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* 2. Neutral hover text colors in light mode (prevents white-on-white text) */
+html.light [class*="hover:text-white"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover,
+html.light [class*="hover:text-white"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover *,
+html.light [class*="hover:text-slate-100"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover,
+html.light [class*="hover:text-slate-200"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover,
+[data-mode="light"] [class*="hover:text-white"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover,
+[data-mode="light"] [class*="hover:text-white"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover *,
+[data-mode="light"] [class*="hover:text-slate-100"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover,
+[data-mode="light"] [class*="hover:text-slate-200"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover {
+  color: #0f172a !important;
+}
+
+html.light [class*="hover:text-white"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover svg,
+[data-mode="light"] [class*="hover:text-white"]:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):not([class*="bg-rose"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-sky"]):not([class*="bg-teal"]):hover svg {
+  color: #0f172a !important;
+}
+
+/* 3. Group hover text and icons in light mode */
+html.light .group:hover [class*="group-hover:text-white"]:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-purple"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *),
+html.light .group:hover [class*="group-hover:text-slate-100"]:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *),
+html.light .group:hover [class*="group-hover:text-slate-200"]:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *),
+[data-mode="light"] .group:hover [class*="group-hover:text-white"]:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-purple"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *),
+[data-mode="light"] .group:hover [class*="group-hover:text-slate-100"]:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *),
+[data-mode="light"] .group:hover [class*="group-hover:text-slate-200"]:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *) {
+  color: #0f172a !important;
+}
+
+html.light .group:hover [class*="group-hover:text-white"] svg,
+[data-mode="light"] .group:hover [class*="group-hover:text-white"] svg {
+  color: #0f172a !important;
+}
+
+/* 4. Group hover pill badges inside theme cards and pickers */
+html.light .group:hover [class*="group-hover:bg-slate-"],
+[data-mode="light"] .group:hover [class*="group-hover:bg-slate-"] {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* 5. Strictly preserve crisp white text on colored theme buttons on hover */
+html.light .btn-premium:hover,
+[data-mode="light"] .btn-premium:hover,
+html.light .btn-premium:hover *,
+[data-mode="light"] .btn-premium:hover *,
+html.light .btn-shimmer:hover,
+[data-mode="light"] .btn-shimmer:hover,
+html.light .btn-shimmer:hover *,
+[data-mode="light"] .btn-shimmer:hover *,
+html.light .bg-brand:hover,
+[data-mode="light"] .bg-brand:hover,
+html.light .bg-brand:hover *,
+[data-mode="light"] .bg-brand:hover *,
+html.light button.bg-indigo-600:hover,
+[data-mode="light"] button.bg-indigo-600:hover,
+html.light a.bg-indigo-600:hover,
+[data-mode="light"] a.bg-indigo-600:hover,
+html.light button.bg-indigo-500:hover,
+[data-mode="light"] button.bg-indigo-500:hover,
+html.light button.bg-purple-600:hover,
+[data-mode="light"] button.bg-purple-600:hover,
+html.light button.bg-emerald-600:hover,
+[data-mode="light"] button.bg-emerald-600:hover,
+html.light button.bg-rose-600:hover,
+[data-mode="light"] button.bg-rose-600:hover,
+html.light button.bg-amber-600:hover,
+[data-mode="light"] button.bg-amber-600:hover,
+html.light button[type="submit"]:not(.btn-secondary):hover,
+[data-mode="light"] button[type="submit"]:not(.btn-secondary):hover,
+html.light button[type="submit"]:not(.btn-secondary):hover *,
+[data-mode="light"] button[type="submit"]:not(.btn-secondary):hover * {
+  color: #ffffff !important;
 }
 
 /* Explicitly preserve crisp white text on colored buttons and active brand badges */

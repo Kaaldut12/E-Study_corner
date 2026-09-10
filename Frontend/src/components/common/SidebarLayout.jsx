@@ -178,7 +178,7 @@ const SidebarLayout = ({ children }) => {
                         `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group relative ${
                           isActive
                             ? 'bg-brand text-white shadow-brand ring-1 ring-white/20 font-bold translate-x-1'
-                            : 'text-slate-400 hover:text-white hover:bg-slate-800/70 hover:translate-x-0.5'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:translate-x-0.5'
                         }`
                       }
                     >
@@ -186,7 +186,7 @@ const SidebarLayout = ({ children }) => {
                         <>
                           <Icon
                             className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                              isActive ? 'text-white scale-110' : 'text-slate-400 group-hover:text-white group-hover:scale-105'
+                              isActive ? 'text-white scale-110' : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-950 dark:group-hover:text-white group-hover:scale-105'
                             }`}
                           />
                           <span className="truncate">{item.label}</span>
@@ -204,23 +204,23 @@ const SidebarLayout = ({ children }) => {
 
           {/* Sidebar Footer User Quick Card */}
           {user && (
-            <div className="p-3.5 border-t border-slate-800/80 bg-slate-950/50 flex items-center justify-between gap-2">
+            <div className="p-3.5 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/50 flex items-center justify-between gap-2">
               <Link
                 to={`/${role === 'superadmin' ? 'admin' : role}/settings`}
-                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-slate-800/60 transition group flex-1 min-w-0"
+                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition group flex-1 min-w-0"
                 title="Open Settings"
               >
                 <div className="relative shrink-0">
                   <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand group-hover:scale-105 transition-transform">
                     {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900" />
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-slate-200 truncate group-hover:text-white transition">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-slate-950 dark:group-hover:text-white transition">
                     {user.name}
                   </div>
-                  <div className="text-[10px] text-slate-400 capitalize flex items-center gap-1">
+                  <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize flex items-center gap-1">
                     <span className="w-1 h-1 rounded-full bg-emerald-400 inline-block animate-ping" />
                     <span>Active {user.role}</span>
                   </div>

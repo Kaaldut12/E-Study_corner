@@ -48,12 +48,12 @@ const Navbar = ({ toggleSidebar }) => {
             {/* Quick Mode Toggle */}
             <button
               onClick={toggleMode}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-800/90 transition shadow-sm text-xs font-semibold cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800/90 transition shadow-xs text-xs font-semibold cursor-pointer"
               title={mode === 'dark' ? 'Switch to Lite Theme' : 'Switch to Dark Theme'}
               aria-label="Toggle theme mode"
             >
               {mode === 'dark' ? (
-                <Sun className="w-4 h-4 text-amber-400" />
+                <Sun className="w-4 h-4 text-amber-500" />
               ) : (
                 <Moon className="w-4 h-4 text-indigo-500" />
               )}
@@ -63,7 +63,7 @@ const Navbar = ({ toggleSidebar }) => {
             {/* Settings Link Button */}
             <Link
               to={`/${user.role === 'superadmin' ? 'admin' : user.role}/settings`}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-800/90 transition shadow-sm text-xs font-semibold group cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800/90 transition shadow-xs text-xs font-semibold group cursor-pointer"
               title="Settings (Profile, Themes & Password)"
             >
               <Settings className="w-4 h-4 text-brand group-hover:rotate-45 transition-transform duration-300" />
@@ -78,15 +78,15 @@ const Navbar = ({ toggleSidebar }) => {
             {/* User Profile Card linked to Settings */}
             <Link
               to={`/${user.role === 'superadmin' ? 'admin' : user.role}/settings`}
-              className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2 border-l border-slate-800/80 hover:opacity-90 transition group cursor-pointer"
+              className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2 border-l border-slate-200 dark:border-slate-800/80 hover:opacity-90 transition group cursor-pointer"
               title="View Profile & Settings"
             >
               <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand ring-1 ring-white/20 group-hover:scale-105 transition-transform">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="hidden md:flex flex-col leading-tight">
-                <span className="text-xs font-bold text-slate-200 group-hover:text-white transition">{user.name}</span>
-                <span className="text-[10px] text-slate-400 truncate max-w-[140px]">{user.email}</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white transition">{user.name}</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[140px]">{user.email}</span>
               </div>
             </Link>
 
