@@ -31,20 +31,34 @@ export const connectDB = async () => {
 
   if (!cached.promise) {
     const opts = {
-      serverSelectionTimeoutMS: 2500,
+      serverSelectionTimeoutMS: 3000,
       connectTimeoutMS: 3000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
-      console.log(`[MongoDB] Connected Successfully: ${mongooseInstance.connection.host}/${mongooseInstance.connection.name}`);
-      cached.conn = mongooseInstance.connection;
-      return cached.conn;
-    }).catch((err) => {
-      cached.promise = null;
-      cached.conn = null;
-      console.error(`[MongoDB] Connection Error: ${err.message}`);
-      throw err;
-    });
+    cached.promise = (async () => {
+      try {
+        const mongooseInstance = await mongoose.connect(MONGODB_URI, opts);
+        console.log(`[MongoDB] Connected Successfully: ${mongooseInstance.connection.host}/${mongooseInstance.connection.name}`);
+        cached.conn = mongooseInstance.connection;
+        return cached.conn;
+      } catch (err) {
+        if (!process.env.VERCEL && process.env.NODE_ENV !== 'production' && !MONGODB_URI.includes('127.0.0.1') && !MONGODB_URI.includes('localhost')) {
+          console.warn(`[MongoDB] Cloud Atlas connection failed (${err.message}). Attempting local fallback (mongodb://127.0.0.1:27017/estudy_db)...`);
+          try {
+            const localInstance = await mongoose.connect('mongodb://127.0.0.1:27017/estudy_db', opts);
+            console.log(`[MongoDB] Connected to local MongoDB fallback: ${localInstance.connection.host}/${localInstance.connection.name}`);
+            cached.conn = localInstance.connection;
+            return cached.conn;
+          } catch {
+            console.warn('[MongoDB] Local MongoDB fallback is also unreachable.');
+          }
+        }
+        cached.promise = null;
+        cached.conn = null;
+        console.error(`[MongoDB] Connection Error: ${err.message}`);
+        throw err;
+      }
+    })();
   }
 
   try {

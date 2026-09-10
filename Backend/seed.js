@@ -867,14 +867,35 @@ const seedCollections = [
   [TeacherQuestion, seedTeacherQuestions]
 ];
 
-export const seedDatabase = async () => {
-  const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy_db';
-  await mongoose.connect(mongoURI, { serverSelectionTimeoutMS: 5000 });
+export const seedDatabase = async (customUri) => {
+  const primaryURI = customUri || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy_db';
+  const localFallbackURI = 'mongodb://127.0.0.1:27017/estudy_db';
+  let connectedURI = primaryURI;
+
+  try {
+    const masked = primaryURI.replace(/\/\/[^@]+@/, '//***:***@');
+    console.log(`Connecting to database (${masked}) ...`);
+    await mongoose.connect(primaryURI, { serverSelectionTimeoutMS: 5000 });
+  } catch (err) {
+    if (primaryURI !== localFallbackURI) {
+      console.warn(`\n⚠️  Could not connect to primary database (${err.message}).`);
+      console.warn(`Tip: If using MongoDB Atlas, whitelist your IP in Atlas -> Security -> Network Access.`);
+      console.log(`Attempting fallback to local MongoDB (${localFallbackURI}) ...`);
+      await mongoose.connect(localFallbackURI, { serverSelectionTimeoutMS: 5000 });
+      connectedURI = localFallbackURI;
+      console.log(`✓ Successfully connected to local MongoDB!`);
+    } else {
+      throw err;
+    }
+  }
 
   let upsertedCount = 0;
   for (const [Model, documents] of seedCollections) {
     for (const document of documents) {
-      const filter = document.id ? { id: document.id } : { email: document.email };
+      const filter = (Model.modelName === 'User')
+        ? (document.id ? { $or: [{ id: document.id }, { email: document.email.toLowerCase() }] } : { email: document.email.toLowerCase() })
+        : (document.id ? { id: document.id } : { email: document.email });
+
       const result = await Model.updateOne(
         filter,
         { $set: document },
@@ -884,7 +905,7 @@ export const seedDatabase = async () => {
     }
   }
 
-  console.log(`Seed complete. Synchronized ${upsertedCount} document(s) with MongoDB.`);
+  console.log(`Seed complete. Synchronized ${upsertedCount} document(s) with MongoDB (${connectedURI.includes('127.0.0.1') ? 'local' : 'remote'}).`);
 };
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
