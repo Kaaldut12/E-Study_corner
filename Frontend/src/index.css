@@ -145,17 +145,17 @@ html.light header,
   box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05) !important;
 }
 
-html.light header button,
-[data-mode="light"] header button,
-html.light header a,
-[data-mode="light"] header a {
+html.light header button:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]),
+[data-mode="light"] header button:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]),
+html.light header a:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]),
+[data-mode="light"] header a:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]) {
   color: #334155 !important;
 }
 
-html.light header button:hover,
-[data-mode="light"] header button:hover,
-html.light header a:hover,
-[data-mode="light"] header a:hover {
+html.light header button:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):hover,
+[data-mode="light"] header button:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):hover,
+html.light header a:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):hover,
+[data-mode="light"] header a:not(.btn-premium):not(.btn-shimmer):not(.bg-brand):not([class*="btn-dashboard"]):not([class*="bg-indigo"]):not([class*="bg-purple"]):not([class*="bg-emerald"]):hover {
   color: #0f172a !important;
 }
 
@@ -249,13 +249,13 @@ html.light h2.text-white,
 html.light h3.text-white,
 html.light h4.text-white,
 html.light p.text-white,
-html.light span.text-white:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *):not([class*="bg-purple"] *):not([class*="bg-sky"] *):not([class*="bg-blue"] *):not([class*="bg-red"] *),
+html.light span.text-white:not(.btn-premium *):not(.btn-primary *):not([class*="btn-dashboard"] *):not(button[type="submit"] *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *):not([class*="bg-purple"] *):not([class*="bg-sky"] *):not([class*="bg-blue"] *):not([class*="bg-red"] *),
 [data-mode="light"] h1.text-white,
 [data-mode="light"] h2.text-white,
 [data-mode="light"] h3.text-white,
 [data-mode="light"] h4.text-white,
 [data-mode="light"] p.text-white,
-[data-mode="light"] span.text-white:not(.btn-premium *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *):not([class*="bg-purple"] *):not([class*="bg-sky"] *):not([class*="bg-blue"] *):not([class*="bg-red"] *) {
+[data-mode="light"] span.text-white:not(.btn-premium *):not(.btn-primary *):not([class*="btn-dashboard"] *):not(button[type="submit"] *):not(.btn-shimmer *):not(.bg-brand *):not([class*="bg-indigo"] *):not([class*="bg-emerald"] *):not([class*="bg-rose"] *):not([class*="bg-amber"] *):not([class*="bg-purple"] *):not([class*="bg-sky"] *):not([class*="bg-blue"] *):not([class*="bg-red"] *) {
   color: #0f172a !important;
 }
 
@@ -602,31 +602,309 @@ html.light .bg-slate-800\/80,
   color: #1e293b !important;
 }
 
+/* ============================================================
+   LIGHT THEME BUTTON SYSTEM — Text & Background Specifications
+   ============================================================ */
+
+/* 1. Primary & Theme Gradient Buttons in Light Mode */
+html.light .btn-premium,
+html.light .btn-primary,
+html.light .btn-brand,
+html.light .btn-dashboard-primary,
+html.light button.btn-premium,
+html.light a.btn-premium,
+html.light button.bg-indigo-600,
+html.light a.bg-indigo-600,
+html.light button.bg-indigo-500,
+html.light a.bg-indigo-500,
+html.light button.bg-brand,
+html.light a.bg-brand,
+html.light form button[type="submit"]:not(.btn-secondary),
+[data-mode="light"] .btn-premium,
+[data-mode="light"] .btn-primary,
+[data-mode="light"] .btn-brand,
+[data-mode="light"] .btn-dashboard-primary,
+[data-mode="light"] button.btn-premium,
+[data-mode="light"] a.btn-premium,
+[data-mode="light"] button.bg-indigo-600,
+[data-mode="light"] a.bg-indigo-600,
+[data-mode="light"] button.bg-indigo-500,
+[data-mode="light"] a.bg-indigo-500,
+[data-mode="light"] button.bg-brand,
+[data-mode="light"] a.bg-brand,
+[data-mode="light"] form button[type="submit"]:not(.btn-secondary) {
+  background: var(--brand-grad) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 14px -2px var(--brand-glow),
+              0 2px 6px -1px rgba(15, 23, 42, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+html.light .btn-premium *,
+html.light .btn-primary *,
+html.light .btn-brand *,
+html.light .btn-dashboard-primary *,
+html.light button.btn-premium *,
+html.light a.btn-premium *,
+html.light form button[type="submit"]:not(.btn-secondary) *,
+[data-mode="light"] .btn-premium *,
+[data-mode="light"] .btn-primary *,
+[data-mode="light"] .btn-brand *,
+[data-mode="light"] .btn-dashboard-primary *,
+[data-mode="light"] button.btn-premium *,
+[data-mode="light"] a.btn-premium *,
+[data-mode="light"] form button[type="submit"]:not(.btn-secondary) * {
+  color: #ffffff !important;
+}
+
+html.light .btn-premium:hover,
+html.light .btn-primary:hover,
+html.light .btn-brand:hover,
+html.light .btn-dashboard-primary:hover,
+html.light button.btn-premium:hover,
+html.light a.btn-premium:hover,
+html.light button.bg-indigo-600:hover,
+html.light a.bg-indigo-600:hover,
+html.light button.bg-indigo-500:hover,
+html.light a.bg-indigo-500:hover,
+html.light button.bg-brand:hover,
+html.light a.bg-brand:hover,
+html.light form button[type="submit"]:not(.btn-secondary):hover,
+[data-mode="light"] .btn-premium:hover,
+[data-mode="light"] .btn-primary:hover,
+[data-mode="light"] .btn-brand:hover,
+[data-mode="light"] .btn-dashboard-primary:hover,
+[data-mode="light"] button.btn-premium:hover,
+[data-mode="light"] a.btn-premium:hover,
+[data-mode="light"] button.bg-indigo-600:hover,
+[data-mode="light"] a.bg-indigo-600:hover,
+[data-mode="light"] button.bg-indigo-500:hover,
+[data-mode="light"] a.bg-indigo-500:hover,
+[data-mode="light"] button.bg-brand:hover,
+[data-mode="light"] a.bg-brand:hover,
+[data-mode="light"] form button[type="submit"]:not(.btn-secondary):hover {
+  background: var(--brand-grad) !important;
+  filter: brightness(1.08) contrast(1.04) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 10px 24px -3px var(--brand-glow),
+              0 0 16px -2px var(--brand-glow),
+              inset 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-2px);
+}
+
+/* 2. Secondary & Neutral Glass Buttons in Light Mode */
 html.light .btn-secondary,
 html.light .btn-dashboard-secondary,
+html.light button.btn-secondary,
+html.light a.btn-secondary,
 [data-mode="light"] .btn-secondary,
-[data-mode="light"] .btn-dashboard-secondary {
-  background: #f1f5f9 !important;
-  border-color: #cbd5e1 !important;
+[data-mode="light"] .btn-dashboard-secondary,
+[data-mode="light"] button.btn-secondary,
+[data-mode="light"] a.btn-secondary {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.06),
+              0 1px 3px rgba(15, 23, 42, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+html.light .btn-secondary *,
+html.light .btn-dashboard-secondary *,
+[data-mode="light"] .btn-secondary *,
+[data-mode="light"] .btn-dashboard-secondary * {
   color: #1e293b !important;
 }
 
 html.light .btn-secondary:hover,
 html.light .btn-dashboard-secondary:hover,
+html.light button.btn-secondary:hover,
+html.light a.btn-secondary:hover,
 [data-mode="light"] .btn-secondary:hover,
-[data-mode="light"] .btn-dashboard-secondary:hover {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
+[data-mode="light"] .btn-dashboard-secondary:hover,
+[data-mode="light"] button.btn-secondary:hover,
+[data-mode="light"] a.btn-secondary:hover {
+  background: #ffffff !important;
+  border-color: var(--brand-2, #6366f1) !important;
+  color: var(--brand-1, #4f46e5) !important;
+  box-shadow: 0 6px 18px -2px rgba(99, 102, 241, 0.22),
+              0 2px 6px rgba(15, 23, 42, 0.05) !important;
+  transform: translateY(-2px);
+}
+
+html.light .btn-secondary:hover *,
+html.light .btn-dashboard-secondary:hover *,
+[data-mode="light"] .btn-secondary:hover *,
+[data-mode="light"] .btn-dashboard-secondary:hover * {
+  color: var(--brand-1, #4f46e5) !important;
 }
 
 html.light .btn-secondary:active,
 html.light .btn-dashboard-secondary:active,
 [data-mode="light"] .btn-secondary:active,
 [data-mode="light"] .btn-dashboard-secondary:active {
-  background: #cbd5e1 !important;
+  background: #f1f5f9 !important;
   border-color: #94a3b8 !important;
   color: #0f172a !important;
   transform: scale(0.96) translateY(1px) !important;
+}
+
+/* 3. Dashboard Accent Buttons in Light Mode */
+/* Emerald (Attendance Check-In Today) */
+html.light .btn-dashboard-emerald,
+[data-mode="light"] .btn-dashboard-emerald {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 14px -2px rgba(16, 185, 129, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+html.light .btn-dashboard-emerald *,
+[data-mode="light"] .btn-dashboard-emerald * {
+  color: #ffffff !important;
+}
+html.light .btn-dashboard-emerald:hover,
+[data-mode="light"] .btn-dashboard-emerald:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 50%, #0d9488 100%) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 10px 24px -3px rgba(16, 185, 129, 0.5),
+              0 0 16px -2px rgba(16, 185, 129, 0.4) !important;
+  color: #ffffff !important;
+}
+
+/* Amber (Grading, Reviews) */
+html.light .btn-dashboard-amber,
+[data-mode="light"] .btn-dashboard-amber {
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+html.light .btn-dashboard-amber *,
+[data-mode="light"] .btn-dashboard-amber * {
+  color: #ffffff !important;
+}
+html.light .btn-dashboard-amber:hover,
+[data-mode="light"] .btn-dashboard-amber:hover {
+  background: linear-gradient(135deg, #b45309 0%, #d97706 50%, #ea580c 100%) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 10px 24px -3px rgba(245, 158, 11, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* Sky (Analytics, Doubts) */
+html.light .btn-dashboard-sky,
+[data-mode="light"] .btn-dashboard-sky {
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 14px -2px rgba(14, 165, 233, 0.4) !important;
+}
+html.light .btn-dashboard-sky *,
+[data-mode="light"] .btn-dashboard-sky * {
+  color: #ffffff !important;
+}
+html.light .btn-dashboard-sky:hover,
+[data-mode="light"] .btn-dashboard-sky:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #0ea5e9 100%) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 10px 24px -3px rgba(14, 165, 233, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* Purple (Leaves, Approvals) */
+html.light .btn-dashboard-purple,
+[data-mode="light"] .btn-dashboard-purple {
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 14px -2px rgba(139, 92, 246, 0.4) !important;
+}
+html.light .btn-dashboard-purple *,
+[data-mode="light"] .btn-dashboard-purple * {
+  color: #ffffff !important;
+}
+html.light .btn-dashboard-purple:hover,
+[data-mode="light"] .btn-dashboard-purple:hover {
+  background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #a855f7 100%) !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 10px 24px -3px rgba(139, 92, 246, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* 4. Subtle & Outline Buttons in Light Mode */
+html.light .btn-brand-subtle,
+[data-mode="light"] .btn-brand-subtle {
+  background-color: rgba(79, 70, 229, 0.09) !important;
+  color: #4338ca !important;
+  border: 1px solid rgba(99, 102, 241, 0.28) !important;
+}
+html.light .btn-brand-subtle:hover,
+[data-mode="light"] .btn-brand-subtle:hover {
+  background-color: rgba(79, 70, 229, 0.18) !important;
+  color: #3730a3 !important;
+  border-color: rgba(99, 102, 241, 0.5) !important;
+}
+
+html.light .btn-outline-brand,
+[data-mode="light"] .btn-outline-brand {
+  background: #ffffff !important;
+  color: #4f46e5 !important;
+  border: 1.5px solid #6366f1 !important;
+}
+html.light .btn-outline-brand:hover,
+[data-mode="light"] .btn-outline-brand:hover {
+  background: rgba(79, 70, 229, 0.08) !important;
+  color: #3730a3 !important;
+  border-color: #4338ca !important;
+}
+
+/* 5. Generic Utility Buttons (like Slate-800/900 buttons, pills, filters) in Light Mode */
+html.light button.bg-slate-800:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+html.light button.bg-slate-900:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+html.light a.bg-slate-800:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+html.light a.bg-slate-900:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] button.bg-slate-800:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] button.bg-slate-900:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] a.bg-slate-800:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] a.bg-slate-900:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand) {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light button.bg-slate-800:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+html.light button.bg-slate-900:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+html.light a.bg-slate-800:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+html.light a.bg-slate-900:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] button.bg-slate-800:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] button.bg-slate-900:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] a.bg-slate-800:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand),
+[data-mode="light"] a.bg-slate-900:hover:not(.btn-premium):not([class*="btn-dashboard"]):not(.bg-brand) {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+/* 6. Dashboard Action Command Center Cards in Light Mode */
+html.light .dashboard-action-card,
+[data-mode="light"] .dashboard-action-card {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06) !important;
+}
+
+html.light .dashboard-action-card:hover,
+[data-mode="light"] .dashboard-action-card:hover {
+  background: #ffffff !important;
+  border-color: var(--brand-2, #6366f1) !important;
+  box-shadow: 0 12px 28px -4px rgba(99, 102, 241, 0.2) !important;
+  transform: translateY(-3px) !important;
 }
 
 /* Light Mode Tables */
