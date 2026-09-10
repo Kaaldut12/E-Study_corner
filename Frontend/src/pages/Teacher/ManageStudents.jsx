@@ -1,5 +1,5 @@
 // frontend/src/pages/Teacher/ManageStudents.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { SkeletonTable, SkeletonCardList } from '../../components/common/SkeletonLoader';
@@ -71,9 +71,9 @@ const ManageStudents = () => {
         }
       }
     }
-  }, [students, searchParams]);
+  }, [students, searchParams, openStudentConsole]);
 
-  const openStudentConsole = async (student) => {
+  const openStudentConsole = useCallback(async (student) => {
     setSelectedStudent(student);
     setDetailsLoading(true);
     setActiveConsoleTab('leaves');
@@ -87,7 +87,7 @@ const ManageStudents = () => {
     } finally {
       setDetailsLoading(false);
     }
-  };
+  }, []);
 
   // 1. Action: Manage Student Leave (Approve / Reject)
   const handleLeaveDecision = async (leaveId, status) => {

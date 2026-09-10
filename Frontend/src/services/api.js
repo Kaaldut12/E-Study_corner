@@ -75,13 +75,4 @@ api.interceptors.response.use(
   }
 );
 
-// Also attach Bearer token to default global axios instance for legacy calls
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token && !config.headers.Authorization) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
 export default api;

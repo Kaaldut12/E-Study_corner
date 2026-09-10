@@ -1,39 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-const THEMES = [
-  { id: 'indigo', label: 'Indigo',  hex: '#6366f1' },
-  { id: 'emerald', label: 'Emerald', hex: '#10b981' },
-  { id: 'amber',   label: 'Amber',   hex: '#f59e0b' },
-  { id: 'rose',    label: 'Rose',    hex: '#f43f5e' },
-];
-
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
-  const [currentTheme, setCurrentTheme] = useState(
-    () => localStorage.getItem('estudy_theme') || 'indigo'
-  );
 
   // Apply saved theme on mount
   useEffect(() => {
     const saved = localStorage.getItem('estudy_theme') || 'indigo';
-    applyTheme(saved);
-  }, []);
-
-  const applyTheme = (name) => {
-    if (name === 'indigo') {
+    if (saved === 'indigo') {
       document.documentElement.removeAttribute('data-theme');
     } else {
-      document.documentElement.setAttribute('data-theme', name);
+      document.documentElement.setAttribute('data-theme', saved);
     }
-  };
-
-  const changeTheme = (name) => {
-    setCurrentTheme(name);
-    localStorage.setItem('estudy_theme', name);
-    applyTheme(name);
-  };
+  }, []);
 
   const roleBadge = {
     student: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',

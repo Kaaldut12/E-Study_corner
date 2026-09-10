@@ -64,7 +64,7 @@ const memAttendance = [
   {
     id: 'att_seed_1',
     userId: 'user_student_1',
-    userName: 'Aarav Sharma',
+    userName: 'Student Scholar',
     userRole: 'student',
     date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
     checkInTime: '09:12 AM',
@@ -74,7 +74,7 @@ const memAttendance = [
   {
     id: 'att_seed_2',
     userId: 'user_teacher_1',
-    userName: 'Dr. Sarah Mitchell',
+    userName: 'Faculty Lecturer',
     userRole: 'teacher',
     date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
     checkInTime: '08:45 AM',
@@ -87,8 +87,8 @@ const memLeaves = [
   {
     id: 'leave_seed_1',
     userId: 'user_student_1',
-    userName: 'Aarav Sharma',
-    userEmail: 'student@estudy.edu',
+    userName: 'Student Scholar',
+    userEmail: 'student@estudy.com',
     userRole: 'student',
     leaveType: 'academic',
     startDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
@@ -96,7 +96,7 @@ const memLeaves = [
     totalDays: 3,
     reason: 'Attending Inter-College Robotics Hackathon competition representing campus team.',
     status: 'approved',
-    reviewedBy: 'Dr. Sarah Mitchell',
+    reviewedBy: 'Faculty Lecturer',
     reviewerNotes: 'Best wishes for the hackathon! Ensure coursework is submitted.',
     reviewedAt: new Date(),
     createdAt: new Date(Date.now() - 86400000 * 2)
@@ -104,8 +104,8 @@ const memLeaves = [
   {
     id: 'leave_seed_2',
     userId: 'user_student_2',
-    userName: 'Priya Patel',
-    userEmail: 'priya@estudy.edu',
+    userName: 'Priya Sharma',
+    userEmail: 'priya@estudy.com',
     userRole: 'student',
     leaveType: 'sick',
     startDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
@@ -121,8 +121,8 @@ const memLeaves = [
   {
     id: 'leave_seed_3',
     userId: 'user_teacher_1',
-    userName: 'Dr. Sarah Mitchell',
-    userEmail: 'sarah@estudy.edu',
+    userName: 'Faculty Lecturer',
+    userEmail: 'teacher@estudy.com',
     userRole: 'teacher',
     leaveType: 'casual',
     startDate: new Date(Date.now() + 86400000 * 5).toISOString().split('T')[0],
@@ -142,6 +142,7 @@ const memQuizSessions = new Map();
 
 const generateId = (prefix) => `${prefix}_${crypto.randomUUID().slice(0, 8)}`;
 const isDBConnected = () => mongoose.connection.readyState === 1;
+const shouldEnforceDB = () => process.env.NODE_ENV === 'production' || process.env.DATA_STORE_MODE === 'strict';
 
 export const dataStore = {
   // ==================== USERS ====================
