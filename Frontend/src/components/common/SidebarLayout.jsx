@@ -129,7 +129,7 @@ const SidebarLayout = ({ children }) => {
   const navSections = navSectionsByRole[role] || navSectionsByRole.student;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
+    <div className="app-shell min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
       {/* Dynamic Background Ambient Glowing Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-12 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[140px] animate-float-slow" />

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 /* ============================================================
@@ -6,7 +6,7 @@
    ============================================================ */
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   color-scheme: dark;
 
   /* === INDIGO THEME (Default) === */
@@ -999,13 +999,13 @@ body {
   background-color: #070a12;
   color: #f1f5f9;
   overflow-x: hidden;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Manrope', system-ui, sans-serif;
   text-rendering: optimizeLegibility;
 }
 
 /* Responsive typography & safe word wrapping */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-family: 'Space Grotesk', 'Manrope', system-ui, sans-serif;
   letter-spacing: -0.02em;
   font-weight: 700;
   overflow-wrap: break-word;
@@ -1035,7 +1035,7 @@ h3 {
 }
 
 .font-display {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
 }
 
 /* ============================================================
@@ -2038,4 +2038,111 @@ html.light .btn-update-password:active *,
 
 ::-webkit-scrollbar-thumb:hover {
   background: #334155;
+}
+
+/* ============================================================
+   PRODUCT-WIDE VISUAL REFRESH
+   ============================================================ */
+
+body {
+  background: #080d17;
+}
+
+.app-shell,
+.site-shell {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(20, 184, 166, 0.09), transparent 28rem),
+    radial-gradient(circle at 92% 12%, rgba(245, 158, 11, 0.06), transparent 24rem),
+    #080d17 !important;
+}
+
+.app-shell main {
+  max-width: 90rem;
+}
+
+.app-navbar {
+  background: rgba(8, 13, 23, 0.86) !important;
+  border-bottom-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 12px 30px -20px rgba(0, 0, 0, 0.9) !important;
+}
+
+.app-shell aside {
+  background: rgba(10, 18, 32, 0.9) !important;
+  border-right-color: rgba(148, 163, 184, 0.14) !important;
+}
+
+.glass-panel {
+  background: rgba(16, 27, 45, 0.88) !important;
+  border-color: rgba(148, 163, 184, 0.17) !important;
+  border-radius: 1rem;
+  box-shadow: 0 18px 45px -30px rgba(0, 0, 0, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+}
+
+.glass-panel-hover:hover {
+  background: rgba(21, 35, 57, 0.96) !important;
+  border-color: var(--brand-border) !important;
+  box-shadow: 0 22px 45px -22px rgba(0, 0, 0, 0.95), 0 0 24px -8px var(--brand-glow) !important;
+}
+
+.dashboard-action-card {
+  background: rgba(12, 22, 38, 0.9) !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+
+.site-shell section {
+  border-color: rgba(148, 163, 184, 0.14) !important;
+}
+
+html.light body {
+  background: #f3f6fa !important;
+}
+
+html.light .app-shell,
+html.light .site-shell,
+[data-mode="light"] .app-shell,
+[data-mode="light"] .site-shell {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(20, 184, 166, 0.08), transparent 26rem),
+    radial-gradient(circle at 92% 12%, rgba(245, 158, 11, 0.07), transparent 22rem),
+    #f3f6fa !important;
+}
+
+html.light .app-navbar,
+[data-mode="light"] .app-navbar {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-bottom-color: #dbe3ed !important;
+  box-shadow: 0 12px 30px -24px rgba(15, 23, 42, 0.45) !important;
+}
+
+html.light .app-shell aside,
+[data-mode="light"] .app-shell aside {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-right-color: #dbe3ed !important;
+}
+
+html.light .glass-panel,
+[data-mode="light"] .glass-panel {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: #dbe3ed !important;
+  box-shadow: 0 18px 40px -30px rgba(15, 23, 42, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+html.light .glass-panel-hover:hover,
+[data-mode="light"] .glass-panel-hover:hover {
+  background: #ffffff !important;
+  border-color: var(--brand-2) !important;
+  box-shadow: 0 22px 42px -26px rgba(15, 23, 42, 0.42), 0 0 22px -10px var(--brand-glow) !important;
+}
+
+html.light .dashboard-action-card,
+[data-mode="light"] .dashboard-action-card {
+  background: rgba(248, 250, 252, 0.92) !important;
+  border-color: #cbd5e1 !important;
+}
+
+@media (max-width: 640px) {
+  .app-shell main {
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+  }
 }

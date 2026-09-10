@@ -15,7 +15,7 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="h-16 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl px-3 sm:px-6 flex items-center justify-between sticky top-0 z-50 transition-all shadow-md">
+    <header className="app-navbar h-16 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl px-3 sm:px-6 flex items-center justify-between sticky top-0 z-50 transition-all shadow-md">
       {/* Left — Menu + Logo */}
       <div className="flex items-center gap-2 sm:gap-3">
         <button

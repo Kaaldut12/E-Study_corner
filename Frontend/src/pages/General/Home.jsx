@@ -48,7 +48,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div id="top" className="min-h-screen bg-[#070a12] text-slate-100 flex flex-col font-sans relative overflow-hidden">
+    <div id="top" className="site-shell min-h-screen bg-[#070a12] text-slate-100 flex flex-col font-sans relative overflow-hidden">
       {/* Dynamic Background Ambient Glowing Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-16 left-10 w-[30rem] h-[30rem] bg-indigo-600/15 rounded-full blur-[140px] animate-float-slow" />
