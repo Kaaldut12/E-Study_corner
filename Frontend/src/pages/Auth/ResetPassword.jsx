@@ -74,8 +74,8 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-sans relative overflow-hidden">
-      <div className="w-full max-w-md glass-panel p-8 rounded-3xl border border-slate-800 shadow-2xl space-y-6 relative z-10">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-3.5 sm:p-4 font-sans relative overflow-hidden">
+      <div className="w-full max-w-md glass-panel p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-2xl space-y-5 sm:space-y-6 relative z-10">
         <div className="text-center space-y-1">
           <div className="w-12 h-12 bg-linear-to-tr from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-2 font-black text-white text-xl">
             🔒
@@ -167,7 +167,7 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3.5 px-4 gradient-bg-primary text-white text-xs font-extrabold rounded-xl shadow-lg shadow-indigo-600/40 hover:scale-[1.02] transition-all disabled:opacity-50"
+              className="w-full py-3.5 px-4 btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide flex items-center justify-center gap-2 hover:scale-[1.02] transition-all disabled:opacity-50"
             >
               {submitting ? 'Resetting Password...' : 'Confirm & Update Password'}
             </button>

@@ -63,34 +63,34 @@ const Home = () => {
       <PublicNavbar />
 
       {/* Hero Carousel Banner */}
-      <section className="relative h-[480px] sm:h-[520px] overflow-hidden flex items-center justify-center border-b border-slate-800/80 z-10">
+      <section className="relative min-h-[440px] sm:min-h-[500px] h-auto py-10 sm:py-16 overflow-hidden flex items-center justify-center border-b border-slate-800/80 z-10">
         {QUOTES_CAROUSEL.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-all duration-1000 flex items-center justify-center p-6 text-center bg-linear-to-b ${slide.bgGradient} ${
+            className={`absolute inset-0 transition-all duration-1000 flex items-center justify-center p-4 sm:p-6 text-center bg-linear-to-b ${slide.bgGradient} ${
               index === currentSlide ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0 pointer-events-none'
             }`}
           >
-            <div className="max-w-4xl space-y-6 animate-fade-in">
-              <span className={`px-4 py-1.5 rounded-full bg-linear-to-r ${slide.badgeColor} text-xs font-extrabold uppercase tracking-widest border backdrop-blur-md shadow-lg`}>
+            <div className="max-w-4xl space-y-4 sm:space-y-6 animate-fade-in">
+              <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-linear-to-r ${slide.badgeColor} text-[10px] sm:text-xs font-extrabold uppercase tracking-widest border backdrop-blur-md shadow-lg`}>
                 ✨ {slide.tag}
               </span>
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight font-display drop-shadow-lg">
+              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight font-display drop-shadow-lg">
                 {slide.title}
               </h1>
-              <p className="text-base sm:text-xl text-slate-300 italic font-serif max-w-2xl mx-auto leading-relaxed drop-shadow">
+              <p className="text-xs sm:text-lg text-slate-300 italic font-serif max-w-2xl mx-auto leading-relaxed drop-shadow">
                 {slide.quote}
               </p>
-              <div className="pt-3 flex flex-wrap justify-center gap-4">
+              <div className="pt-2 sm:pt-3 flex flex-wrap justify-center gap-3 sm:gap-4">
                 <Link
                   to="/register"
-                  className="py-3.5 px-8 rounded-2xl btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide"
+                  className="py-2.5 sm:py-3.5 px-5 sm:px-8 rounded-2xl btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide"
                 >
                   🚀 Get Started Free
                 </Link>
                 <Link
                   to="/login"
-                  className="py-3.5 px-8 rounded-2xl btn-secondary text-slate-200 text-xs font-bold"
+                  className="py-2.5 sm:py-3.5 px-5 sm:px-8 rounded-2xl btn-secondary text-slate-200 text-xs font-bold"
                 >
                   📖 Explore Course Materials
                 </Link>
@@ -117,50 +117,50 @@ const Home = () => {
       </section>
 
       {/* KPI Stats Counter Ribbon */}
-      <section className="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md py-8 px-4 relative z-10">
-        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-center">
-          <div className="glass-panel glass-panel-hover p-4 sm:p-5 rounded-2xl">
-            <div className="text-3xl sm:text-4xl font-black t-brand-grad font-display">100+</div>
-            <div className="text-xs text-slate-400 font-medium mt-1">Free Study Courses</div>
+      <section className="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md py-5 sm:py-8 px-4 relative z-10">
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center">
+          <div className="glass-panel glass-panel-hover p-3.5 sm:p-5 rounded-2xl">
+            <div className="text-2xl sm:text-4xl font-black t-brand-grad font-display">100+</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium mt-0.5">Free Study Courses</div>
           </div>
-          <div className="glass-panel glass-panel-hover p-4 sm:p-5 rounded-2xl">
-            <div className="text-3xl sm:text-4xl font-black text-emerald-400 font-display">20+ Yrs</div>
-            <div className="text-xs text-slate-400 font-medium mt-1">Faculty Experience</div>
+          <div className="glass-panel glass-panel-hover p-3.5 sm:p-5 rounded-2xl">
+            <div className="text-2xl sm:text-4xl font-black text-emerald-400 font-display">20+ Yrs</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium mt-0.5">Faculty Experience</div>
           </div>
-          <div className="glass-panel glass-panel-hover p-4 sm:p-5 rounded-2xl">
-            <div className="text-3xl sm:text-4xl font-black text-amber-400 font-display">100%</div>
-            <div className="text-xs text-slate-400 font-medium mt-1">Free Student Access</div>
+          <div className="glass-panel glass-panel-hover p-3.5 sm:p-5 rounded-2xl">
+            <div className="text-2xl sm:text-4xl font-black text-amber-400 font-display">100%</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium mt-0.5">Free Student Access</div>
           </div>
-          <div className="glass-panel glass-panel-hover p-4 sm:p-5 rounded-2xl">
-            <div className="text-3xl sm:text-4xl font-black text-indigo-300 font-display">All Streams</div>
-            <div className="text-xs text-slate-400 font-medium mt-1">Accredited Syllabus</div>
+          <div className="glass-panel glass-panel-hover p-3.5 sm:p-5 rounded-2xl">
+            <div className="text-2xl sm:text-4xl font-black text-indigo-300 font-display">All Streams</div>
+            <div className="text-[11px] sm:text-xs text-slate-400 font-medium mt-0.5">Accredited Syllabus</div>
           </div>
         </div>
       </section>
 
       {/* Main Content Sections */}
-      <section className="py-16 px-4 sm:px-8 max-w-7xl mx-auto space-y-16 w-full relative z-10">
+      <section className="py-8 sm:py-14 px-3.5 sm:px-8 max-w-7xl mx-auto space-y-8 sm:space-y-14 w-full relative z-10">
         {/* Student Services Section */}
-        <div id="services" className="space-y-10 scroll-mt-24">
-          <div className="text-center space-y-3">
-            <span className="px-3.5 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-xs font-extrabold uppercase tracking-widest">
+        <div id="services" className="space-y-6 sm:space-y-10 scroll-mt-24">
+          <div className="text-center space-y-2 sm:space-y-3">
+            <span className="px-3.5 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[10px] sm:text-xs font-extrabold uppercase tracking-widest">
               Digital Learning Experience
             </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-white font-display">
+            <h2 className="text-2xl sm:text-5xl font-black text-white font-display">
               Student <span className="t-brand-grad font-display">Services</span>
             </h2>
-            <p className="text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">
               Empowering technical education with flexible online tools, interactive courseware, and direct teacher guidance.
             </p>
           </div>
 
           {/* 3 Interactive Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="glass-panel glass-panel-hover glass-card-accent p-8 rounded-3xl space-y-4 group">
-              <div className="w-14 h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            <div className="glass-panel glass-panel-hover glass-card-accent p-5 sm:p-7 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 group">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl sm:text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
                 💻
               </div>
-              <h3 className="text-xl font-bold text-white group-hover:text-indigo-300 transition-colors font-display">
+              <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-indigo-300 transition-colors font-display">
                 Facilities of Online Classes
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed">
@@ -168,11 +168,11 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="glass-panel glass-panel-hover glass-card-accent p-8 rounded-3xl space-y-4 group">
-              <div className="w-14 h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
+            <div className="glass-panel glass-panel-hover glass-card-accent p-5 sm:p-7 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 group">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center text-2xl sm:text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
                 🎥
               </div>
-              <h3 className="text-xl font-bold text-white group-hover:text-purple-300 transition-colors font-display">
+              <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-purple-300 transition-colors font-display">
                 Daily Live Classes
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed">
@@ -180,11 +180,11 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="glass-panel glass-panel-hover glass-card-accent p-8 rounded-3xl space-y-4 group">
-              <div className="w-14 h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
+            <div className="glass-panel glass-panel-hover glass-card-accent p-5 sm:p-7 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 group">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-2xl sm:text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
                 📚
               </div>
-              <h3 className="text-xl font-bold text-white group-hover:text-emerald-300 transition-colors font-display">
+              <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-emerald-300 transition-colors font-display">
                 100+ Free Courses & Notes
               </h3>
               <p className="text-xs text-slate-400 leading-relaxed">
@@ -195,7 +195,7 @@ const Home = () => {
         </div>
 
         {/* Tabbed Learning Features Component */}
-        <div id="academics" className="glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-8 shadow-2xl scroll-mt-24">
+        <div id="academics" className="glass-panel p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-6 sm:space-y-8 shadow-2xl scroll-mt-24">
           <div className="text-center space-y-2">
             <h3 className="text-2xl sm:text-3xl font-black text-white font-display">
               Through Online <span className="t-brand-grad font-display">Learning</span>
@@ -341,10 +341,10 @@ const Home = () => {
         </div>
 
         {/* Project Introduction Card */}
-        <div id="about" className="glass-panel p-8 sm:p-10 rounded-3xl border border-slate-800 space-y-4 relative overflow-hidden scroll-mt-24">
+        <div id="about" className="glass-panel p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3 sm:space-y-4 relative overflow-hidden scroll-mt-24">
           <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
           <span className="text-xs font-extrabold t-brand uppercase tracking-widest block">Project Abstract</span>
-          <h3 className="text-2xl sm:text-3xl font-black text-white font-display">About E-Study Corner</h3>
+          <h3 className="text-xl sm:text-3xl font-black text-white font-display">About E-Study Corner</h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify">
             Professional education is rapidly evolving. Industry requirements demand students to possess real-world, practical skills. E-Study Corner acts as a bridge of communication amongst students across different branches and institutions.
           </p>
@@ -358,7 +358,7 @@ const Home = () => {
       <EnquiryModal />
 
       {/* Project Credits Footer */}
-      <footer id="contact" className="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-10 px-4 sm:px-8 text-xs text-slate-400 scroll-mt-24 relative z-10">
+      <footer id="contact" className="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-6 sm:py-8 px-4 sm:px-8 text-xs text-slate-400 scroll-mt-24 relative z-10">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="space-y-1">
             <div className="font-black text-white text-sm font-display">{import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}</div>

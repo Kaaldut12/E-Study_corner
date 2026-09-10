@@ -283,7 +283,7 @@ const UserManagement = () => {
                 handleRoleChange('teacher');
                 setShowAddModal(true);
               }}
-              className="py-2.5 px-4 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition flex items-center gap-2"
+              className="py-2.5 px-4 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition flex items-center gap-2"
             >
               <span>👨‍🏫 + Provision Teacher</span>
             </button>
@@ -293,7 +293,7 @@ const UserManagement = () => {
                 handleRoleChange('student');
                 setShowAddModal(true);
               }}
-              className="py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center gap-2"
+              className="py-2.5 px-4 btn-premium text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center gap-2"
             >
               <span>+ Add User</span>
             </button>
@@ -534,8 +534,8 @@ const UserManagement = () => {
 
         {/* Quick Permissions Inspector Modal */}
         {viewingPermsUser && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="glass-panel max-w-lg w-full p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl animate-scaleUp">
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel max-w-lg w-full p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto animate-scaleUp">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs">
@@ -602,8 +602,8 @@ const UserManagement = () => {
 
         {/* Edit User & Permissions Modal */}
         {editingUser && (
-          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="glass-panel max-w-xl w-full p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel max-w-xl w-full p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -739,8 +739,8 @@ const UserManagement = () => {
 
         {/* Add User Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="glass-panel max-w-xl w-full p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel max-w-xl w-full p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                   <h3 className="text-lg font-bold text-white">

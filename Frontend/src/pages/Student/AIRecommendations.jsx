@@ -28,7 +28,7 @@ const AIRecommendations = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-teal-400">AI Coach & Smart Learning</span>
             <h1 className="text-2xl font-black text-white flex items-center gap-2">
@@ -47,7 +47,7 @@ const AIRecommendations = () => {
         ) : (
           <div className="space-y-6">
             {/* AI Reasoning Spotlight Card */}
-            <div className="p-6 rounded-3xl bg-linear-to-r from-teal-900/30 to-indigo-900/30 border border-teal-500/30 space-y-2">
+            <div className="p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-linear-to-r from-teal-900/30 to-indigo-900/30 border border-teal-500/30 space-y-2">
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-teal-400">Next Focus Milestone</span>
               <h2 className="text-xl font-bold text-white">{data?.nextRecommendedTopic || 'Tree Traversals & Graph Search'}</h2>
               <p className="text-xs text-slate-300 leading-relaxed">{data?.reasoning}</p>
@@ -58,7 +58,7 @@ const AIRecommendations = () => {
               <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Recommended Courses For You</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(data?.courses || []).map((c) => (
-                  <div key={c.id} className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
+                  <div key={c.id} className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 uppercase">{c.subject}</span>
                     <h4 className="text-base font-bold text-white">{c.title}</h4>
                     <p className="text-xs text-slate-400 line-clamp-2">{c.description}</p>
@@ -72,7 +72,7 @@ const AIRecommendations = () => {
               <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Suggested Study Materials</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {(data?.materials || []).map((m) => (
-                  <div key={m.id} className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
+                  <div key={m.id} className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3">
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 uppercase">{m.subject}</span>
                     <h4 className="text-base font-bold text-white">{m.title}</h4>
                     <p className="text-xs text-slate-400 line-clamp-2">{m.description}</p>

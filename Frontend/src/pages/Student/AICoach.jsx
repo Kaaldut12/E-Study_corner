@@ -60,12 +60,12 @@ const AICoach = () => {
 
   return (
     <SidebarLayout>
-      <div className="space-y-6 max-w-4xl mx-auto flex flex-col h-[calc(100vh-6rem)]">
+      <div className="space-y-4 sm:space-y-6 max-w-4xl mx-auto flex flex-col h-[calc(100vh-8.5rem)] sm:h-[calc(100vh-9.5rem)]">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex items-center justify-between">
+        <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 flex items-center justify-between">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-teal-400">V3 Advanced Learning</span>
-            <h1 className="text-2xl font-black text-white flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
               <span>🤖</span> AI Study Coach & Tutor
             </h1>
             <p className="text-xs text-slate-400 mt-1">
@@ -88,7 +88,7 @@ const AICoach = () => {
         </div>
 
         {/* Chat Messages Log */}
-        <div className="flex-1 glass-panel p-6 rounded-3xl border border-slate-800 overflow-y-auto space-y-4">
+        <div className="flex-1 glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 overflow-y-auto space-y-4">
           {messages.map((msg, idx) => (
             <div
               key={idx}

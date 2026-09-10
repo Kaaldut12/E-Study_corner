@@ -51,9 +51,9 @@ const StudentDashboard = () => {
 
   return (
     <SidebarLayout>
-      <div className="space-y-6">
+      <div className="space-y-5 sm:space-y-6">
         {/* Welcome Header Banner */}
-        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden shadow-2xl">
+        <div className="glass-panel glass-card-accent p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-5 relative overflow-hidden shadow-2xl">
           <div className="relative z-10">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
@@ -127,7 +127,7 @@ const StudentDashboard = () => {
         {/* Content Section: Upcoming Assignments & Recent Feedback */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Upcoming Assignments (2 cols) */}
-          <div className="lg:col-span-2 glass-panel p-6 sm:p-7 rounded-3xl space-y-4">
+          <div className="lg:col-span-2 glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
               <h2 className="text-lg font-bold text-white flex items-center gap-2 font-display">
                 <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,7 +145,7 @@ const StudentDashboard = () => {
                 {data.upcomingAssignments.map((asg) => (
                   <div
                     key={asg.id}
-                    className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-slate-700 hover:bg-slate-900/90 transition-all duration-200 group"
+                    className="p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 hover:border-slate-700 hover:bg-slate-900/90 transition-all duration-200 group"
                   >
                     <div>
                       <div className="flex items-center gap-2 mb-1.5 flex-wrap">
@@ -183,7 +183,7 @@ const StudentDashboard = () => {
           </div>
 
           {/* Recent Feedback Stream (1 col) */}
-          <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-4">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
               <h2 className="text-lg font-bold text-white flex items-center gap-2 font-display">
                 <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

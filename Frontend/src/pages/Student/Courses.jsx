@@ -144,15 +144,15 @@ const Courses = () => {
         )}
 
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-6 rounded-3xl border border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Curriculum Catalog</span>
-            <h1 className="text-2xl font-black text-white">Course Catalog & Learning Paths</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-white">Course Catalog & Learning Paths</h1>
             <p className="text-xs text-slate-400 mt-1">
               Explore academic curriculum modules, enroll in learning paths, and track real-time lesson progress.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <input
               type="text"
               placeholder="Search courses..."
@@ -184,7 +184,7 @@ const Courses = () => {
         {loading ? (
           <SkeletonCourseList count={6} />
         ) : filteredCourses.length === 0 ? (
-          <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
+          <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-4xl">📚</div>
             <h3 className="text-lg font-bold text-white">No courses match your filter</h3>
             <p className="text-xs text-slate-400">Try clearing your search query or selecting a different subject.</p>
@@ -195,7 +195,7 @@ const Courses = () => {
             {filteredCourses.map((course) => (
               <div
                 key={course.id}
-                className="glass-panel glass-panel-hover p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 group"
+                className="glass-panel glass-panel-hover p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 group"
               >
                 <div className="space-y-3">
                   <div className="h-40 rounded-2xl overflow-hidden relative">
@@ -281,8 +281,8 @@ const Courses = () => {
 
         {/* Modal for Course Modules & Lesson Completion */}
         {selectedCourse && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-2xl w-full space-y-6 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3.5 sm:p-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 max-w-2xl w-full space-y-5 sm:space-y-6 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="flex items-center gap-2">

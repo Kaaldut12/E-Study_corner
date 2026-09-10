@@ -59,8 +59,8 @@ const LoginForm = () => {
 
       <PublicNavbar />
 
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10">
-        <div className="w-full max-w-md glass-panel p-7 sm:p-9 shadow-2xl space-y-6 animate-slide-up">
+      <main className="flex-1 flex items-center justify-center p-3.5 sm:p-6 relative z-10">
+        <div className="w-full max-w-md glass-panel p-5 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-5 sm:space-y-6 animate-slide-up">
           {/* Header */}
           <div className="text-center space-y-2">
             <div className="w-16 h-16 rounded-2xl overflow-hidden border border-brand/40 shadow-brand ring-2 ring-white/15 mx-auto mb-3 bg-slate-900 shrink-0">

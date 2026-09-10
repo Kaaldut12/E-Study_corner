@@ -42,7 +42,7 @@ const CreateCourse = () => {
     <SidebarLayout>
       <div className="space-y-6 max-w-3xl mx-auto">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800">
           <span className="text-xs font-bold uppercase tracking-wider text-purple-400">V4 Platform</span>
           <h1 className="text-2xl font-black text-white">Publish New Course & Learning Path</h1>
           <p className="text-xs text-slate-400 mt-1">
@@ -59,7 +59,7 @@ const CreateCourse = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+        <form onSubmit={handleSubmit} className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-xs font-semibold text-slate-300 block mb-1">Course Code</label>
@@ -151,7 +151,7 @@ const CreateCourse = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition disabled:opacity-50"
+            className="w-full py-3.5 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition disabled:opacity-50"
           >
             {loading ? 'Publishing Course...' : 'Publish Course to Catalog'}
           </button>

@@ -111,7 +111,7 @@ const ApplyLeave = () => {
         )}
 
         {/* Header Banner */}
-        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl">
+        <div className="glass-panel glass-card-accent p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shadow-2xl">
           <div>
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
@@ -130,7 +130,7 @@ const ApplyLeave = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Apply For Leave Form (1 col on desktop) */}
-          <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-5 shadow-2xl">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-5 shadow-2xl">
             <div className="border-b border-slate-800/80 pb-3">
               <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-400 font-display">New Request</span>
               <h2 className="text-lg font-bold text-white font-display">Apply for Leave</h2>
@@ -154,7 +154,7 @@ const ApplyLeave = () => {
               </div>
 
               {/* Start Date & End Date */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">From Date</label>
                   <input
@@ -221,7 +221,7 @@ const ApplyLeave = () => {
             {loading ? (
               <SkeletonCardList count={3} cols={1} />
             ) : leaves.length === 0 ? (
-              <div className="glass-panel p-12 rounded-3xl text-center space-y-2">
+              <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl text-center space-y-2">
                 <span className="text-5xl">🏖️</span>
                 <h3 className="text-base font-bold text-white font-display">No leave applications found</h3>
                 <p className="text-xs text-slate-400">
@@ -237,7 +237,7 @@ const ApplyLeave = () => {
                   return (
                     <div
                       key={leave.id}
-                      className="glass-panel glass-panel-hover p-5 sm:p-6 rounded-3xl space-y-3.5"
+                      className="glass-panel glass-panel-hover p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3.5"
                     >
                       {/* Header row: category + dates + status */}
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">

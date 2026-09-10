@@ -99,7 +99,7 @@ const LeaveManagement = () => {
         )}
 
         {/* Header */}
-        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
+        <div className="glass-panel glass-card-accent p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
           <div>
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
@@ -115,7 +115,7 @@ const LeaveManagement = () => {
         </div>
 
         {/* KPI Metrics */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div className="glass-panel glass-panel-hover p-5 rounded-2xl space-y-1 animate-slide-up delay-75">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 font-display">Total Applications</span>
             <div className="text-3xl font-black text-white font-display">{leaves.length}</div>
@@ -292,8 +292,8 @@ const LeaveManagement = () => {
 
         {/* Modal */}
         {selectedLeave && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-            <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-slate-800 max-w-md w-full space-y-4 shadow-2xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-md w-full max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
               <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
                 <h3 className="text-base font-bold text-white font-display">Administrative Leave Review</h3>
                 <button

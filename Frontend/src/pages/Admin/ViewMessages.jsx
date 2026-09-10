@@ -65,37 +65,37 @@ const ViewMessages = () => {
 
   return (
     <SidebarLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Support Inquiry Tickets</h1>
-          <p className="text-sm text-slate-400">Review and resolve user queries, bug reports, and technical help requests</p>
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Support Inquiry Tickets</h1>
+          <p className="text-xs sm:text-sm text-slate-400">Review and resolve user queries, bug reports, and technical help requests</p>
         </div>
 
         {toastMsg && (
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-semibold">
+          <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs sm:text-sm font-semibold">
             ✓ {toastMsg}
           </div>
         )}
 
         {loading ? (
-          <div className="py-12 text-center text-slate-400">Loading support ticket inbox...</div>
+          <div className="py-12 text-center text-slate-400 text-xs sm:text-sm">Loading support ticket inbox...</div>
         ) : messages.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
             {messages.map((msg) => (
-              <div key={msg.id} className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+              <div key={msg.id} className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-3">
                   <div>
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex flex-wrap items-center gap-2 mb-1">
                       <span className="px-2.5 py-0.5 text-xs font-semibold rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                         {msg.category}
                       </span>
                       <span className="text-xs text-slate-400">From: <strong className="text-slate-200">{msg.userName}</strong> ({msg.userRole})</span>
                     </div>
-                    <h2 className="text-base font-bold text-white">{msg.subject}</h2>
+                    <h2 className="text-sm sm:text-base font-bold text-white">{msg.subject}</h2>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <span className={`px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-bold rounded-full ${
                       msg.status === 'resolved'
                         ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                         : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
@@ -105,19 +105,19 @@ const ViewMessages = () => {
 
                     <button
                       onClick={() => openReplyModal(msg)}
-                      className="py-1.5 px-4 gradient-bg-primary text-white text-xs font-semibold rounded-lg transition"
+                      className="py-1.5 px-3 sm:px-4 btn-premium text-white text-xs font-semibold rounded-xl transition"
                     >
                       {msg.status === 'resolved' ? 'Edit Response' : 'Reply & Resolve'}
                     </button>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-sm leading-relaxed">
+                <div className="p-3.5 sm:p-4 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 text-xs sm:text-sm leading-relaxed">
                   {msg.message}
                 </div>
 
                 {msg.adminReply && (
-                  <div className="p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-indigo-200">
+                  <div className="p-3 sm:p-3.5 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-xs text-indigo-200">
                     <strong className="text-indigo-300">Admin Response: </strong> {msg.adminReply}
                   </div>
                 )}
@@ -125,17 +125,17 @@ const ViewMessages = () => {
             ))}
           </div>
         ) : (
-          <div className="glass-panel p-12 text-center text-slate-400 rounded-2xl border border-slate-800">
+          <div className="glass-panel p-6 sm:p-12 text-center text-slate-400 rounded-2xl sm:rounded-3xl border border-slate-800/80 text-xs sm:text-sm">
             No support tickets in inbox.
           </div>
         )}
 
         {/* Reply Modal */}
         {selectedMsg && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="glass-panel max-w-lg w-full p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl">
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel max-w-lg w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-base sm:text-lg font-bold text-white">
                   Respond to Support Ticket
                 </h3>
                 <button onClick={() => setSelectedMsg(null)} className="text-slate-400 hover:text-white p-1">
@@ -153,7 +153,7 @@ const ViewMessages = () => {
                   <select
                     value={statusInput}
                     onChange={(e) => setStatusInput(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
                   >
                     <option value="resolved">Resolved</option>
                     <option value="pending">Pending</option>
@@ -168,11 +168,11 @@ const ViewMessages = () => {
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Enter official resolution or instructions for user..."
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-sm focus:outline-none focus:border-indigo-500 leading-relaxed"
+                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-indigo-500 leading-relaxed"
                   />
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-2">
+                <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setSelectedMsg(null)}
@@ -183,7 +183,7 @@ const ViewMessages = () => {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="py-2 px-5 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
+                    className="py-2 px-4 sm:px-5 btn-premium text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 text-center"
                   >
                     {submitting ? 'Saving...' : 'Send Response & Resolve'}
                   </button>

@@ -38,7 +38,7 @@ const StudentFeedback = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Academic Records</span>
             <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">My Grades & Instructor Feedback</h1>
@@ -90,7 +90,7 @@ const StudentFeedback = () => {
               return (
                 <div
                   key={item.id}
-                  className="glass-panel p-6 sm:p-7 rounded-3xl border border-slate-800 space-y-4 shadow-lg hover:border-emerald-500/30 transition duration-200"
+                  className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-4 shadow-lg hover:border-emerald-500/30 transition duration-200"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3.5">
                     <div>
@@ -162,7 +162,7 @@ const StudentFeedback = () => {
             })}
           </div>
         ) : (
-          <div className="glass-panel p-16 text-center text-slate-400 rounded-3xl border border-slate-800 space-y-3">
+          <div className="glass-panel p-6 sm:p-12 text-center text-slate-400 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3">
             <div className="text-4xl">🎓</div>
             <h3 className="text-lg font-bold text-white">No graded assignments yet</h3>
             <p className="text-xs text-slate-400">
@@ -171,7 +171,7 @@ const StudentFeedback = () => {
             <div className="pt-2">
               <Link
                 to="/student/assignments"
-                className="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition"
+                className="btn-premium py-2 px-4 text-white text-xs font-bold rounded-xl transition inline-block"
               >
                 Go to Assignments
               </Link>

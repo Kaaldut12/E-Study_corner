@@ -85,7 +85,7 @@ const TeacherQuestions = () => {
     <SidebarLayout>
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Header Banner */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Faculty Classroom</span>
@@ -200,7 +200,7 @@ const TeacherQuestions = () => {
               return (
                 <div
                   key={q.id}
-                  className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-slate-700 transition shadow-lg"
+                  className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-slate-700 transition shadow-lg"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                     <div className="space-y-1">
@@ -278,7 +278,7 @@ const TeacherQuestions = () => {
                     <div className="pt-2 flex justify-end">
                       <button
                         onClick={() => handleOpenReply(q)}
-                        className="py-2 px-4 bg-linear-to-r from-purple-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/25 transition flex items-center gap-1.5"
+                        className="py-2 px-4 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/25 transition flex items-center gap-1.5"
                       >
                         <span>✍️ Reply to Student</span>
                       </button>
@@ -289,7 +289,7 @@ const TeacherQuestions = () => {
             })}
           </div>
         ) : (
-          <div className="glass-panel p-16 text-center text-slate-400 rounded-3xl border border-slate-800 space-y-3">
+          <div className="glass-panel p-6 sm:p-12 text-center text-slate-400 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3">
             <div className="text-4xl">👨‍🏫</div>
             <h3 className="text-lg font-bold text-white">No questions in this view</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -302,8 +302,8 @@ const TeacherQuestions = () => {
 
         {/* Reply Modal */}
         {replyingQuestion && (
-          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="glass-panel max-w-xl w-full p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel max-w-xl w-full p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -350,7 +350,7 @@ const TeacherQuestions = () => {
                   <button
                     type="submit"
                     disabled={submittingReply}
-                    className="py-2.5 px-5 bg-linear-to-r from-purple-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/25 transition disabled:opacity-50"
+                    className="py-2.5 px-5 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/25 transition disabled:opacity-50"
                   >
                     {submittingReply ? 'Sending Answer...' : 'Send Verified Answer'}
                   </button>

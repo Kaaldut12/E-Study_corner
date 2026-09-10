@@ -45,16 +45,16 @@ const SystemHealth = () => {
 
   return (
     <SidebarLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">V5 Production</span>
+              <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-400">V5 Production</span>
               <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold rounded-md border border-emerald-500/30">LIVE</span>
             </div>
-            <h1 className="text-2xl font-black text-white mt-1">System Health & Performance Monitoring</h1>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <h1 className="text-xl sm:text-2xl font-black text-white mt-1 tracking-tight">System Health & Performance Monitoring</h1>
+            <p className="text-xs sm:text-sm text-slate-400 mt-0.5 leading-relaxed">
               Real-time monitoring of Node.js runtime process, memory utilization, database connectivity, and security audits.
             </p>
           </div>
@@ -62,7 +62,7 @@ const SystemHealth = () => {
           <button
             onClick={fetchSystemStatus}
             disabled={refreshing}
-            className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-2 shrink-0 border border-slate-700"
+            className="w-full sm:w-auto justify-center py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl transition flex items-center gap-2 shrink-0 border border-slate-700"
           >
             <span className={refreshing ? 'animate-spin' : ''}>🔄</span>
             <span>{refreshing ? 'Refreshing...' : 'Ping System'}</span>
@@ -74,43 +74,43 @@ const SystemHealth = () => {
             <div className="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Top Metric Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Server Status</span>
                 <div className="flex items-center gap-2">
-                  <span className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
-                  <p className="text-xl font-black text-emerald-400 uppercase">{healthData?.status || 'HEALTHY'}</p>
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                  <p className="text-lg sm:text-xl font-black text-emerald-400 uppercase">{healthData?.status || 'HEALTHY'}</p>
                 </div>
                 <p className="text-[10px] text-slate-500 font-mono">Build: {healthData?.version}</p>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">System Uptime</span>
-                <p className="text-xl font-black text-indigo-400">{healthData?.uptime?.formatted || '0h 0m'}</p>
+                <p className="text-lg sm:text-xl font-black text-indigo-400">{healthData?.uptime?.formatted || '0h 0m'}</p>
                 <p className="text-[10px] text-slate-500 font-mono">Process Run Time</p>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Database Engine</span>
-                <p className="text-xl font-black text-purple-400">{healthData?.database?.mode || 'In-Memory Fallback'}</p>
+                <p className="text-lg sm:text-xl font-black text-purple-400">{healthData?.database?.mode || 'In-Memory Fallback'}</p>
                 <p className="text-[10px] text-slate-500 font-mono">{healthData?.database?.connected ? 'Live Replica Set' : 'Auto-Sync Active'}</p>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">API Ping Latency</span>
-                <p className="text-xl font-black text-amber-400">{pingLatency ? `${pingLatency} ms` : '12 ms'}</p>
+                <p className="text-lg sm:text-xl font-black text-amber-400">{pingLatency ? `${pingLatency} ms` : '12 ms'}</p>
                 <p className="text-[10px] text-slate-500 font-mono">HTTP Round-Trip Time</p>
               </div>
             </div>
 
             {/* Memory & System Info */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {/* Process Memory Usage */}
-              <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+              <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4 sm:space-y-6">
                 <div>
-                  <h3 className="text-base font-bold text-white">Process Memory Allocation</h3>
+                  <h3 className="text-sm sm:text-base font-bold text-white">Process Memory Allocation</h3>
                   <p className="text-xs text-slate-400">V8 engine heap statistics and resident set size (RSS).</p>
                 </div>
 
@@ -130,32 +130,32 @@ const SystemHealth = () => {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3 p-4 bg-slate-950 rounded-2xl border border-slate-800 text-center">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800 text-center">
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold">RSS Memory</span>
-                      <p className="text-sm font-bold text-white mt-0.5">{healthData?.memory?.rssMB || 85} MB</p>
+                      <p className="text-xs sm:text-sm font-bold text-white mt-0.5">{healthData?.memory?.rssMB || 85} MB</p>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold">Heap Total</span>
-                      <p className="text-sm font-bold text-indigo-400 mt-0.5">{healthData?.memory?.heapTotalMB || 120} MB</p>
+                      <p className="text-xs sm:text-sm font-bold text-indigo-400 mt-0.5">{healthData?.memory?.heapTotalMB || 120} MB</p>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold">Free OS RAM</span>
-                      <p className="text-sm font-bold text-emerald-400 mt-0.5">{healthData?.system?.freeMemMB || 4096} MB</p>
+                      <p className="text-xs sm:text-sm font-bold text-emerald-400 mt-0.5">{healthData?.system?.freeMemMB || 4096} MB</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Security Audit Checklist */}
-              <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+              <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4 sm:space-y-6">
                 <div>
-                  <h3 className="text-base font-bold text-white">Production Security Audit</h3>
+                  <h3 className="text-sm sm:text-base font-bold text-white">Production Security Audit</h3>
                   <p className="text-xs text-slate-400">Security headers, rate-limiting guards, and input sanitizers.</p>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-slate-950 rounded-2xl border border-slate-800 text-xs">
+                <div className="space-y-2.5 sm:space-y-3">
+                  <div className="flex items-center justify-between p-2.5 sm:p-3 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800 text-xs">
                     <div className="flex items-center gap-2">
                       <span className="text-emerald-400 font-bold">✓</span>
                       <span className="text-slate-200 font-semibold">OWASP Security Headers</span>
@@ -163,7 +163,7 @@ const SystemHealth = () => {
                     <span className="text-[10px] font-bold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">Active</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-950 rounded-2xl border border-slate-800 text-xs">
+                  <div className="flex items-center justify-between p-2.5 sm:p-3 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800 text-xs">
                     <div className="flex items-center gap-2">
                       <span className="text-emerald-400 font-bold">✓</span>
                       <span className="text-slate-200 font-semibold">Sliding-Window Rate Limiter</span>
@@ -171,7 +171,7 @@ const SystemHealth = () => {
                     <span className="text-[10px] font-bold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">120 req/min</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-950 rounded-2xl border border-slate-800 text-xs">
+                  <div className="flex items-center justify-between p-2.5 sm:p-3 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800 text-xs">
                     <div className="flex items-center gap-2">
                       <span className="text-emerald-400 font-bold">✓</span>
                       <span className="text-slate-200 font-semibold">Input Script Sanitization</span>
@@ -179,7 +179,7 @@ const SystemHealth = () => {
                     <span className="text-[10px] font-bold uppercase text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">Enforced</span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-950 rounded-2xl border border-slate-800 text-xs">
+                  <div className="flex items-center justify-between p-2.5 sm:p-3 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800 text-xs">
                     <div className="flex items-center gap-2">
                       <span className="text-emerald-400 font-bold">✓</span>
                       <span className="text-slate-200 font-semibold">Strict HSTS & CSP</span>
@@ -192,27 +192,27 @@ const SystemHealth = () => {
 
             {/* Performance Metrics Table */}
             {metricsData && (
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <h3 className="text-base font-bold text-white">Production Metric Snapshot</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                  <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+              <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
+                <h3 className="text-sm sm:text-base font-bold text-white">Production Metric Snapshot</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
+                  <div className="p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold">Avg Response Time</span>
-                    <p className="text-lg font-bold text-emerald-400 mt-1">{metricsData.apiLatencyMs} ms</p>
+                    <p className="text-base sm:text-lg font-bold text-emerald-400 mt-1">{metricsData.apiLatencyMs} ms</p>
                   </div>
 
-                  <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+                  <div className="p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold">Throughput</span>
-                    <p className="text-lg font-bold text-indigo-400 mt-1">{metricsData.requestsPerMinute} req/min</p>
+                    <p className="text-base sm:text-lg font-bold text-indigo-400 mt-1">{metricsData.requestsPerMinute} req/min</p>
                   </div>
 
-                  <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+                  <div className="p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold">Error Rate</span>
-                    <p className="text-lg font-bold text-emerald-400 mt-1">{metricsData.errorRatePercentage}%</p>
+                    <p className="text-base sm:text-lg font-bold text-emerald-400 mt-1">{metricsData.errorRatePercentage}%</p>
                   </div>
 
-                  <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+                  <div className="p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800">
                     <span className="text-[10px] text-slate-400 uppercase font-semibold">Cache Hit Rate</span>
-                    <p className="text-lg font-bold text-amber-400 mt-1">{metricsData.cacheHitRate}</p>
+                    <p className="text-base sm:text-lg font-bold text-amber-400 mt-1">{metricsData.cacheHitRate}</p>
                   </div>
                 </div>
               </div>

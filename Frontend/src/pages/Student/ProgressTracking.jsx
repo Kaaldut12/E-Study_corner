@@ -28,7 +28,7 @@ const ProgressTracking = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">V2 Learning System</span>
             <h1 className="text-2xl font-black text-white">Learning Analytics & Progress Tracking</h1>
@@ -46,41 +46,41 @@ const ProgressTracking = () => {
           <div className="space-y-6">
             {/* Stat Cards Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Daily Study Streak</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-black text-amber-400">🔥 {data?.stats?.studyStreakDays || 5}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-amber-400">🔥 {data?.stats?.studyStreakDays || 5}</span>
                   <span className="text-xs text-slate-400">Days</span>
                 </div>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Study Time</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-black text-indigo-400">⏱️ {data?.stats?.totalStudyMinutes || 240}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-indigo-400">⏱️ {data?.stats?.totalStudyMinutes || 240}</span>
                   <span className="text-xs text-slate-400">Mins</span>
                 </div>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Completed Courses</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-black text-emerald-400">🎓 {data?.stats?.completedCoursesCount || 2}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-emerald-400">🎓 {data?.stats?.completedCoursesCount || 2}</span>
                   <span className="text-xs text-slate-400">Courses</span>
                 </div>
               </div>
 
-              <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
+              <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Personal Notes</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-black text-purple-400">📝 {data?.stats?.activeNotesCount || 4}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-purple-400">📝 {data?.stats?.activeNotesCount || 4}</span>
                   <span className="text-xs text-slate-400">Notes</span>
                 </div>
               </div>
             </div>
 
             {/* Subject Mastery Progress Bars */}
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+            <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-6">
               <div>
                 <h3 className="text-base font-bold text-white">Subject Mastery & Skill Levels</h3>
                 <p className="text-xs text-slate-400">Calculated based on quiz attempts, completed lessons, and assignment grades.</p>

@@ -132,7 +132,7 @@ const CreateAssignment = () => {
           </p>
         </div>
 
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl">
           {successMsg && (
             <div className="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-semibold flex items-center gap-2">
               <span>✓</span>
@@ -378,18 +378,18 @@ const CreateAssignment = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4 border-t border-slate-800">
               <button
                 type="button"
                 onClick={() => navigate('/teacher/assignments')}
-                className="py-2.5 px-5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 transition"
+                className="py-2.5 px-5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-900 border border-slate-800 transition text-center"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="py-2.5 px-6 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition disabled:opacity-50 flex items-center gap-2"
+                className="py-2.5 px-6 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>

@@ -130,7 +130,7 @@ const WeakTopicDetector = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div className="space-y-1">
             <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Diagnostic Analytics</span>
             <h1 className="text-2xl font-black text-white flex items-center gap-2">
@@ -193,7 +193,7 @@ const WeakTopicDetector = () => {
 
         {/* Summary Metric KPI Cards */}
         {!loading && !error && topics.length > 0 && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {/* Card 1: Total Flagged */}
             <div className="glass-panel p-4 rounded-2xl border border-slate-800 space-y-1">
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Identified Concepts</span>
@@ -305,7 +305,7 @@ const WeakTopicDetector = () => {
           </div>
         ) : !error && topics.length === 0 ? (
           /* Zero-state (No weak topics or no quiz attempts) */
-          <div className="glass-panel p-10 rounded-3xl border border-slate-800 text-center space-y-4">
+          <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-4">
             <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto text-2xl font-bold border border-emerald-500/20">
               ✓
             </div>
@@ -357,7 +357,7 @@ const WeakTopicDetector = () => {
               return (
                 <div
                   key={cardKey}
-                  className="glass-panel p-6 rounded-3xl border border-slate-800 hover:border-slate-700 transition flex flex-col md:flex-row justify-between items-start md:items-center gap-5 group"
+                  className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 hover:border-slate-700 transition flex flex-col md:flex-row justify-between items-start md:items-center gap-5 group"
                 >
                   {/* Left Column: Subject, Status, Topic, Recommendation */}
                   <div className="space-y-2.5 flex-1 min-w-0">

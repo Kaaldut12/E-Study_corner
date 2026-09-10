@@ -205,7 +205,7 @@ const SidebarLayout = ({ children }) => {
 
         {/* Main Content with Fixed Sidebar Offset */}
         <div className="flex-1 lg:pl-64 w-full min-w-0 flex flex-col">
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto animate-slide-up">
+          <main className="flex-1 p-3.5 sm:p-5 lg:p-7 max-w-7xl w-full mx-auto animate-slide-up min-w-0">
             {children}
           </main>
         </div>

@@ -29,7 +29,7 @@ const ManageCourses = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-purple-400">V4 Platform</span>
             <h1 className="text-2xl font-black text-white">Teacher Course Manager</h1>
@@ -40,7 +40,7 @@ const ManageCourses = () => {
 
           <Link
             to="/teacher/create-course"
-            className="py-2.5 px-4 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition flex items-center gap-2"
+            className="py-2.5 px-4 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition flex items-center gap-2 shrink-0"
           >
             <span>+ Create New Course</span>
           </Link>
@@ -51,7 +51,7 @@ const ManageCourses = () => {
             <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : courses.length === 0 ? (
-          <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
+          <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-4xl">📚</div>
             <h3 className="text-lg font-bold text-white">No courses published yet</h3>
             <p className="text-xs text-slate-400">Click "Create New Course" to build your first course module.</p>
@@ -59,7 +59,7 @@ const ManageCourses = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {courses.map((course) => (
-              <div key={course.id} className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+              <div key={course.id} className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-4">
                 <div className="flex items-center gap-4">
                   <img src={course.thumbnail} alt={course.title} className="w-16 h-16 rounded-2xl object-cover shrink-0" />
                   <div>

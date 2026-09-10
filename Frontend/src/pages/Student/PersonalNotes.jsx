@@ -118,17 +118,17 @@ const PersonalNotes = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-6 rounded-3xl border border-slate-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-purple-400">V1 Foundation</span>
-            <h1 className="text-2xl font-black text-white">Personal Notes App</h1>
+            <h1 className="text-xl sm:text-2xl font-black text-white">Personal Notes App</h1>
             <p className="text-xs text-slate-400 mt-1">
               Create, tag, pin, and organize your study notes linked to course subjects.
             </p>
           </div>
           <button
             onClick={openModalForCreate}
-            className="py-2.5 px-5 gradient-bg-primary text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition flex items-center justify-center gap-2"
+            className="py-2.5 px-5 btn-premium text-white text-xs font-bold shadow-brand hover:opacity-95 transition flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -170,17 +170,17 @@ const PersonalNotes = () => {
             <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : filteredNotes.length === 0 ? (
-          <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
+          <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-4xl">📝</div>
             <h3 className="text-lg font-bold text-white">No personal notes found</h3>
             <p className="text-xs text-slate-400">Click "Create New Note" to start writing your personal study notes.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredNotes.map((note) => (
               <div
                 key={note.id}
-                className="glass-panel glass-panel-hover p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 relative group"
+                className="glass-panel glass-panel-hover p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 relative group"
                 style={{ borderTop: `4px solid ${note.color || '#3B82F6'}` }}
               >
                 <div className="space-y-3">
@@ -243,8 +243,8 @@ const PersonalNotes = () => {
 
         {/* Modal for Create/Edit Note */}
         {showModal && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <form onSubmit={handleCreateOrUpdate} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full space-y-4">
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3.5 sm:p-4">
+            <form onSubmit={handleCreateOrUpdate} className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 max-w-lg w-full space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-bold text-white">
                   {editingNote ? 'Edit Study Note' : 'Create New Study Note'}

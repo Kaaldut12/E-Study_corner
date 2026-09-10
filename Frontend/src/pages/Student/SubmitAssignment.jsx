@@ -156,7 +156,7 @@ const SubmitAssignment = () => {
 
         {/* Graded Evaluation Banner (If Graded) */}
         {isGraded && (
-          <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-emerald-500/30 bg-emerald-950/20 space-y-3.5 shadow-2xl animate-slide-up">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-emerald-500/30 bg-emerald-950/20 space-y-3.5 shadow-2xl animate-slide-up">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-500/20 pb-3">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🏆</span>
@@ -186,7 +186,7 @@ const SubmitAssignment = () => {
         )}
 
         {/* Assignment Briefing Header */}
-        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl space-y-4 shadow-2xl">
+        <div className="glass-panel glass-card-accent p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl space-y-4 shadow-2xl">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 text-xs font-bold rounded-xl bg-brand-subtle text-indigo-300 border border-brand">
@@ -252,7 +252,7 @@ const SubmitAssignment = () => {
         </div>
 
         {/* Submission Form */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl space-y-5 shadow-2xl">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl space-y-5 shadow-2xl">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-white font-display">
               {existingSub ? (isGraded ? 'Your Submitted Solution' : 'Update Your Submission') : 'Submit Your Solution'}
@@ -306,7 +306,7 @@ const SubmitAssignment = () => {
                 }}
                 onDragLeave={() => setIsDragOver(false)}
                 onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-2xl p-6 text-center transition bg-slate-900/60 relative ${
+                className={`border-2 border-dashed rounded-2xl p-4 sm:p-6 text-center transition bg-slate-900/60 relative ${
                   isDragOver ? 'border-indigo-400 bg-indigo-500/10 scale-[1.01]' : 'border-slate-800 hover:border-indigo-500/50'
                 }`}
               >
@@ -318,7 +318,7 @@ const SubmitAssignment = () => {
                 />
 
                 {fileName ? (
-                  <div className="flex items-center justify-between p-3.5 bg-slate-950/80 rounded-2xl border border-indigo-500/30 text-left">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-3.5 bg-slate-950/80 rounded-2xl border border-indigo-500/30 text-left">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-xl bg-brand flex items-center justify-center text-xl text-white font-black shadow-brand shrink-0">
                         📄
@@ -386,17 +386,17 @@ const SubmitAssignment = () => {
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-3 border-t border-slate-800">
               <Link
                 to="/student/assignments"
-                className="py-3 px-5 rounded-xl btn-secondary text-xs font-bold"
+                className="py-2.5 sm:py-3 px-5 rounded-xl btn-secondary text-xs font-bold text-center"
               >
                 Cancel
               </Link>
               <button
                 type="submit"
                 disabled={submitting}
-                className="py-3 px-7 btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide flex items-center gap-2"
+                className="py-2.5 sm:py-3 px-7 btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>

@@ -59,7 +59,7 @@ const EnquiryModal = () => {
       {/* Floating Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 py-3 px-5 rounded-full gradient-bg-primary text-white font-bold text-xs shadow-2xl shadow-indigo-600/50 hover:scale-105 transition flex items-center gap-2 border border-indigo-400/30"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 py-2.5 sm:py-3 px-4 sm:px-5 rounded-full btn-premium text-white font-bold text-xs shadow-2xl shadow-indigo-600/50 hover:scale-105 transition flex items-center gap-2 border border-white/20"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -70,7 +70,7 @@ const EnquiryModal = () => {
       {/* Modal Dialog */}
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="glass-panel max-w-md w-full p-6 rounded-3xl border border-slate-800 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="glass-panel max-w-md w-full p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-4 shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="text-lg font-bold text-white">Student Enquiry Form</h3>
@@ -152,7 +152,7 @@ const EnquiryModal = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="py-2 px-5 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
+                  className="py-2 px-5 btn-premium text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
                 >
                   {submitting ? 'Saving...' : 'Save Enquiry'}
                 </button>

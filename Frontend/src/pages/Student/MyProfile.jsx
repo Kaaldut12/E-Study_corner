@@ -83,8 +83,8 @@ const MyProfile = () => {
           </div>
         )}
 
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
-          <div className="flex items-center gap-4 border-b border-slate-800 pb-6">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-6">
+          <div className="flex items-center gap-4 border-b border-slate-800 pb-4 sm:pb-6">
             <div className="w-16 h-16 rounded-full bg-linear-to-tr from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-2xl text-white shadow-lg shadow-indigo-500/30">
               {firstName ? firstName.charAt(0) : 'S'}
             </div>
@@ -210,7 +210,7 @@ const MyProfile = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="py-2.5 px-6 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
+                className="w-full sm:w-auto py-2.5 px-6 btn-premium text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
               >
                 {submitting ? 'Updating...' : 'Update Profile'}
               </button>

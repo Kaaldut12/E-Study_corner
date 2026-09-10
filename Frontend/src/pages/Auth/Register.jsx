@@ -74,8 +74,8 @@ const Register = () => {
       {/* Top Public Navigation Bar */}
       <PublicNavbar />
 
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 relative z-10 my-4 sm:my-8">
-        <div className="w-full max-w-2xl glass-panel p-7 sm:p-10 shadow-2xl relative z-10 animate-slide-up">
+      <div className="flex-1 flex items-center justify-center p-3.5 sm:p-6 relative z-10 my-2 sm:my-6">
+        <div className="w-full max-w-2xl glass-panel p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl shadow-2xl relative z-10 animate-slide-up">
         <div className="text-center mb-6">
           <div className="w-16 h-16 rounded-2xl overflow-hidden border border-brand/40 shadow-brand ring-2 ring-white/15 mx-auto mb-3 bg-slate-900 shrink-0">
             <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />

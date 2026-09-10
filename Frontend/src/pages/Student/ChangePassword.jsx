@@ -55,7 +55,7 @@ const ChangePassword = () => {
           <p className="text-sm text-slate-400">Update your account credentials securely</p>
         </div>
 
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-4">
           {toastMsg && (
             <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
               ✓ {toastMsg}
@@ -108,7 +108,7 @@ const ChangePassword = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 px-4 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50 mt-2"
+              className="w-full py-3 px-4 btn-premium text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50 mt-2"
             >
               {submitting ? 'Updating Password...' : 'Update Password'}
             </button>

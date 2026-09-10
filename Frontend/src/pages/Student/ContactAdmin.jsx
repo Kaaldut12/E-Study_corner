@@ -76,7 +76,7 @@ const ContactAdmin = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Submission Form */}
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4">
             <h2 className="text-lg font-bold text-white">Submit New Inquiry</h2>
 
             {successMsg && (
@@ -127,7 +127,7 @@ const ContactAdmin = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 px-4 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
+                className="w-full py-3 px-4 btn-premium text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50"
               >
                 {submitting ? 'Submitting...' : 'Send Message to Admin'}
               </button>
@@ -135,7 +135,7 @@ const ContactAdmin = () => {
           </div>
 
           {/* Ticket History */}
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4">
             <h2 className="text-lg font-bold text-white">Your Submitted Tickets</h2>
 
             {myTickets.length > 0 ? (

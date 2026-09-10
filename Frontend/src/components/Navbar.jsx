@@ -43,12 +43,12 @@ const Navbar = ({ toggleSidebar }) => {
   };
 
   return (
-    <header className="h-16 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between sticky top-0 z-50 transition-all shadow-md">
+    <header className="h-16 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl px-3 sm:px-6 flex items-center justify-between sticky top-0 z-50 transition-all shadow-md">
       {/* Left — Menu + Logo */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all"
+          className="lg:hidden p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition-all"
           aria-label="Toggle menu"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,12 +56,12 @@ const Navbar = ({ toggleSidebar }) => {
           </svg>
         </button>
 
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl overflow-hidden border border-brand/40 shadow-brand group-hover:scale-105 group-hover:rotate-2 transition-all bg-slate-900 shrink-0">
+        <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden border border-brand/40 shadow-brand group-hover:scale-105 group-hover:rotate-2 transition-all bg-slate-900 shrink-0">
             <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
           </div>
           <div className="flex flex-col">
-            <span className="font-extrabold text-base tracking-tight t-brand-grad font-display leading-tight">
+            <span className="font-extrabold text-sm sm:text-base tracking-tight t-brand-grad font-display leading-tight">
               E-Study Corner
             </span>
             <span className="text-[10px] text-slate-400 font-medium hidden sm:inline-block">
@@ -72,10 +72,10 @@ const Navbar = ({ toggleSidebar }) => {
       </div>
 
       {/* Right — Theme switcher + User Profile */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         {/* Theme Palette Switcher */}
         <div
-          className="flex items-center gap-2 px-2.5 py-1.5 bg-slate-900/90 rounded-xl border border-slate-800/90 shadow-inner"
+          className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-slate-900/90 rounded-xl border border-slate-800/90 shadow-inner"
           title="Switch Color Theme"
         >
           {THEMES.map((t) => (
@@ -85,7 +85,7 @@ const Navbar = ({ toggleSidebar }) => {
               title={`${t.label} theme`}
               aria-label={`${t.label} theme`}
               style={{ backgroundColor: t.hex }}
-              className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${
+              className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full transition-all duration-300 ${
                 currentTheme === t.id
                   ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-950 scale-125 shadow-md shadow-white/20'
                   : 'opacity-40 hover:opacity-100 hover:scale-110'
@@ -100,7 +100,7 @@ const Navbar = ({ toggleSidebar }) => {
               {user.role === 'superadmin' ? '👑 Super Admin' : user.role}
             </span>
 
-            <div className="flex items-center gap-2.5 pl-2 border-l border-slate-800/80">
+            <div className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2 border-l border-slate-800/80">
               <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand ring-1 ring-white/20">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>

@@ -57,19 +57,19 @@ const PublicNavbar = () => {
   };
 
   return (
-    <header className="h-20 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl px-4 sm:px-8 sticky top-0 z-40 shadow-xl transition-all">
+    <header className="h-16 sm:h-20 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl px-3.5 sm:px-8 sticky top-0 z-40 shadow-xl transition-all">
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
         
         {/* Left: Brand Identity */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-11 h-11 rounded-2xl overflow-hidden border border-brand/40 shadow-brand group-hover:scale-105 group-hover:rotate-2 transition-all bg-slate-900 shrink-0">
+        <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group">
+          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl overflow-hidden border border-brand/40 shadow-brand group-hover:scale-105 group-hover:rotate-2 transition-all bg-slate-900 shrink-0">
             <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
           </div>
           <div>
-            <span className="font-black text-xl tracking-tight t-brand-grad font-display block leading-tight">
+            <span className="font-black text-lg sm:text-xl tracking-tight t-brand-grad font-display block leading-tight">
               E-Study Corner
             </span>
-            <span className="text-[10px] font-bold t-brand uppercase tracking-widest block truncate max-w-[220px] sm:max-w-none">
+            <span className="text-[9px] sm:text-[10px] font-bold t-brand uppercase tracking-widest block truncate max-w-[180px] sm:max-w-none">
               {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}
             </span>
           </div>
@@ -205,7 +205,7 @@ const PublicNavbar = () => {
 
       {/* Mobile Drawer Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden absolute top-20 left-0 w-full bg-slate-950/95 backdrop-blur-2xl border-b border-slate-800 p-5 space-y-4 shadow-2xl animate-slide-down">
+        <div className="lg:hidden absolute top-16 sm:top-20 left-0 w-full bg-slate-950/95 backdrop-blur-2xl border-b border-slate-800 p-5 space-y-4 shadow-2xl animate-slide-down">
           <nav className="flex flex-col space-y-2 text-sm font-semibold text-slate-300">
             <a
               href="/"

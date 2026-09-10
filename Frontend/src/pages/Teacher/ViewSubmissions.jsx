@@ -233,7 +233,7 @@ const ViewSubmissions = () => {
               return (
                 <div
                   key={sub.id}
-                  className={`glass-panel p-6 sm:p-7 rounded-3xl border transition duration-150 space-y-5 shadow-lg ${
+                  className={`glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition duration-150 space-y-5 shadow-lg ${
                     isGraded ? 'border-slate-800' : 'border-amber-500/30'
                   }`}
                 >
@@ -251,7 +251,7 @@ const ViewSubmissions = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
                       {isGraded ? (
                         <div className="text-right">
                           <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-block">
@@ -270,7 +270,7 @@ const ViewSubmissions = () => {
                         className={`py-2 px-4 text-xs font-bold rounded-xl shadow transition ${
                           isGraded
                             ? 'bg-slate-800 hover:bg-slate-700 text-slate-200'
-                            : 'bg-linear-to-r from-purple-600 to-indigo-600 hover:opacity-95 text-white'
+                            : 'btn-premium text-white'
                         }`}
                       >
                         {isGraded ? 'Edit Evaluation' : 'Grade & Give Feedback'}
@@ -334,7 +334,7 @@ const ViewSubmissions = () => {
             })}
           </div>
         ) : (
-          <div className="glass-panel p-16 text-center text-slate-400 rounded-3xl border border-slate-800 space-y-3">
+          <div className="glass-panel p-6 sm:p-12 text-center text-slate-400 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3">
             <div className="text-4xl">📬</div>
             <h3 className="text-lg font-bold text-white">No submissions matching criteria</h3>
             <p className="text-xs text-slate-400">
@@ -347,8 +347,8 @@ const ViewSubmissions = () => {
 
         {/* Grading Modal */}
         {selectedSub && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="glass-panel max-w-lg w-full p-6 sm:p-7 rounded-3xl border border-slate-800 space-y-5 shadow-2xl animate-in fade-in zoom-in duration-150">
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel max-w-lg w-full p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-5 shadow-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in duration-150">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3.5">
                 <div>
                   <h3 className="text-lg font-black text-white">

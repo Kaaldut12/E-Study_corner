@@ -130,7 +130,7 @@ const StudentQuestions = () => {
     <SidebarLayout>
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl">
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Direct Academic Help</span>
@@ -147,7 +147,7 @@ const StudentQuestions = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowModal(true)}
-              className="py-3 px-5 bg-linear-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center gap-2"
+              className="btn-premium py-2.5 sm:py-3 px-4 sm:px-5 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/25 transition flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               <span className="text-base">💬</span>
               <span>+ Ask a Question</span>
@@ -243,7 +243,7 @@ const StudentQuestions = () => {
               return (
                 <div
                   key={q.id}
-                  className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-slate-700 transition shadow-lg"
+                  className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 hover:border-slate-700 transition shadow-lg"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                     <div className="space-y-1">
@@ -328,7 +328,7 @@ const StudentQuestions = () => {
             })}
           </div>
         ) : (
-          <div className="glass-panel p-16 text-center text-slate-400 rounded-3xl border border-slate-800 space-y-3">
+          <div className="glass-panel p-6 sm:p-12 text-center text-slate-400 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3">
             <div className="text-4xl">💬</div>
             <h3 className="text-lg font-bold text-white">No questions found</h3>
             <p className="text-xs text-slate-400 max-w-sm mx-auto">
@@ -338,7 +338,7 @@ const StudentQuestions = () => {
             </p>
             <button
               onClick={() => setShowModal(true)}
-              className="mt-2 py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition inline-block"
+              className="btn-premium mt-2 py-2.5 px-4 text-white text-xs font-semibold rounded-xl transition inline-block"
             >
               + Ask Your Teacher
             </button>
@@ -347,8 +347,8 @@ const StudentQuestions = () => {
 
         {/* Ask Question Modal */}
         {showModal && (
-          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="glass-panel max-w-xl w-full p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel max-w-xl w-full p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
               <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                 <div>
                   <h3 className="text-lg font-bold text-white flex items-center gap-2">
@@ -458,7 +458,7 @@ const StudentQuestions = () => {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="py-2.5 px-5 bg-linear-to-r from-indigo-600 to-purple-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/25 transition disabled:opacity-50"
+                    className="btn-premium py-2.5 px-5 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/25 transition disabled:opacity-50"
                   >
                     {submitting ? 'Submitting Question...' : 'Send Question to Teacher'}
                   </button>

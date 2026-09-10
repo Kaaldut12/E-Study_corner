@@ -163,7 +163,7 @@ const TeacherLeaves = () => {
         )}
 
         {/* Header */}
-        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
+        <div className="glass-panel glass-card-accent p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
           <div>
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
@@ -211,7 +211,7 @@ const TeacherLeaves = () => {
         {activeTab === 'faculty' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Form */}
-            <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-5 shadow-2xl">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-5 shadow-2xl">
               <div className="border-b border-slate-800/80 pb-3">
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-400 font-display">Application</span>
                 <h2 className="text-lg font-bold text-white font-display">Apply for Faculty Leave</h2>
@@ -233,7 +233,7 @@ const TeacherLeaves = () => {
                   </select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-300 uppercase tracking-wider font-display">Start Date</label>
                     <input
@@ -302,7 +302,7 @@ const TeacherLeaves = () => {
                   {myLeaves.map((leave) => (
                     <div
                       key={leave.id}
-                      className="glass-panel glass-panel-hover p-5 sm:p-6 rounded-3xl space-y-3"
+                      className="glass-panel glass-panel-hover p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-3"
                     >
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold uppercase tracking-wider bg-brand-subtle px-3 py-1 rounded-xl border border-brand text-indigo-300 font-display">
@@ -564,8 +564,8 @@ const TeacherLeaves = () => {
 
         {/* Evaluation Modal */}
         {selectedLeave && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-            <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-slate-800 max-w-md w-full space-y-4 shadow-2xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-md w-full max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl">
               <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
                 <h3 className="text-base font-bold text-white font-display">Evaluate Student Leave</h3>
                 <button

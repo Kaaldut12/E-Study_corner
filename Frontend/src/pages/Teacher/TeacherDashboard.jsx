@@ -54,7 +54,7 @@ const TeacherDashboard = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Welcome Header */}
-        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden shadow-2xl">
+        <div className="glass-panel glass-card-accent p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-5 relative overflow-hidden shadow-2xl">
           <div className="relative z-10">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
@@ -94,7 +94,7 @@ const TeacherDashboard = () => {
         <AttendanceWidget />
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           <div className="glass-panel glass-panel-hover p-5 rounded-2xl animate-slide-up delay-75">
             <div className="text-slate-400 text-xs font-bold uppercase tracking-wider font-display">Active Coursework</div>
             <div className="text-3xl sm:text-4xl font-black text-white mt-2 font-display">{stats.totalAssignments || 0}</div>
@@ -146,7 +146,7 @@ const TeacherDashboard = () => {
         {/* Content Section: Submissions to Grade & Published Assignments */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Submissions Pending Grade */}
-          <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-4">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
               <h2 className="text-lg font-bold text-white flex items-center gap-2 font-display">
                 <svg className="w-5 h-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -190,7 +190,7 @@ const TeacherDashboard = () => {
           </div>
 
           {/* Recent Created Assignments */}
-          <div className="glass-panel p-6 sm:p-7 rounded-3xl space-y-4">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
               <h2 className="text-lg font-bold text-white flex items-center gap-2 font-display">
                 <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -206,7 +206,7 @@ const TeacherDashboard = () => {
             {data?.recentAssignments && data.recentAssignments.length > 0 ? (
               <div className="space-y-3">
                 {data.recentAssignments.map((asg) => (
-                  <div key={asg.id} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between hover:border-slate-700 transition">
+                  <div key={asg.id} className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-700 transition">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
                         <span className="px-2.5 py-0.5 text-[11px] font-bold rounded-md bg-brand-subtle text-indigo-300 border border-brand">

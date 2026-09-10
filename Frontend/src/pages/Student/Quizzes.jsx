@@ -109,7 +109,7 @@ const Quizzes = () => {
       <div className="space-y-6">
         {/* Header Banner */}
         {!activeQuiz && (
-          <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-purple-400">V2 Learning System</span>
               <h1 className="text-2xl font-black text-white">Interactive Quizzes & Practice</h1>
@@ -122,13 +122,13 @@ const Quizzes = () => {
 
         {/* Active Quiz Header & Timer */}
         {activeQuiz && !result && (
-          <div className="glass-panel p-6 rounded-3xl border border-indigo-500/30 flex items-center justify-between">
+          <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">{activeQuiz.subject}</span>
               <h2 className="text-xl font-bold text-white">{activeQuiz.title}</h2>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="px-4 py-2 bg-slate-900 border border-slate-750 rounded-2xl flex items-center gap-2">
+            <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+              <div className="px-3.5 py-1.5 sm:px-4 sm:py-2 bg-slate-900 border border-slate-750 rounded-2xl flex items-center gap-2">
                 <span className="text-xs text-slate-400">Time Left:</span>
                 <span className={`text-sm font-mono font-bold ${timeLeft < 120 ? 'text-rose-400 animate-pulse' : 'text-amber-400'}`}>
                   ⏱️ {formatTime(timeLeft)}
@@ -136,7 +136,7 @@ const Quizzes = () => {
               </div>
               <button
                 onClick={quitQuiz}
-                className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl"
+                className="py-1.5 px-3 sm:py-2 sm:px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl"
               >
                 Quit
               </button>
@@ -153,7 +153,7 @@ const Quizzes = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {quizzes.map((quiz) => (
-                <div key={quiz.id} className="glass-panel glass-panel-hover p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4">
+                <div key={quiz.id} className="glass-panel glass-panel-hover p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center text-[10px] font-bold">
                       <span className="px-2.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 uppercase">{quiz.subject}</span>
@@ -181,7 +181,7 @@ const Quizzes = () => {
 
                     <button
                       onClick={() => startQuiz(quiz)}
-                      className="w-full py-2.5 px-4 bg-linear-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition"
+                      className="w-full py-2.5 px-4 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition"
                     >
                       {quiz.attemptCount > 0 ? 'Retake Quiz' : 'Start Quiz'}
                     </button>
@@ -194,9 +194,9 @@ const Quizzes = () => {
 
         {/* Active Quiz Questions View */}
         {activeQuiz && !result && (
-          <div className="space-y-6 max-w-3xl mx-auto">
+          <div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto">
             {questions.map((q, qIdx) => (
-              <div key={q.id} className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+              <div key={q.id} className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-4">
                 <div className="flex justify-between items-start">
                   <span className="text-xs font-bold text-indigo-400">Question {qIdx + 1} of {questions.length}</span>
                   <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400">+{q.points || 10} pts</span>
@@ -211,7 +211,7 @@ const Quizzes = () => {
                       <button
                         key={optIdx}
                         onClick={() => handleOptionSelect(q.id, optIdx)}
-                        className={`w-full p-4 rounded-2xl text-left text-xs font-semibold transition-all border flex items-center justify-between ${
+                        className={`w-full p-3 sm:p-4 rounded-xl sm:rounded-2xl text-left text-xs font-semibold transition-all border flex items-center justify-between ${
                           isSelected
                             ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-md shadow-indigo-600/20'
                             : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700'
@@ -235,7 +235,7 @@ const Quizzes = () => {
 
             <button
               onClick={submitQuiz}
-              className="w-full py-4 bg-linear-to-r from-emerald-600 to-indigo-600 text-white text-sm font-bold rounded-2xl shadow-xl shadow-emerald-600/30 hover:opacity-95 transition"
+              className="w-full py-3.5 sm:py-4 btn-premium text-white text-sm font-bold rounded-xl sm:rounded-2xl shadow-xl shadow-emerald-600/30 hover:opacity-95 transition"
             >
               Submit Quiz Answers
             </button>
@@ -244,8 +244,8 @@ const Quizzes = () => {
 
         {/* Quiz Result Modal */}
         {result && (
-          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 max-w-xl w-full space-y-6 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 max-w-xl w-full space-y-6 max-h-[90vh] overflow-y-auto">
               <div className="text-center space-y-2">
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto ${
                   result.passed ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
@@ -298,7 +298,7 @@ const Quizzes = () => {
 
               <button
                 onClick={quitQuiz}
-                className="w-full py-3 bg-linear-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30"
+                className="w-full py-3 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30"
               >
                 Return to Quizzes
               </button>

@@ -38,7 +38,7 @@ const Bookmarks = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-amber-400">Study Tools</span>
             <h1 className="text-2xl font-black text-white">Saved Bookmarks & Quick Links</h1>
@@ -54,7 +54,7 @@ const Bookmarks = () => {
             <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : bookmarks.length === 0 ? (
-          <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
+          <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-4xl">🔖</div>
             <h3 className="text-lg font-bold text-white">No saved bookmarks yet</h3>
             <p className="text-xs text-slate-400">Bookmark your favorite courses, notes, and study guides for one-click access.</p>
@@ -62,7 +62,7 @@ const Bookmarks = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bookmarks.map((bm) => (
-              <div key={bm.id} className="glass-panel glass-panel-hover p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4">
+              <div key={bm.id} className="glass-panel glass-panel-hover p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-amber-500/20 text-amber-300">

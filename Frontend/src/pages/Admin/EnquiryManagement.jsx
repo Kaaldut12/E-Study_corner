@@ -41,46 +41,46 @@ const EnquiryManagement = () => {
 
   return (
     <SidebarLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Website Student Enquiry Management</h1>
-          <p className="text-sm text-slate-400">View and respond to inquiries submitted through the homepage modal</p>
+      <div className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Website Student Enquiry Management</h1>
+          <p className="text-xs sm:text-sm text-slate-400">View and respond to inquiries submitted through the homepage modal</p>
         </div>
 
         {toastMsg && (
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+          <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
             ✓ {toastMsg}
           </div>
         )}
 
-        <div className="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+        <div className="glass-panel rounded-2xl sm:rounded-3xl border border-slate-800/80 overflow-hidden">
           {loading ? (
             <div className="py-12 text-center text-slate-400 text-xs">Loading student enquiries...</div>
           ) : enquiries.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
+              <table className="w-full text-left text-xs text-slate-300 min-w-[640px]">
                 <thead className="bg-slate-900 text-slate-400 uppercase font-semibold border-b border-slate-800">
                   <tr>
-                    <th className="px-6 py-3.5">ID</th>
-                    <th className="px-6 py-3.5">Name</th>
-                    <th className="px-6 py-3.5">Email & Mobile</th>
-                    <th className="px-6 py-3.5">Message</th>
-                    <th className="px-6 py-3.5">Date</th>
-                    <th className="px-6 py-3.5 text-right">Action</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-3.5">ID</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-3.5">Name</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-3.5">Email & Mobile</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-3.5">Message</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-3.5">Date</th>
+                    <th className="px-4 sm:px-6 py-3 sm:py-3.5 text-right">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/80">
                   {enquiries.map((e) => (
                     <tr key={e.id} className="hover:bg-slate-900/40 transition">
-                      <td className="px-6 py-4 font-mono text-slate-400">#{e.enquiryId || e.id}</td>
-                      <td className="px-6 py-4 font-semibold text-white">{e.name}</td>
-                      <td className="px-6 py-4">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 font-mono text-slate-400">#{e.enquiryId || e.id}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 font-semibold text-white">{e.name}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4">
                         <div className="text-slate-200">{e.email}</div>
                         <div className="text-slate-400 text-[11px] font-mono">{e.mobileNo}</div>
                       </td>
-                      <td className="px-6 py-4 max-w-xs text-slate-300 leading-relaxed">{e.message}</td>
-                      <td className="px-6 py-4 text-slate-400">{new Date(e.enquiryDt).toLocaleDateString()}</td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 max-w-xs text-slate-300 leading-relaxed">{e.message}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-slate-400">{new Date(e.enquiryDt).toLocaleDateString()}</td>
+                      <td className="px-4 sm:px-6 py-3 sm:py-4 text-right">
                         <button
                           onClick={() => handleDelete(e.id)}
                           className="px-3 py-1 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 font-semibold rounded-lg transition"
@@ -94,7 +94,7 @@ const EnquiryManagement = () => {
               </table>
             </div>
           ) : (
-            <div className="p-8 text-center text-slate-400 text-xs">No website enquiries received yet.</div>
+            <div className="p-6 sm:p-8 text-center text-slate-400 text-xs">No website enquiries received yet.</div>
           )}
         </div>
       </div>

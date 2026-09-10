@@ -222,7 +222,7 @@ const ManageStudents = () => {
         )}
 
         {/* Header Banner */}
-        <div className="glass-panel glass-card-accent p-6 sm:p-8 rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
+        <div className="glass-panel glass-card-accent p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 shadow-2xl">
           <div>
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-brand-subtle text-indigo-400 border border-brand text-[11px] font-extrabold uppercase tracking-widest font-display">
@@ -314,13 +314,13 @@ const ManageStudents = () => {
         {loading ? (
           <SkeletonTable rows={6} cols={5} />
         ) : filtered.length === 0 ? (
-          <div className="glass-panel p-16 rounded-3xl border border-slate-800 text-center space-y-3">
+          <div className="glass-panel p-6 sm:p-12 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-5xl">🎓</div>
             <h3 className="text-lg font-bold text-white font-display">No students found</h3>
             <p className="text-xs text-slate-400">Students registered in your classes will appear here.</p>
           </div>
         ) : (
-          <div className="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
+          <div className="glass-panel rounded-2xl sm:rounded-3xl border border-slate-800 overflow-hidden shadow-2xl">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-300">
                 <thead className="bg-slate-950/80 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-800 font-display">
@@ -385,8 +385,8 @@ const ManageStudents = () => {
             STUDENT ACTION & GOVERNANCE CONSOLE MODAL
             ============================================================ */}
         {selectedStudent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 max-w-4xl w-full max-h-[90vh] overflow-y-auto space-y-6 shadow-2xl">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
+            <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-4xl w-full max-h-[90vh] overflow-y-auto space-y-6 shadow-2xl">
               
               {/* Modal Header */}
               <div className="flex items-start justify-between border-b border-slate-800/80 pb-4">

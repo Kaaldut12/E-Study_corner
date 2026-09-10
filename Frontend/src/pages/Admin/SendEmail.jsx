@@ -40,15 +40,15 @@ const SendEmail = () => {
 
   return (
     <SidebarLayout>
-      <div className="max-w-xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Broadcast Email Sender</h1>
-          <p className="text-sm text-slate-400">Send email updates, exam schedules & notices to students</p>
+      <div className="max-w-xl mx-auto space-y-4 sm:space-y-6">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">Broadcast Email Sender</h1>
+          <p className="text-xs sm:text-sm text-slate-400">Send email updates, exam schedules & notices to students</p>
         </div>
 
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
           {toastMsg && (
-            <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
               ✓ {toastMsg}
             </div>
           )}
@@ -93,7 +93,7 @@ const SendEmail = () => {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 px-4 gradient-bg-primary text-white text-xs font-semibold rounded-xl shadow-lg shadow-indigo-600/30 hover:opacity-95 transition disabled:opacity-50 mt-2"
+              className="w-full py-3 px-4 btn-premium text-white text-xs font-semibold rounded-xl transition disabled:opacity-50 mt-2"
             >
               {submitting ? 'Sending Email...' : 'Send Broadcast Email'}
             </button>

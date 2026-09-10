@@ -167,7 +167,7 @@ const AdminDashboard = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Welcome Header */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl relative overflow-hidden border border-brand">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl relative overflow-hidden border border-brand">
           <div className="absolute right-0 top-0 w-72 h-72 rounded-full blur-3xl pointer-events-none" style={{ background: 'var(--brand-glow)' }}></div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div>
@@ -236,7 +236,7 @@ const AdminDashboard = () => {
         {/* =========================================================================
             ADMINISTRATIVE QUICK ACTION COMMAND CENTER
         ========================================================================== */}
-        <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-indigo-500/30 bg-indigo-950/20 relative overflow-hidden space-y-4">
+        <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-indigo-500/30 bg-indigo-950/20 relative overflow-hidden space-y-4">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-indigo-500/20 pb-3">
             <div>
               <div className="flex items-center gap-2">
@@ -547,8 +547,8 @@ const AdminDashboard = () => {
             MODAL 1: CAMPUS BROADCAST MODAL
         ========================================================================== */}
         {showBroadcastModal && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 max-w-lg w-full space-y-5 animate-scale-up">
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">📢</span>
@@ -601,8 +601,8 @@ const AdminDashboard = () => {
             MODAL 2: TICKET RESOLVER MODAL
         ========================================================================== */}
         {selectedTicket && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 max-w-lg w-full space-y-5 animate-scale-up">
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">🎫</span>
@@ -677,8 +677,8 @@ const AdminDashboard = () => {
             MODAL 3: DOUBT ANSWER MODAL
         ========================================================================== */}
         {selectedQuestion && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 max-w-lg w-full space-y-5 animate-scale-up">
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">✍️</span>
@@ -738,8 +738,8 @@ const AdminDashboard = () => {
             MODAL 4: SYSTEM AUDIT REPORT MODAL
         ========================================================================== */}
         {showResyncModal && resyncAudit && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 max-w-lg w-full space-y-5 animate-scale-up">
+          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <span className="text-xl">✅</span>

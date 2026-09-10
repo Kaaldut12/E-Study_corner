@@ -28,7 +28,7 @@ const NotificationsFeed = () => {
     <SidebarLayout>
       <div className="space-y-6 max-w-4xl mx-auto">
         {/* Header Banner */}
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-rose-400">Academics & Feed</span>
             <h1 className="text-2xl font-black text-white">Notice Board & Campus Notifications</h1>
@@ -44,7 +44,7 @@ const NotificationsFeed = () => {
             <div className="w-8 h-8 border-4 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : notifications.length === 0 ? (
-          <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
+          <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-4xl">📢</div>
             <h3 className="text-lg font-bold text-white">No notifications at this time</h3>
             <p className="text-xs text-slate-400">New campus announcements published by administrators will appear here.</p>
@@ -52,7 +52,7 @@ const NotificationsFeed = () => {
         ) : (
           <div className="space-y-4">
             {notifications.map((noti) => (
-              <div key={noti.id || noti._id} className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3 relative group hover:border-slate-700 transition">
+              <div key={noti.id || noti._id} className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3 relative group hover:border-slate-700 transition">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>

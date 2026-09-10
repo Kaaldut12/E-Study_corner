@@ -68,7 +68,7 @@ const ManageAssignments = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Header Banner */}
-        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Teacher Coursework Hub</span>
             <h1 className="text-2xl sm:text-3xl font-black text-white mt-1">Coursework Assignments & Submissions</h1>
@@ -79,7 +79,7 @@ const ManageAssignments = () => {
 
           <Link
             to="/teacher/create-assignment"
-            className="py-3 px-5 bg-linear-to-r from-purple-600 to-indigo-600 text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition flex items-center gap-2 shrink-0"
+            className="py-2.5 sm:py-3 px-4 sm:px-5 btn-premium text-white text-xs font-bold rounded-xl shadow-lg shadow-purple-600/30 hover:opacity-95 transition flex items-center justify-center gap-2 shrink-0 w-full sm:w-auto"
           >
             <span className="text-base leading-none">+</span>
             <span>Give New Assignment</span>
@@ -170,7 +170,7 @@ const ManageAssignments = () => {
         {loading ? (
           <SkeletonCardList count={4} cols={2} />
         ) : filteredAssignments.length === 0 ? (
-          <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
+          <div className="glass-panel p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 text-center space-y-3">
             <div className="text-4xl">📝</div>
             <h3 className="text-lg font-bold text-white">No assignments found</h3>
             <p className="text-xs text-slate-400">
@@ -184,7 +184,7 @@ const ManageAssignments = () => {
             {filteredAssignments.map((asg) => (
               <div
                 key={asg.id}
-                className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4 flex flex-col justify-between hover:border-purple-500/40 transition duration-200 shadow-lg"
+                className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-4 flex flex-col justify-between hover:border-purple-500/40 transition duration-200 shadow-lg"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
@@ -250,7 +250,7 @@ const ManageAssignments = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-1 text-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1 text-xs">
                     <span className="text-slate-400 text-[11px]">
                       Due: <strong className="text-slate-300">{new Date(asg.dueDate).toLocaleDateString()}</strong>
                     </span>
@@ -265,7 +265,7 @@ const ManageAssignments = () => {
 
                       <Link
                         to={`/teacher/submissions/${asg.id}`}
-                        className="px-3.5 py-1.5 bg-linear-to-r from-purple-600 to-indigo-600 hover:opacity-95 text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1"
+                        className="px-3.5 py-1.5 btn-premium hover:opacity-95 text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1"
                       >
                         <span>Check Submissions</span>
                         {(asg.pendingGradeCount || 0) > 0 && (
