@@ -8,7 +8,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "seed": "node src/seed/seedDatabase.js",
-    "test": "node --test \"test/*.test.js\" \"test/**/*.test.js\""
+    "test": "node --test test/auth.test.js test/student.test.js test/teacher.test.js test/admin.test.js"
   },
   "keywords": [],
   "author": "",

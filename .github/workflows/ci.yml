@@ -51,13 +51,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
-          cache-dependency-path: Frontend/package-lock.json
 
       - name: Install Frontend Dependencies
         run: |
           cd Frontend
-          npm ci
+          rm -rf node_modules package-lock.json
+          npm install
 
       - name: Run Frontend Linting
         run: |
