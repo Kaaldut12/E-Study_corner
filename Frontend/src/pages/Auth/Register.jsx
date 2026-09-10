@@ -13,7 +13,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [gender, setGender] = useState('Male');
-  const [collegeName, setCollegeName] = useState(import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies');
+  const [collegeName, setCollegeName] = useState(import.meta.env.VITE_COLLEGE_NAME || 'E-Study Academy');
   const [course, setCourse] = useState('Computer Science & Engineering');
   const [courseYear, setCourseYear] = useState('1st Year');
   const [mobileNo, setMobileNo] = useState('');
@@ -82,7 +82,7 @@ const Register = () => {
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-white font-display">Student Registration Portal</h1>
           <p className="text-xs text-slate-400 mt-1">
-            {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'} · Academic Student Registration
+            E-Study Corner · Student Registration
           </p>
         </div>
 
@@ -140,7 +140,7 @@ const Register = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="student@nitas.edu"
+                placeholder="student@estudy.com"
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 placeholder-slate-500 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>
@@ -203,7 +203,7 @@ const Register = () => {
                 required
                 value={collegeName}
                 onChange={(e) => setCollegeName(e.target.value)}
-                placeholder="e.g. National Institute of Technology & Advanced Studies / University Name"
+                placeholder="e.g. E-Study Academy / University Name"
                 className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
               />
             </div>

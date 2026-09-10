@@ -226,7 +226,7 @@ export const dataStore = {
       id: newId,
       status: 'active',
       joinedAt: new Date(),
-      collegeName: userData.collegeName || process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+      collegeName: userData.collegeName || process.env.COLLEGE_NAME || 'E-Study Academy',
       course: userData.course || 'Computer Science & Engineering',
       courseYear: userData.courseYear || '1st Year',
       ...userData,

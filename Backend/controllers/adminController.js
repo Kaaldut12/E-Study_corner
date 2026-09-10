@@ -119,7 +119,7 @@ export const createUser = async (req, res) => {
       department: department || (role === 'teacher' ? 'Computer Science & Engineering' : role === 'superadmin' ? 'Administration' : 'General'),
       subject: subject || (role === 'teacher' ? 'Computer Science' : ''),
       gradeLevel: gradeLevel || '3rd Year',
-      collegeName: collegeName || process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+      collegeName: collegeName || process.env.COLLEGE_NAME || 'E-Study Academy',
       course: course || 'Computer Science & Engineering'
     });
 

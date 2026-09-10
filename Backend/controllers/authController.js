@@ -118,7 +118,7 @@ export const register = async (req, res) => {
       password,
       role,
       gender: gender || 'Male',
-      collegeName: collegeName || process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+      collegeName: collegeName || process.env.COLLEGE_NAME || 'E-Study Academy',
       course: course || 'Computer Science & Engineering',
       courseYear: courseYear || '1st Year',
       mobileNo: mobileNo || '',

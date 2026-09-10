@@ -37,7 +37,7 @@ export const seedSuperAdmin = {
   permissions: DEFAULT_ROLE_PERMISSIONS.superadmin,
   gender: 'Male',
   department: process.env.SEED_SUPERADMIN_DEPT || 'Administration & Platform Governance',
-  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
   mobileNo: process.env.SEED_SUPERADMIN_PHONE || '9335856018',
   dob: process.env.SEED_SUPERADMIN_DOB || '2004-07-28',
   addressP: process.env.SEED_SUPERADMIN_ADDRESS || 'Administration Block',
@@ -55,10 +55,10 @@ export const seedAdmin = {
   permissions: DEFAULT_ROLE_PERMISSIONS.admin,
   gender: process.env.SEED_ADMIN_GENDER || 'Male',
   department: process.env.SEED_ADMIN_DEPT || 'Department of CS & Engg',
-  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
   mobileNo: process.env.SEED_ADMIN_PHONE || '9876543211',
   dob: process.env.SEED_ADMIN_DOB || '1978-04-12',
-  addressP: process.env.SEED_ADMIN_ADDRESS || 'Academic Complex, NITAS Campus',
+  addressP: process.env.SEED_ADMIN_ADDRESS || 'Academic Complex, Technology Park',
   status: 'active'
 };
 
@@ -73,10 +73,10 @@ export const seedTeacher = {
   permissions: DEFAULT_ROLE_PERMISSIONS.teacher,
   gender: process.env.SEED_TEACHER_GENDER || 'Male',
   department: process.env.SEED_TEACHER_DEPT || 'Department of CS & Engg',
-  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
   mobileNo: process.env.SEED_TEACHER_PHONE || '9876543212',
   dob: process.env.SEED_TEACHER_DOB || '1982-08-15',
-  addressP: process.env.SEED_TEACHER_ADDRESS || 'Faculty Residential Quarters, NITAS Campus',
+  addressP: process.env.SEED_TEACHER_ADDRESS || 'Faculty Residential Quarters, Technology Park',
   status: 'active'
 };
 
@@ -92,10 +92,10 @@ export const seedStudent = {
   gender: process.env.SEED_STUDENT_GENDER || 'Male',
   course: process.env.SEED_STUDENT_COURSE || 'Computer Science & Engineering',
   courseYear: process.env.SEED_STUDENT_YEAR || '1st Year',
-  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
   mobileNo: process.env.SEED_STUDENT_PHONE || '9876543213',
   dob: process.env.SEED_STUDENT_DOB || '2005-05-10',
-  addressP: process.env.SEED_STUDENT_ADDRESS || 'Student Hostel Block A, NITAS Campus',
+  addressP: process.env.SEED_STUDENT_ADDRESS || 'Student Hostel Block A, Technology Park',
   status: 'active'
 };
 
@@ -111,10 +111,10 @@ export const seedStudent2 = {
   gender: 'Female',
   course: 'Computer Science & Engineering',
   courseYear: '2nd Year',
-  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
   mobileNo: '9876543214',
   dob: '2004-09-18',
-  addressP: 'Student Hostel Block B, NITAS Campus',
+  addressP: 'Student Hostel Block B, Technology Park',
   status: 'active'
 };
 
@@ -130,10 +130,10 @@ export const seedStudent3 = {
   gender: 'Male',
   course: 'Information Technology',
   courseYear: '1st Year',
-  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
   mobileNo: '9876543215',
   dob: '2005-02-14',
-  addressP: 'Student Hostel Block A, NITAS Campus',
+  addressP: 'Student Hostel Block A, Technology Park',
   status: 'active'
 };
 
@@ -148,10 +148,10 @@ export const seedDefaultSuperAdmin = {
   permissions: DEFAULT_ROLE_PERMISSIONS.superadmin,
   gender: 'Male',
   department: 'Administration & Platform Governance',
-  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
   mobileNo: '9876543210',
   dob: '1980-01-01',
-  addressP: 'Administration Block, NITAS Campus',
+  addressP: 'Administration Block, Technology Park',
   status: 'active'
 };
 
@@ -182,10 +182,10 @@ if (process.env.SEED_ADMIN_EMAIL && process.env.SEED_ADMIN_EMAIL.toLowerCase() !
     permissions: DEFAULT_ROLE_PERMISSIONS.admin,
     gender: 'Male',
     department: process.env.SEED_ADMIN_DEPT || 'Department of CS & Engg',
-    collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+    collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
     mobileNo: process.env.SEED_ADMIN_PHONE || '9876543211',
     dob: process.env.SEED_ADMIN_DOB || '1978-04-12',
-    addressP: process.env.SEED_ADMIN_ADDRESS || 'Academic Complex, NITAS Campus',
+    addressP: process.env.SEED_ADMIN_ADDRESS || 'Academic Complex, Technology Park',
     status: 'active'
   });
 }
@@ -201,7 +201,7 @@ if (process.env.NEW_USER_EMAIL) {
     role: newRole,
     permissions: DEFAULT_ROLE_PERMISSIONS[newRole] || [],
     gender: 'Male',
-    collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+    collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
     status: 'active'
   });
 }

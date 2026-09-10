@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ['student', 'teacher', 'admin', 'superadmin'], default: 'student' },
   permissions: { type: [String], default: [] },
   gender: { type: String, default: 'Male' },
-  collegeName: { type: String, default: 'National Institute of Technology & Advanced Studies' },
+  collegeName: { type: String, default: 'E-Study Academy' },
   course: { type: String, default: 'Computer Science & Engineering' },
   courseYear: { type: String, default: '1st Year' },
   mobileNo: { type: String },

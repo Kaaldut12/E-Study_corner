@@ -75,7 +75,7 @@ const EnquiryModal = () => {
               <div>
                 <h3 className="text-lg font-bold text-white">Student Enquiry Form</h3>
                 <p className="text-xs text-slate-400">
-                  {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}
+                  {import.meta.env.VITE_APP_NAME || 'E-Study Corner'} · Engineered by Abhay Patel
                 </p>
               </div>
               <button

@@ -1,6 +1,6 @@
-# 📚 E-Study Corner (v2.1 — Stability & Quality Release)
+# 📚 E-Study Corner
 
-> A production-grade, full-stack Academic Governance and E-Learning Platform engineered for **National Institute of Technology & Advanced Studies** — built with React 19, Tailwind CSS v4, Express 5, Mongoose 9, role-based access control, automated attendance governance, coursework file streaming, and a zero-dependency integration test suite.
+> A production-grade, full-stack Academic Governance and E-Learning Platform engineered by **Abhay Patel** — built with React 19, Tailwind CSS v4, Express 5, Mongoose 9, role-based access control, automated attendance governance, coursework file streaming, Nodemailer email broadcasting, resilient dual-database persistence, and an automated integration test suite.
 
 ---
 
@@ -160,7 +160,7 @@ npm run build
 
 | Role | Name | Email | Default Password |
 |---|---|---|---|
-| **Superadmin** | Super Administrator | `superadmin@estudy.com` | `SuperAdmin@123` |
+| **Superadmin** | Abhay Patel | `abhaypatel2556444@gmail.com` | `SuperAdmin@123` |
 | **Admin** | Admin Officer | `admin@estudy.com` | `Admin@123` |
 | **Teacher** | Faculty Lecturer | `teacher@estudy.com` | `Admin@123` |
 | **Student** | Student Scholar | `student@estudy.com` | `Admin@123` |
@@ -171,5 +171,14 @@ npm run build
 
 ---
 
+## 👨‍💻 Developer & Portfolio
+
+- **Author**: **Abhay Patel**
+- **GitHub Profile**: [@Kaaldut12](https://github.com/Kaaldut12)
+- **Project Repository**: [Kaaldut12/E-Study_corner](https://github.com/Kaaldut12/E-Study_corner)
+- **Contact**: `abhaypatel2556444@gmail.com`
+
+---
+
 ## 📄 License
-ISC License — © National Institute of Technology & Advanced Studies / E-Study Corner.
+ISC License — © 2026 Abhay Patel / E-Study Corner. All Rights Reserved.

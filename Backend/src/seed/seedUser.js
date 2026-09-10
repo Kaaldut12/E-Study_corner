@@ -58,7 +58,7 @@ export const seedCustomUser = async () => {
     (role === 'superadmin' ? 'Platform Super Administrator' : 'Platform Administrator')
   ).trim();
 
-  const collegeName = process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies';
+  const collegeName = process.env.COLLEGE_NAME || 'E-Study Academy';
   const permissions = DEFAULT_ROLE_PERMISSIONS[role] || DEFAULT_ROLE_PERMISSIONS.admin || [];
 
   const primaryURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy';

@@ -70,7 +70,7 @@ const PublicNavbar = () => {
               E-Study Corner
             </span>
             <span className="text-[9px] sm:text-[10px] font-bold t-brand uppercase tracking-widest block truncate max-w-[180px] sm:max-w-none">
-              {import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}
+              {import.meta.env.VITE_PLATFORM_TAGLINE || 'Engineered by Abhay Patel'}
             </span>
           </div>
         </Link>

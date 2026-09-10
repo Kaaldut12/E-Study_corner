@@ -60,4 +60,4 @@ const customOrigins = (process.env.FRONTEND_URL || '')
 
 export const ALLOWED_ORIGINS = Array.from(new Set([...defaultOrigins, ...customOrigins]));
 
-export const COLLEGE_NAME = process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies';
+export const COLLEGE_NAME = process.env.COLLEGE_NAME || 'E-Study Corner';

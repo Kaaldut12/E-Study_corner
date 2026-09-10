@@ -7,9 +7,9 @@ import PublicNavbar from '../../components/common/PublicNavbar';
 
 const QUOTES_CAROUSEL = [
   {
-    tag: 'Smart Learning Pathashala',
-    title: 'Digital Portal for Computer Science & Technical Education',
-    quote: 'Personalized e-learning platform designed to meet the academic and career requirements of students across all disciplines and degrees.',
+    tag: 'Full-Stack Showcase · By Abhay Patel',
+    title: 'Modern Learning Platform & Academic Architecture',
+    quote: 'Engineered by Abhay Patel — a full-stack e-learning ecosystem with real-time analytics, automated attendance, dynamic quizzes, and dual-database persistence.',
     badgeColor: 'from-indigo-500/20 to-purple-500/20 text-indigo-300 border-indigo-500/40',
     bgGradient: 'from-indigo-950/80 via-slate-950 to-purple-950/80'
   },
@@ -343,13 +343,13 @@ const Home = () => {
         {/* Project Introduction Card */}
         <div id="about" className="glass-panel p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3 sm:space-y-4 relative overflow-hidden scroll-mt-24">
           <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
-          <span className="text-xs font-extrabold t-brand uppercase tracking-widest block">Project Abstract</span>
+          <span className="text-xs font-extrabold t-brand uppercase tracking-widest block">Featured Portfolio Project</span>
           <h3 className="text-xl sm:text-3xl font-black text-white font-display">About E-Study Corner</h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify">
-            Professional education is rapidly evolving. Industry requirements demand students to possess real-world, practical skills. E-Study Corner acts as a bridge of communication amongst students across different branches and institutions.
+            E-Study Corner is an enterprise-grade, full-stack Learning Management & Academic Governance platform designed and engineered by <strong className="text-white font-semibold">Abhay Patel</strong>.
           </p>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify">
-            Smart Learning Pathashala is a personalized web portal created to meet all academic requirements of every student — providing anytime/anywhere access to online learning, assignments, performance evaluation, and comprehensive technical study notes.
+            Built with modern web standards, this platform features role-based access control for Students, Faculty, Administrators, and SuperAdmins. It includes automated attendance tracking, interactive quiz evaluation, coursework assignments, real-time email broadcasting via Nodemailer, and an innovative dual-step database persistence engine synchronizing MongoDB Atlas Cloud with local backups.
           </p>
         </div>
       </section>
@@ -357,23 +357,70 @@ const Home = () => {
       {/* Floating Enquiry Modal Trigger */}
       <EnquiryModal />
 
-      {/* Project Credits Footer */}
-      <footer id="contact" className="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-6 sm:py-8 px-4 sm:px-8 text-xs text-slate-400 scroll-mt-24 relative z-10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-          <div className="space-y-1">
-            <div className="font-black text-white text-sm font-display">{import.meta.env.VITE_COLLEGE_NAME || 'National Institute of Technology & Advanced Studies'}</div>
-            <div className="text-slate-400">{import.meta.env.VITE_COLLEGE_DEPT || 'Department of Computer Science & Engineering'} · Academic Portal</div>
-            <div className="text-[11px] text-slate-500">Autonomous Institute & Higher Technical Education Center</div>
+      {/* Developer Portfolio Footer */}
+      <footer id="contact" className="mt-auto border-t border-slate-800/80 bg-slate-950/90 py-8 sm:py-12 px-4 sm:px-8 text-xs text-slate-400 scroll-mt-24 relative z-10">
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start justify-between gap-8">
+          {/* Col 1: Platform Overview */}
+          <div className="space-y-2 max-w-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-xl overflow-hidden border border-brand/40 shadow-brand bg-slate-900 shrink-0">
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+              </div>
+              <span className="font-black text-lg text-white font-display">E-Study Corner</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              A comprehensive, production-ready Full-Stack Learning Management System built by <strong className="text-slate-200">Abhay Patel</strong> as a flagship software engineering portfolio project.
+            </p>
+            <div className="text-[11px] text-slate-500 pt-1">
+              React 19 · Node.js · Express · MongoDB Atlas · Tailwind CSS
+            </div>
           </div>
 
-          <div className="text-xs space-y-1 bg-slate-900/70 p-4 rounded-2xl border border-slate-800">
-            <div><strong className="text-indigo-400">Project Team:</strong> {import.meta.env.VITE_PROJECT_TEAM || 'Computer Science & Engineering Student Team'}</div>
-            <div><strong className="text-purple-400">Under Guidance of:</strong> {import.meta.env.VITE_PROJECT_GUIDE || 'Department Faculty Lecturer'}</div>
-            <div><strong className="text-emerald-400">HOD & Supervisor:</strong> {import.meta.env.VITE_PROJECT_HOD || 'Head of Department & Academic Supervisor'}</div>
+          {/* Col 2: Developer Portfolio Card */}
+          <div className="text-xs space-y-2.5 bg-slate-900/80 p-5 rounded-2xl border border-slate-800/90 shadow-xl w-full lg:w-auto lg:min-w-[340px]">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+              <div>
+                <div className="font-bold text-white text-sm">Abhay Patel</div>
+                <div className="text-[11px] t-brand font-medium">Full Stack Software Developer</div>
+              </div>
+              <a
+                href="https://github.com/Kaaldut12"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700/80 transition inline-flex items-center gap-1.5"
+              >
+                <span>GitHub</span>
+                <span>↗</span>
+              </a>
+            </div>
+            <div className="space-y-1.5 text-[11px]">
+              <div className="flex items-center gap-2">
+                <span className="text-slate-500">Email:</span>
+                <a href="mailto:abhaypatel2556444@gmail.com" className="text-indigo-400 hover:underline">abhaypatel2556444@gmail.com</a>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-slate-500">Repository:</span>
+                <a href="https://github.com/Kaaldut12/E-Study_corner" target="_blank" rel="noopener noreferrer" className="text-purple-400 hover:underline">Kaaldut12/E-Study_corner</a>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-slate-500">Dual-Step DB:</span>
+                <span className="text-emerald-400">MongoDB Atlas Cloud + Local Replica</span>
+              </div>
+            </div>
           </div>
 
-          <div className="text-slate-500">
-            Copyright &copy; {new Date().getFullYear()} E-Study Corner. All Rights Reserved.
+          {/* Col 3: Navigation & Copyright */}
+          <div className="space-y-3 lg:text-right">
+            <div className="flex flex-wrap gap-3 text-xs font-medium text-slate-400 lg:justify-end">
+              <a href="#top" className="hover:text-white transition">Back to Top</a>
+              <a href="#services" className="hover:text-white transition">Services</a>
+              <a href="#academics" className="hover:text-white transition">Academics</a>
+              <a href="#about" className="hover:text-white transition">About</a>
+              <Link to="/login" className="t-brand hover:underline">Sign In</Link>
+            </div>
+            <div className="text-slate-500 text-[11px]">
+              Copyright &copy; {new Date().getFullYear()} E-Study Corner. Engineered by Abhay Patel.
+            </div>
           </div>
         </div>
       </footer>

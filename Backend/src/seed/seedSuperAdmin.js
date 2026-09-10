@@ -47,7 +47,7 @@ export const seedSuperAdminUser = async () => {
     permissions: DEFAULT_ROLE_PERMISSIONS.superadmin,
     gender: 'Male',
     department: process.env.SEED_SUPERADMIN_DEPT || 'Administration & Platform Governance',
-    collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+    collegeName: process.env.COLLEGE_NAME || 'E-Study Academy',
     mobileNo: process.env.SEED_SUPERADMIN_PHONE || '9335856018',
     dob: process.env.SEED_SUPERADMIN_DOB || '2004-07-28',
     addressP: process.env.SEED_SUPERADMIN_ADDRESS || 'Administration Block',

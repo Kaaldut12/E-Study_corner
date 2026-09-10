@@ -63,7 +63,7 @@ const Settings = () => {
       setFirstName(user.firstName || parts[0] || '');
       setLastName(user.lastName || parts.slice(1).join(' ') || '');
       setGender(user.gender || 'Male');
-      setCollegeName(user.collegeName || import.meta.env.VITE_COLLEGE_NAME || 'Tech Academy of Science');
+      setCollegeName(user.collegeName || import.meta.env.VITE_COLLEGE_NAME || 'E-Study Academy');
       setCourse(user.course || 'Computer Science & Engineering');
       setCourseYear(user.courseYear || '1st Year');
       setMobileNo(user.mobileNo || '');
@@ -391,7 +391,7 @@ const Settings = () => {
                     type="text"
                     value={collegeName}
                     onChange={(e) => setCollegeName(e.target.value)}
-                    placeholder="e.g. National Institute of Technology and Applied Sciences"
+                    placeholder="e.g. E-Study Academy / University Name"
                     className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs sm:text-sm focus:outline-none focus:border-indigo-500"
                   />
                 </div>
