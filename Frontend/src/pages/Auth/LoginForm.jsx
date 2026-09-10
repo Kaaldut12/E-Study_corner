@@ -4,11 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import PublicNavbar from '../../components/common/PublicNavbar';
 
-const DEMO_ACCOUNTS = [
-  { label: 'Student', email: 'student@estudy.com', role: 'student' },
-  { label: 'Teacher', email: 'teacher@estudy.com', role: 'teacher' },
-  { label: 'Admin', email: 'admin@estudy.com', role: 'admin' }
-];
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -21,12 +16,6 @@ const LoginForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [localError, setLocalError] = useState('');
 
-  const handleQuickFill = (demo) => {
-    setEmail(demo.email);
-    setPassword('Admin@123');
-    setRole(demo.role);
-    setLocalError('');
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,29 +63,6 @@ const LoginForm = () => {
             </p>
           </div>
 
-          {/* Quick Demo Fill Pills */}
-          <div className="bg-slate-950/70 border border-slate-800/80 rounded-2xl p-3 shadow-inner">
-            <div className="flex items-center justify-between text-[11px] text-slate-400 mb-2 px-1">
-              <span className="font-semibold text-slate-300">⚡ One-click Demo Login:</span>
-              <span className="text-[10px] text-slate-400 font-mono bg-slate-900 px-2 py-0.5 rounded-md border border-slate-800">Pass: Admin@123</span>
-            </div>
-            <div className="grid grid-cols-3 gap-1.5">
-              {DEMO_ACCOUNTS.map((demo) => (
-                <button
-                  key={demo.role}
-                  type="button"
-                  onClick={() => handleQuickFill(demo)}
-                  className={`py-2 px-2 text-xs font-bold rounded-xl transition-all border text-center ${
-                    role === demo.role && email === demo.email
-                      ? 'bg-brand text-white shadow-brand ring-1 ring-white/20'
-                      : 'bg-slate-900/90 text-slate-300 hover:text-white border-slate-800 hover:bg-slate-800'
-                  }`}
-                >
-                  {demo.label}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {(localError || error) && (
             <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-fade-in">
