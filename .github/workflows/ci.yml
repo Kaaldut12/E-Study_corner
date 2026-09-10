@@ -37,7 +37,7 @@ jobs:
       - name: Run Backend Automated Tests
         run: |
           cd Backend
-          npm test
+          node --test test/auth.test.js test/student.test.js test/teacher.test.js test/admin.test.js
 
   frontend-test-and-build:
     name: Frontend Lint & Production Build Verification
@@ -57,6 +57,7 @@ jobs:
           cd Frontend
           rm -rf node_modules package-lock.json
           npm install
+          npm install @rollup/rollup-linux-x64-gnu@4.52.5
 
       - name: Run Frontend Linting
         run: |
