@@ -71,44 +71,41 @@ const Navbar = ({ toggleSidebar }) => {
         </Link>
       </div>
 
-      {/* Right — Theme switcher + User Profile */}
-      <div className="flex items-center gap-2 sm:gap-4">
-        {/* Theme Palette Switcher */}
-        <div
-          className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-2.5 py-1 sm:py-1.5 bg-slate-900/90 rounded-xl border border-slate-800/90 shadow-inner"
-          title="Switch Color Theme"
-        >
-          {THEMES.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => changeTheme(t.id)}
-              title={`${t.label} theme`}
-              aria-label={`${t.label} theme`}
-              style={{ backgroundColor: t.hex }}
-              className={`w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full transition-all duration-300 ${
-                currentTheme === t.id
-                  ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-950 scale-125 shadow-md shadow-white/20'
-                  : 'opacity-40 hover:opacity-100 hover:scale-110'
-              }`}
-            />
-          ))}
-        </div>
-
+      {/* Right — Settings + Role Badge + User Profile + Logout */}
+      <div className="flex items-center gap-2 sm:gap-3">
         {user && (
           <>
+            {/* Settings Link Button */}
+            <Link
+              to={`/${user.role === 'superadmin' ? 'admin' : user.role}/settings`}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-800/90 transition shadow-sm text-xs font-semibold group"
+              title="Settings (Profile, Themes & Password)"
+            >
+              <svg className="w-4 h-4 text-brand group-hover:rotate-45 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="hidden sm:inline-block">Settings</span>
+            </Link>
+
             <span className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border capitalize hidden sm:inline-block shadow-xs ${roleBadge[user.role] || 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
               {user.role === 'superadmin' ? '👑 Super Admin' : user.role}
             </span>
 
-            <div className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2 border-l border-slate-800/80">
-              <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand ring-1 ring-white/20">
+            {/* User Profile Card linked to Settings */}
+            <Link
+              to={`/${user.role === 'superadmin' ? 'admin' : user.role}/settings`}
+              className="flex items-center gap-2 sm:gap-2.5 pl-1.5 sm:pl-2 border-l border-slate-800/80 hover:opacity-90 transition group"
+              title="View Profile & Settings"
+            >
+              <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand ring-1 ring-white/20 group-hover:scale-105 transition-transform">
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="hidden md:flex flex-col leading-tight">
-                <span className="text-xs font-bold text-slate-200">{user.name}</span>
+                <span className="text-xs font-bold text-slate-200 group-hover:text-white transition">{user.name}</span>
                 <span className="text-[10px] text-slate-400 truncate max-w-[140px]">{user.email}</span>
               </div>
-            </div>
+            </Link>
 
             <button
               onClick={logout}

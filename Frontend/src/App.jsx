@@ -57,7 +57,8 @@ import PlatformAnalytics from './pages/Admin/PlatformAnalytics';
 import SystemHealth from './pages/Admin/SystemHealth';
 import LeaveManagement from './pages/Admin/LeaveManagement';
 
-// Common Components & Pages
+// Settings & Common Pages
+import Settings from './pages/Common/Settings';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import NotFound from './pages/NotFound';
 
@@ -73,6 +74,16 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/registration" element={<Register />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+
+          {/* Universal Settings Route */}
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Student Routes - Protected */}
           <Route
@@ -96,8 +107,9 @@ function App() {
                   <Route path="/questions" element={<StudentQuestions />} />
                   <Route path="/study-material" element={<DownStudyMaterial />} />
                   <Route path="/feedback" element={<StudentFeedback />} />
-                  <Route path="/profile" element={<MyProfile />} />
-                  <Route path="/change-password" element={<ChangePassword />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/profile" element={<Settings />} />
+                  <Route path="/change-password" element={<Settings />} />
                   <Route path="/contact-admin" element={<ContactAdmin />} />
                   <Route path="/leave" element={<ApplyLeave />} />
                   <Route path="*" element={<NotFound />} />
@@ -121,6 +133,7 @@ function App() {
                   <Route path="/submissions/:assignmentId" element={<ViewSubmissions />} />
                   <Route path="/questions" element={<TeacherQuestions />} />
                   <Route path="/leave" element={<TeacherLeaves />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </ProtectedRoute>
@@ -145,6 +158,7 @@ function App() {
                   <Route path="/feedback" element={<ViewFeedback />} />
                   <Route path="/messages" element={<ViewMessages />} />
                   <Route path="/send-email" element={<SendEmail />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </ProtectedRoute>

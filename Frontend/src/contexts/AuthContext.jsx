@@ -73,6 +73,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateCurrentUser = (updatedData) => {
+    setUser((prev) => {
+      const merged = { ...(prev || {}), ...updatedData };
+      localStorage.setItem('user_data', JSON.stringify(merged));
+      return merged;
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -83,6 +91,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         resetPassword,
+        updateCurrentUser,
         apiUrl: API_URL
       }}
     >

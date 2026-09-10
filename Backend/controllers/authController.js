@@ -225,3 +225,71 @@ export const confirmResetPassword = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const ALLOWED_PROFILE_FIELDS = [
+      'name', 'firstName', 'lastName', 'gender', 'mobileNo',
+      'dob', 'addressP', 'collegeName', 'course', 'courseYear', 'userpic'
+    ];
+    const updates = {};
+    ALLOWED_PROFILE_FIELDS.forEach(field => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    if (updates.firstName !== undefined || updates.lastName !== undefined) {
+      const existing = await dataStore.getUserById(userId);
+      const fName = updates.firstName !== undefined ? updates.firstName : (existing?.firstName || '');
+      const lName = updates.lastName !== undefined ? updates.lastName : (existing?.lastName || '');
+      if (!updates.name) {
+        updates.name = `${fName} ${lName}`.trim();
+      }
+    }
+
+    const updated = await dataStore.updateUser(userId, updates);
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'User account not found.' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully!',
+      user: toPublicUser(updated)
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const currentPass = req.body.Pass || req.body.currentPassword || req.body.password;
+    const newPass = req.body.NewPass || req.body.newPassword;
+    const confPass = req.body.ConfPass || req.body.confirmPassword || newPass;
+
+    if (!currentPass || !newPass) {
+      return res.status(400).json({ success: false, message: 'Current and new password fields are required.' });
+    }
+
+    if (newPass !== confPass) {
+      return res.status(400).json({ success: false, message: 'New password and confirm password do not match.' });
+    }
+
+    if (newPass.length < 6) {
+      return res.status(400).json({ success: false, message: 'New password must be at least 6 characters long.' });
+    }
+
+    const result = await dataStore.changeUserPassword(userId, currentPass, newPass);
+    if (!result.success) {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
