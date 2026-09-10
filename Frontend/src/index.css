@@ -129,7 +129,7 @@ html.light #root,
 [data-mode="light"] #root,
 html.light .min-h-screen,
 [data-mode="light"] .min-h-screen {
-  background-color: #f8fafc !important;
+  background-color: #eef2f7 !important;
   color: #0f172a !important;
 }
 
@@ -196,7 +196,7 @@ html.light aside nav a.bg-brand *,
 
 html.light .glass-panel,
 [data-mode="light"] .glass-panel {
-  background: rgba(255, 255, 255, 0.94) !important;
+  background: #ffffff !important;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid #e2e8f0 !important;
@@ -894,7 +894,7 @@ html.light a.bg-slate-900:hover:not(.btn-premium):not([class*="btn-dashboard"]):
 /* 6. Dashboard Action Command Center Cards in Light Mode */
 html.light .dashboard-action-card,
 [data-mode="light"] .dashboard-action-card {
-  background: #ffffff !important;
+  background: #f8fafc !important;
   border: 1px solid #cbd5e1 !important;
   box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06) !important;
 }
