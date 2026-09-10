@@ -1,19 +1,10 @@
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth();
-
-  // Apply saved theme on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('estudy_theme') || 'indigo';
-    if (saved === 'indigo') {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', saved);
-    }
-  }, []);
+  const { mode, toggleMode } = useTheme();
 
   const roleBadge = {
     student: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
@@ -51,10 +42,21 @@ const Navbar = ({ toggleSidebar }) => {
         </Link>
       </div>
 
-      {/* Right — Settings + Role Badge + User Profile + Logout */}
+      {/* Right — Theme Toggle + Settings + Role Badge + User Profile + Logout */}
       <div className="flex items-center gap-2 sm:gap-3">
         {user && (
           <>
+            {/* Quick Mode Toggle */}
+            <button
+              onClick={toggleMode}
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl text-slate-300 hover:text-white bg-slate-900/90 hover:bg-slate-800 border border-slate-800/90 transition shadow-sm text-xs font-semibold cursor-pointer"
+              title={mode === 'dark' ? 'Switch to Lite Theme' : 'Switch to Dark Theme'}
+              aria-label="Toggle theme mode"
+            >
+              <span>{mode === 'dark' ? '☀️' : '🌙'}</span>
+              <span className="hidden sm:inline-block">{mode === 'dark' ? 'Lite' : 'Dark'}</span>
+            </button>
+
             {/* Settings Link Button */}
             <Link
               to={`/${user.role === 'superadmin' ? 'admin' : user.role}/settings`}

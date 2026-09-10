@@ -3,49 +3,13 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import { THEMES, MODES } from '../../utils/themes';
 import authService from '../../services/authService';
-
-const THEMES = [
-  {
-    id: 'indigo',
-    label: 'Electric Indigo',
-    hex: '#6366f1',
-    accentGrad: 'from-indigo-500 via-indigo-600 to-purple-600',
-    borderCol: 'border-indigo-500/40',
-    glowCol: 'rgba(99, 102, 241, 0.25)',
-    description: 'The signature deep-space futuristic violet theme. Crisp, modern, and sleek.'
-  },
-  {
-    id: 'emerald',
-    label: 'Cyber Emerald',
-    hex: '#10b981',
-    accentGrad: 'from-emerald-500 via-emerald-600 to-teal-600',
-    borderCol: 'border-emerald-500/40',
-    glowCol: 'rgba(16, 185, 129, 0.25)',
-    description: 'Vibrant neon matrix green. Energetic, high contrast, and easy on the eyes.'
-  },
-  {
-    id: 'amber',
-    label: 'Solar Amber',
-    hex: '#f59e0b',
-    accentGrad: 'from-amber-500 via-amber-600 to-orange-600',
-    borderCol: 'border-amber-500/40',
-    glowCol: 'rgba(245, 158, 11, 0.25)',
-    description: 'Warm dusk solar tones. Rich golden highlights with fiery sunset accents.'
-  },
-  {
-    id: 'rose',
-    label: 'Neon Rose',
-    hex: '#f43f5e',
-    accentGrad: 'from-rose-500 via-rose-600 to-pink-600',
-    borderCol: 'border-rose-500/40',
-    glowCol: 'rgba(244, 63, 94, 0.25)',
-    description: 'Striking cyberpunk crimson and hot pink. Bold, stylish, and high impact.'
-  }
-];
 
 const Settings = () => {
   const { user, updateCurrentUser } = useAuth();
+  const { mode, setMode, colorTheme, setColorTheme } = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Tab State: 'profile' | 'themes' | 'security'
@@ -60,24 +24,9 @@ const Settings = () => {
     setSearchParams({ tab });
   };
 
-  // ==================== THEME STATE ====================
-  const [currentTheme, setCurrentTheme] = useState(
-    () => localStorage.getItem('estudy_theme') || 'indigo'
-  );
-
-  const applyTheme = (name) => {
-    if (name === 'indigo') {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', name);
-    }
-  };
-
-  const changeTheme = (name) => {
-    setCurrentTheme(name);
-    localStorage.setItem('estudy_theme', name);
-    applyTheme(name);
-  };
+  // Aliases for compatibility
+  const currentTheme = colorTheme;
+  const changeTheme = (name) => setColorTheme(name);
 
   // ==================== PROFILE STATE ====================
   const [firstName, setFirstName] = useState('');
@@ -469,103 +418,164 @@ const Settings = () => {
 
         {/* TAB 2: APPEARANCE & THEMES */}
         {activeTab === 'themes' && (
-          <div className="space-y-4 sm:space-y-6">
-            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-2">
-              <h2 className="text-base sm:text-lg font-bold text-white">System Color Palettes</h2>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Choose your preferred accent theme. The theme instantly updates buttons, gradient borders, badges, and glows across every portal page.
-              </p>
-            </div>
+          <div className="space-y-6">
+            {/* Appearance Mode (Lite vs Dark Theme) */}
+            <div className="glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white">Appearance Mode</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
+                  Switch between the crisp, luminous <strong>Lite Theme</strong> and the futuristic midnight <strong>Dark Theme</strong>.
+                </p>
+              </div>
 
-            {/* Theme Grid Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {THEMES.map((t) => {
-                const isSelected = currentTheme === t.id;
-                return (
-                  <div
-                    key={t.id}
-                    onClick={() => changeTheme(t.id)}
-                    className={`glass-panel p-5 rounded-2xl sm:rounded-3xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-[-2px] ${
-                      isSelected
-                        ? `${t.borderCol} ring-2 ring-white/30 shadow-xl`
-                        : 'border-slate-800/80 hover:border-slate-700'
-                    }`}
-                    style={{
-                      boxShadow: isSelected ? `0 12px 30px ${t.glowCol}` : undefined
-                    }}
-                  >
-                    {/* Top Decorative Gradient Line */}
-                    <div className={`h-1.5 w-full bg-gradient-to-r ${t.accentGrad} rounded-full mb-4`} />
-
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-6 h-6 rounded-full shrink-0 shadow-md ring-2 ring-white/30"
-                          style={{ backgroundColor: t.hex }}
-                        />
-                        <div>
-                          <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-slate-100 transition">
-                            {t.label}
-                          </h3>
-                          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                            HEX {t.hex}
-                          </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {MODES.map((m) => {
+                  const isModeActive = mode === m.id;
+                  return (
+                    <div
+                      key={m.id}
+                      onClick={() => setMode(m.id)}
+                      className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-[-2px] ${
+                        isModeActive
+                          ? m.id === 'light'
+                            ? 'bg-white text-slate-900 border-indigo-500 ring-2 ring-indigo-500/40 shadow-xl'
+                            : 'bg-slate-950 text-white border-indigo-500 ring-2 ring-indigo-500/40 shadow-xl'
+                          : 'bg-slate-900/60 text-slate-300 border-slate-800 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-xs ${
+                              m.id === 'light'
+                                ? 'bg-amber-400/20 text-amber-500'
+                                : 'bg-indigo-500/20 text-indigo-400'
+                            }`}
+                          >
+                            {m.icon}
+                          </div>
+                          <div>
+                            <h3 className="text-sm sm:text-base font-bold">
+                              {m.label}
+                            </h3>
+                            <span className="text-[10px] font-mono uppercase tracking-wider opacity-70">
+                              {m.id === 'light' ? 'Daylight Canvas' : 'Midnight Obsidian'}
+                            </span>
+                          </div>
                         </div>
+
+                        {isModeActive ? (
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-brand text-white shadow-xs">
+                            ✓ Active
+                          </span>
+                        ) : (
+                          <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold text-slate-400 bg-slate-800/80 group-hover:bg-slate-700 transition">
+                            Select
+                          </span>
+                        )}
                       </div>
 
-                      {isSelected ? (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-white text-slate-950 shadow-sm flex items-center gap-1">
-                          <span>✓ Active</span>
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-lg text-[10px] font-semibold text-slate-400 bg-slate-800/80 group-hover:bg-slate-700 transition">
-                          Select
-                        </span>
-                      )}
+                      <p className="text-xs opacity-75 leading-relaxed">
+                        {m.description}
+                      </p>
                     </div>
+                  );
+                })}
+              </div>
+            </div>
 
-                    <p className="text-xs text-slate-400 mt-3 leading-relaxed">
-                      {t.description}
-                    </p>
+            {/* Color Accent Themes */}
+            <div className="glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
+              <div>
+                <h2 className="text-base sm:text-lg font-bold text-white">Color Palettes & Accent Themes</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
+                  Choose your signature color palette. This customizes buttons, gradient text, glow pills, and borders across every screen.
+                </p>
+              </div>
 
-                    {/* Mini interactive UI preview element */}
-                    <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between">
-                      <span className="text-[11px] font-medium text-slate-400">Accent Preview:</span>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="px-2.5 py-0.5 rounded-full text-[10px] font-bold"
-                          style={{
-                            backgroundColor: `${t.hex}20`,
-                            color: t.hex,
-                            border: `1px solid ${t.hex}40`
-                          }}
-                        >
-                          Badge
-                        </span>
+              {/* Theme Grid Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {THEMES.map((t) => {
+                  const isSelected = currentTheme === t.id;
+                  return (
+                    <div
+                      key={t.id}
+                      onClick={() => changeTheme(t.id)}
+                      className={`p-4 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-[-2px] ${
+                        isSelected
+                          ? `${t.borderCol} ring-2 ring-white/30 shadow-xl bg-slate-900/90`
+                          : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
+                      }`}
+                      style={{
+                        boxShadow: isSelected ? `0 12px 28px ${t.glowCol}` : undefined
+                      }}
+                    >
+                      {/* Top Decorative Gradient Line */}
+                      <div className={`h-1.5 w-full bg-gradient-to-r ${t.accentGrad} rounded-full mb-3`} />
+
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="w-5 h-5 rounded-full shrink-0 shadow-md ring-2 ring-white/30"
+                            style={{ backgroundColor: t.hex }}
+                          />
+                          <div>
+                            <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100 transition">
+                              {t.label}
+                            </h3>
+                            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                              {t.hex}
+                            </span>
+                          </div>
+                        </div>
+
+                        {isSelected ? (
+                          <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider bg-white text-slate-950 shadow-xs">
+                            ✓
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold text-slate-400 bg-slate-800/80 group-hover:bg-slate-700 transition">
+                            Pick
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="text-[11px] text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                        {t.description}
+                      </p>
+
+                      {/* Mini Preview Bar */}
+                      <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between">
+                        <span className="text-[10px] text-slate-500">Preview:</span>
                         <div
-                          className="w-12 h-4 rounded-md shadow-xs"
+                          className="w-14 h-3 rounded-full shadow-xs"
                           style={{
                             background: `linear-gradient(to right, ${t.hex}, #a855f7)`
                           }}
                         />
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
 
             {/* Live Interactive Component Preview Card */}
-            <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
-              <div className="border-b border-slate-800/80 pb-3">
-                <h3 className="text-sm sm:text-base font-bold text-white">Live Theme Component Preview</h3>
-                <p className="text-xs text-slate-400">Preview how your active theme styles system buttons, cards, and highlights.</p>
+            <div className="glass-panel p-5 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
+              <div className="border-b border-slate-800/80 pb-3 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-white">Live Theme Component Preview</h3>
+                  <p className="text-xs text-slate-400">See how your active mode and accent palette style buttons, badges, and headings.</p>
+                </div>
+                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-brand/10 text-brand border border-brand/30">
+                  {mode === 'light' ? '☀️ Lite Mode Active' : '🌙 Dark Mode Active'}
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Primary Button</span>
-                  <button type="button" className="w-full py-2 px-3 btn-premium text-white text-xs font-semibold rounded-xl">
+                  <button type="button" className="w-full py-2.5 px-3 btn-premium text-white text-xs font-semibold rounded-xl">
                     Dynamic Accent Button
                   </button>
                 </div>
@@ -575,12 +585,12 @@ const Settings = () => {
                   <h4 className="text-sm font-black t-brand-grad">
                     Smart Technical Learning
                   </h4>
-                  <p className="text-[11px] text-slate-400">Dynamic text gradient clip</p>
+                  <p className="text-[11px] text-slate-400">Adaptive gradient typography</p>
                 </div>
 
                 <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Glow Pill</span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 pt-1">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand/10 text-brand border border-brand/30 shadow-xs">
                       Active Theme Pill
                     </span>
