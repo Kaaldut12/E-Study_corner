@@ -46,7 +46,7 @@ app.use(cors({
     }
 
     // 2. Verified project deployment domains on Vercel
-    const isAppVercelDomain = /^https:\/\/(e-study-corner[a-z0-9-]*|e-study-corder[a-z0-9-]*|.*kaaldut12[a-z0-9-]*)\.vercel\.app$/i.test(requestOrigin);
+    const isAppVercelDomain = /^https:\/\/[a-z0-9._-]+\.vercel\.app$/i.test(requestOrigin);
     if (isAppVercelDomain) {
       return callback(null, true);
     }
