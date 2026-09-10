@@ -10,16 +10,16 @@
   color-scheme: dark;
 
   /* === INDIGO THEME (Default) === */
-  --brand-1: #4f46e5;
-  --brand-2: #6366f1;
-  --brand-3: #818cf8;
-  --brand-t1: #818cf8;
-  --brand-t2: #c7d2fe;
-  --brand-glow: rgba(99, 102, 241, 0.35);
-  --brand-border: rgba(99, 102, 241, 0.3);
-  --brand-bg: rgba(79, 70, 229, 0.12);
-  --brand-bg-hover: rgba(79, 70, 229, 0.22);
-  --brand-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+  --brand-1: #0f766e;
+  --brand-2: #0d9488;
+  --brand-3: #2dd4bf;
+  --brand-t1: #2dd4bf;
+  --brand-t2: #99f6e4;
+  --brand-glow: rgba(20, 184, 166, 0.3);
+  --brand-border: rgba(20, 184, 166, 0.3);
+  --brand-bg: rgba(13, 148, 136, 0.12);
+  --brand-bg-hover: rgba(13, 148, 136, 0.22);
+  --brand-grad: linear-gradient(135deg, #0f766e 0%, #0d9488 52%, #2563eb 100%);
 }
 
 [data-theme="emerald"] {
@@ -2145,4 +2145,204 @@ html.light .dashboard-action-card,
     padding-top: 1.25rem;
     padding-bottom: 2rem;
   }
+}
+
+/* Final polish for repeated product surfaces */
+.public-navbar {
+  background: rgba(8, 13, 23, 0.8) !important;
+  border-bottom-color: rgba(148, 163, 184, 0.15) !important;
+}
+
+.public-navbar nav {
+  background: rgba(16, 27, 45, 0.72) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+.home-hero {
+  min-height: min(38rem, calc(100vh - 7rem));
+  background: linear-gradient(135deg, rgba(8, 13, 23, 0.94), rgba(13, 34, 47, 0.86)) !important;
+}
+
+.home-slide {
+  background: linear-gradient(135deg, #0a1622 0%, #102b35 56%, #13251f 100%) !important;
+}
+
+.home-slide:nth-child(2) {
+  background: linear-gradient(135deg, #101b2a 0%, #173541 56%, #1b2c32 100%) !important;
+}
+
+.home-slide:nth-child(3) {
+  background: linear-gradient(135deg, #0c1724 0%, #17313c 56%, #253329 100%) !important;
+}
+
+.home-slide:nth-child(4) {
+  background: linear-gradient(135deg, #0a1820 0%, #123b3d 56%, #263426 100%) !important;
+}
+
+.home-slide > div > span {
+  background: rgba(20, 184, 166, 0.12) !important;
+  border-color: rgba(45, 212, 191, 0.36) !important;
+  color: #99f6e4 !important;
+}
+
+.home-hero h1 {
+  max-width: 54rem;
+  margin-inline: auto;
+  text-wrap: balance;
+  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.38);
+}
+
+.home-hero p {
+  max-width: 42rem;
+}
+
+.home-stats {
+  background: rgba(7, 15, 27, 0.78) !important;
+}
+
+.home-stats .glass-panel {
+  border-top: 2px solid var(--brand-2) !important;
+}
+
+.app-shell input,
+.app-shell select,
+.app-shell textarea,
+.site-shell input,
+.site-shell select,
+.site-shell textarea {
+  border-radius: 0.75rem !important;
+  min-height: 2.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.app-shell input:focus,
+.app-shell select:focus,
+.app-shell textarea:focus,
+.site-shell input:focus,
+.site-shell select:focus,
+.site-shell textarea:focus {
+  border-color: var(--brand-2) !important;
+  box-shadow: 0 0 0 3px var(--brand-glow) !important;
+}
+
+.app-shell table,
+.site-shell table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.app-shell thead th,
+.site-shell thead th {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.04em;
+  font-size: 0.68rem;
+}
+
+.app-shell button:not(.btn-premium):not(.btn-shimmer):not(.bg-brand),
+.app-shell a:not(.btn-premium):not(.btn-shimmer):not(.bg-brand) {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+html.light .public-navbar,
+[data-mode="light"] .public-navbar {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-bottom-color: #dbe3ed !important;
+}
+
+html.light .public-navbar nav,
+[data-mode="light"] .public-navbar nav {
+  background: rgba(241, 245, 249, 0.88) !important;
+  border-color: #dbe3ed !important;
+}
+
+html.light .home-hero,
+[data-mode="light"] .home-hero {
+  background: linear-gradient(135deg, #e8f1f3, #f8fafc 58%, #fff7ed) !important;
+}
+
+html.light .home-hero h1,
+[data-mode="light"] .home-hero h1 {
+  text-shadow: none;
+}
+
+html.light .home-stats,
+[data-mode="light"] .home-stats {
+  background: rgba(226, 232, 240, 0.56) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Light mode surface conversion for page-level Tailwind utilities */
+html.light .app-shell .bg-slate-950:not(.bg-brand),
+html.light .app-shell .bg-slate-900:not(.bg-brand),
+html.light .app-shell [class*="bg-slate-950/"],
+html.light .app-shell [class*="bg-slate-900/"],
+html.light .site-shell .bg-slate-950:not(.bg-brand),
+html.light .site-shell .bg-slate-900:not(.bg-brand),
+html.light .site-shell [class*="bg-slate-950/"],
+html.light .site-shell [class*="bg-slate-900/"] {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-color: #dbe3ed !important;
+}
+
+html.light .app-shell .bg-slate-800:not(.bg-brand),
+html.light .app-shell [class*="bg-slate-800/"],
+html.light .site-shell .bg-slate-800:not(.bg-brand),
+html.light .site-shell [class*="bg-slate-800/"] {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light .app-shell .text-white:not(.btn-premium):not(.btn-shimmer):not(.bg-brand *),
+html.light .app-shell .text-slate-100:not(.btn-premium):not(.btn-shimmer),
+html.light .app-shell .text-slate-200:not(.btn-premium):not(.btn-shimmer),
+html.light .site-shell .text-white:not(.btn-premium):not(.btn-shimmer):not(.bg-brand *),
+html.light .site-shell .text-slate-100:not(.btn-premium):not(.btn-shimmer),
+html.light .site-shell .text-slate-200:not(.btn-premium):not(.btn-shimmer),
+[data-mode="light"] .app-shell .text-white:not(.btn-premium):not(.btn-shimmer):not(.bg-brand *),
+[data-mode="light"] .app-shell .text-slate-100:not(.btn-premium):not(.btn-shimmer),
+[data-mode="light"] .app-shell .text-slate-200:not(.btn-premium):not(.btn-shimmer),
+[data-mode="light"] .site-shell .text-white:not(.btn-premium):not(.btn-shimmer):not(.bg-brand *),
+[data-mode="light"] .site-shell .text-slate-100:not(.btn-premium):not(.btn-shimmer),
+[data-mode="light"] .site-shell .text-slate-200:not(.btn-premium):not(.btn-shimmer) {
+  color: #1e293b !important;
+}
+
+html.light .app-shell .border-slate-800,
+html.light .app-shell [class*="border-slate-800/"],
+html.light .site-shell .border-slate-800,
+html.light .site-shell [class*="border-slate-800/"],
+[data-mode="light"] .app-shell .border-slate-800,
+[data-mode="light"] .app-shell [class*="border-slate-800/"],
+[data-mode="light"] .site-shell .border-slate-800,
+[data-mode="light"] .site-shell [class*="border-slate-800/"] {
+  border-color: #dbe3ed !important;
+}
+
+html.light .app-shell .hover\:bg-slate-900:hover,
+html.light .app-shell .hover\:bg-slate-800:hover,
+html.light .site-shell .hover\:bg-slate-900:hover,
+html.light .site-shell .hover\:bg-slate-800:hover,
+[data-mode="light"] .app-shell .hover\:bg-slate-900:hover,
+[data-mode="light"] .app-shell .hover\:bg-slate-800:hover,
+[data-mode="light"] .site-shell .hover\:bg-slate-900:hover,
+[data-mode="light"] .site-shell .hover\:bg-slate-800:hover {
+  background-color: #e8eef5 !important;
+  color: #0f172a !important;
+}
+
+html.light .app-shell .bg-slate-950\/80.backdrop-blur-md,
+[data-mode="light"] .app-shell .bg-slate-950\/80.backdrop-blur-md {
+  background-color: rgba(255, 255, 255, 0.78) !important;
 }

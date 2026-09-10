@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const THEMES = [
-  { id: 'indigo', label: 'Indigo', hex: '#6366f1' },
+  { id: 'indigo', label: 'Tidal Teal', hex: '#14b8a6' },
   { id: 'emerald', label: 'Emerald', hex: '#10b981' },
   { id: 'amber', label: 'Amber', hex: '#f59e0b' },
   { id: 'rose', label: 'Rose', hex: '#f43f5e' },
@@ -57,7 +57,7 @@ const PublicNavbar = () => {
   };
 
   return (
-    <header className="h-16 sm:h-20 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl px-3.5 sm:px-8 sticky top-0 z-40 shadow-xl transition-all">
+    <header className="public-navbar h-16 sm:h-20 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl px-3.5 sm:px-8 sticky top-0 z-40 shadow-xl transition-all">
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
         
         {/* Left: Brand Identity */}

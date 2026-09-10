@@ -3,12 +3,12 @@
 export const THEMES = [
   {
     id: 'indigo',
-    label: 'Electric Indigo',
-    hex: '#6366f1',
+    label: 'Tidal Teal',
+    hex: '#14b8a6',
     accentGrad: 'from-indigo-500 via-indigo-600 to-purple-600',
     borderCol: 'border-indigo-500/40',
     glowCol: 'rgba(99, 102, 241, 0.25)',
-    description: 'Signature deep-space cosmic violet. Crisp, authoritative, and sleek.'
+    description: 'Calm teal, crisp blue, and focused contrast for everyday study.'
   },
   {
     id: 'emerald',

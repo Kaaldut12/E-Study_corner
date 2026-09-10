@@ -63,11 +63,11 @@ const Home = () => {
       <PublicNavbar />
 
       {/* Hero Carousel Banner */}
-      <section className="relative min-h-[440px] sm:min-h-[500px] h-auto py-10 sm:py-16 overflow-hidden flex items-center justify-center border-b border-slate-800/80 z-10">
+      <section className="home-hero relative min-h-[440px] sm:min-h-[500px] h-auto py-10 sm:py-16 overflow-hidden flex items-center justify-center border-b border-slate-800/80 z-10">
         {QUOTES_CAROUSEL.map((slide, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-all duration-1000 flex items-center justify-center p-4 sm:p-6 text-center bg-linear-to-b ${slide.bgGradient} ${
+            className={`home-slide absolute inset-0 transition-all duration-1000 flex items-center justify-center p-4 sm:p-6 text-center bg-linear-to-b ${slide.bgGradient} ${
               index === currentSlide ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0 pointer-events-none'
             }`}
           >
@@ -117,7 +117,7 @@ const Home = () => {
       </section>
 
       {/* KPI Stats Counter Ribbon */}
-      <section className="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md py-5 sm:py-8 px-4 relative z-10">
+      <section className="home-stats border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md py-5 sm:py-8 px-4 relative z-10">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center">
           <div className="glass-panel glass-panel-hover p-3.5 sm:p-5 rounded-2xl">
             <div className="text-2xl sm:text-4xl font-black t-brand-grad font-display">100+</div>
