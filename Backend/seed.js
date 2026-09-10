@@ -31,16 +31,16 @@ export const seedSuperAdmin = {
   name: process.env.SEED_SUPERADMIN_NAME || 'Platform Super Administrator',
   firstName: process.env.SEED_SUPERADMIN_FIRSTNAME || 'Super',
   lastName: process.env.SEED_SUPERADMIN_LASTNAME || 'Admin',
-  email: process.env.SEED_SUPERADMIN_EMAIL || 'superadmin@estudy.com',
+  email: (process.env.SEED_SUPERADMIN_EMAIL || 'abhaypatel2556444@gmail.com').trim().toLowerCase(),
   password: hashPassword(process.env.SEED_SUPERADMIN_PASSWORD || 'SuperAdmin@123'),
   role: 'superadmin',
   permissions: DEFAULT_ROLE_PERMISSIONS.superadmin,
   gender: 'Male',
   department: process.env.SEED_SUPERADMIN_DEPT || 'Administration & Platform Governance',
   collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
-  mobileNo: process.env.SEED_SUPERADMIN_PHONE || '9876543210',
-  dob: process.env.SEED_SUPERADMIN_DOB || '1980-01-01',
-  addressP: process.env.SEED_SUPERADMIN_ADDRESS || 'Administration Block, NITAS Campus',
+  mobileNo: process.env.SEED_SUPERADMIN_PHONE || '9335856018',
+  dob: process.env.SEED_SUPERADMIN_DOB || '2004-07-28',
+  addressP: process.env.SEED_SUPERADMIN_ADDRESS || 'Administration Block',
   status: 'active'
 };
 
