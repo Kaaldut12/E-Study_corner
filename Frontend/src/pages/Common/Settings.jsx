@@ -582,27 +582,74 @@ const Settings = () => {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Primary Button</span>
-                  <button type="button" className="w-full py-2.5 px-3 btn-premium text-white text-xs font-semibold rounded-xl">
-                    Dynamic Accent Button
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* 1. Primary Dynamic Button */}
+                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Primary Button</span>
+                    <Sparkles className="w-3 h-3 text-brand" />
+                  </div>
+                  <button type="button" className="w-full py-2.5 px-3 btn-premium text-white text-xs font-bold rounded-xl cursor-pointer">
+                    Dynamic Primary
                   </button>
+                  <p className="text-[10px] text-slate-400">Filled with active theme gradient</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                {/* 2. Shimmer Dynamic Button */}
+                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Shimmer Button</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
+                  </div>
+                  <button type="button" className="w-full py-2.5 px-3 btn-shimmer text-white text-xs font-bold rounded-xl cursor-pointer">
+                    Shimmering Ray
+                  </button>
+                  <p className="text-[10px] text-slate-400">Animated light ray sweep</p>
+                </div>
+
+                {/* 3. Subtle Frosted Button */}
+                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Subtle Button</span>
+                    <span className="text-[10px] font-mono text-brand">Soft</span>
+                  </div>
+                  <button type="button" className="w-full py-2.5 px-3 btn-brand-subtle text-xs font-bold cursor-pointer">
+                    Subtle Accent
+                  </button>
+                  <p className="text-[10px] text-slate-400">Frosted theme tinted background</p>
+                </div>
+
+                {/* 4. Outline Glow Button */}
+                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Outline Button</span>
+                    <span className="text-[10px] font-mono text-brand">Border</span>
+                  </div>
+                  <button type="button" className="w-full py-2.5 px-3 btn-outline-brand text-xs font-bold cursor-pointer">
+                    Outline Glow
+                  </button>
+                  <p className="text-[10px] text-slate-400">Border tinted with active palette</p>
+                </div>
+              </div>
+
+              {/* Additional Typography & Badges preview */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gradient Heading</span>
-                  <h4 className="text-sm font-black t-brand-grad">
-                    Smart Technical Learning
+                  <h4 className="text-base font-black t-brand-grad font-display">
+                    E-Study Corner Platform
                   </h4>
-                  <p className="text-[11px] text-slate-400">Adaptive gradient typography</p>
+                  <p className="text-[11px] text-slate-400">Adaptive gradient typography matching active palette</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Glow Pill</span>
-                  <div className="flex items-center gap-2 pt-1">
+                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Glow Pill & Badge</span>
+                  <div className="flex items-center gap-2 pt-1 flex-wrap">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand/10 text-brand border border-brand/30 shadow-xs">
                       Active Theme Pill
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-brand text-white shadow-brand">
+                      Filled Badge
                     </span>
                   </div>
                 </div>

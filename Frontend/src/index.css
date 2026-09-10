@@ -778,25 +778,125 @@ h1, h2, h3, h4, h5, h6 {
    BUTTON SYSTEM
    ============================================================ */
 
-.btn-premium {
+/* ============================================================
+   BUTTON SYSTEM — Fully Dynamic Theme Binding
+   ============================================================ */
+
+/* Primary Dynamic Theme Buttons (Adopts Active Color Theme) */
+.btn-premium,
+.btn-primary,
+.btn-brand,
+button.btn-premium,
+a.btn-premium,
+button.bg-indigo-600,
+a.bg-indigo-600,
+button.bg-indigo-500,
+a.bg-indigo-500,
+button.bg-brand,
+a.bg-brand,
+button.bg-purple-600:not([data-static="true"]),
+a.bg-purple-600:not([data-static="true"]) {
   position: relative;
-  background: var(--brand-grad);
-  color: #ffffff;
+  background: var(--brand-grad) !important;
+  color: #ffffff !important;
   font-weight: 700;
   border-radius: 0.875rem;
-  box-shadow: 0 8px 20px -4px var(--brand-glow);
+  box-shadow: 0 8px 20px -4px var(--brand-glow) !important;
+  border: 1px solid transparent !important;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
 }
 
-.btn-premium:hover {
+.btn-premium:hover,
+.btn-primary:hover,
+.btn-brand:hover,
+button.btn-premium:hover,
+a.btn-premium:hover,
+button.bg-indigo-600:hover,
+a.bg-indigo-600:hover,
+button.bg-indigo-500:hover,
+a.bg-indigo-500:hover,
+button.bg-brand:hover,
+a.bg-brand:hover,
+button.bg-purple-600:hover,
+a.bg-purple-600:hover {
   transform: translateY(-2px);
-  filter: brightness(1.1);
-  box-shadow: 0 12px 28px -4px var(--brand-glow);
+  filter: brightness(1.12);
+  box-shadow: 0 12px 28px -4px var(--brand-glow) !important;
+  color: #ffffff !important;
 }
 
-.btn-premium:active {
+.btn-premium:active,
+button.bg-indigo-600:active,
+a.bg-indigo-600:active,
+button.bg-brand:active,
+a.bg-brand:active {
   transform: translateY(0) scale(0.98);
+}
+
+/* Subtle / Frosted Theme Buttons */
+.btn-brand-subtle,
+button.bg-indigo-600\/10,
+a.bg-indigo-600\/10,
+button.bg-indigo-600\/20,
+a.bg-indigo-600\/20,
+button.bg-purple-600\/15,
+a.bg-purple-600\/15,
+button.bg-purple-600\/20,
+a.bg-purple-600\/20 {
+  background-color: var(--brand-bg) !important;
+  color: var(--brand-t1) !important;
+  border: 1px solid var(--brand-border) !important;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.25s ease;
+}
+
+.btn-brand-subtle:hover,
+button.bg-indigo-600\/10:hover,
+a.bg-indigo-600\/10:hover,
+button.bg-indigo-600\/20:hover,
+a.bg-indigo-600\/20:hover,
+button.bg-purple-600\/15:hover,
+a.bg-purple-600\/15:hover,
+button.bg-purple-600\/20:hover,
+a.bg-purple-600\/20:hover {
+  background-color: var(--brand-bg-hover) !important;
+  color: var(--brand-t2) !important;
+  border-color: var(--brand-border) !important;
+  transform: translateY(-1px);
+}
+
+/* Outline Theme Button */
+.btn-outline-brand,
+button.border-indigo-500,
+a.border-indigo-500 {
+  background: transparent;
+  color: var(--brand-t1) !important;
+  border: 1.5px solid var(--brand-2) !important;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition: all 0.25s ease;
+}
+
+.btn-outline-brand:hover,
+button.border-indigo-500:hover,
+a.border-indigo-500:hover {
+  background: var(--brand-bg) !important;
+  border-color: var(--brand-3) !important;
+  box-shadow: 0 4px 16px -2px var(--brand-glow);
+}
+
+/* Form Submit Buttons */
+form button[type="submit"]:not(.btn-secondary):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-slate"]):not([class*="bg-gray"]) {
+  background: var(--brand-grad) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px -4px var(--brand-glow) !important;
+}
+
+form button[type="submit"]:not(.btn-secondary):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-slate"]):not([class*="bg-gray"]):hover {
+  filter: brightness(1.12) !important;
+  box-shadow: 0 12px 28px -4px var(--brand-glow) !important;
 }
 
 .btn-secondary {
@@ -818,8 +918,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-shimmer {
   position: relative;
-  background: var(--brand-grad);
-  color: #ffffff;
+  background: var(--brand-grad) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 0.875rem;
+  box-shadow: 0 8px 20px -4px var(--brand-glow);
   overflow: hidden;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -839,7 +942,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-shimmer:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px var(--brand-glow);
+  box-shadow: 0 12px 28px -4px var(--brand-glow) !important;
 }
 
 /* ============================================================
