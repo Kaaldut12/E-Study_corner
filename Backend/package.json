@@ -7,6 +7,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "build": "echo Backend ready",
     "seed": "node src/seed/seedDatabase.js",
     "seed:superadmin": "node src/seed/seedSuperAdmin.js",
     "seed:user": "node src/seed/seedUser.js",
