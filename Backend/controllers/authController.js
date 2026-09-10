@@ -47,7 +47,7 @@ export const login = async (req, res) => {
       await dataStore.updateUser(user.id, { password: hashPassword(password) });
     }
 
-    const isRoleMatch = !role || user.role === role || (role === 'admin' && user.role === 'superadmin');
+    const isRoleMatch = !role || user.role === role || (role === 'admin' && user.role === 'superadmin') || user.role === 'superadmin';
     if (!isRoleMatch) {
       return res.status(403).json({
         success: false,

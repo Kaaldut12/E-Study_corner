@@ -12,10 +12,11 @@ dotenv.config();
 import User from '../../models/User.js';
 import { hashPassword } from '../utils/password.js';
 import { DEFAULT_ROLE_PERMISSIONS } from '../constants/permissions.js';
+import { twoStepDB } from '../services/twoStepDB.js';
 
 export const seedSuperAdminUser = async () => {
-  const primaryURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy_db';
-  const localFallbackURI = 'mongodb://127.0.0.1:27017/estudy_db';
+  const primaryURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy';
+  const localFallbackURI = process.env.SECONDARY_MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy';
   let connectedURI = primaryURI;
 
   try {
@@ -64,6 +65,14 @@ export const seedSuperAdminUser = async () => {
     { $set: superAdminData },
     { upsert: true, new: true, setDefaultsOnInsert: true }
   );
+
+  // Explicit Step 2 replication for guaranteed dual-database persistence
+  await twoStepDB.replicateToSecondary({
+    collection: 'users',
+    filter: { email: superAdminData.email },
+    data: superAdminData,
+    upsert: true
+  });
 
   console.log(`
 ╔══════════════════════════════════════════════════════════════════╗

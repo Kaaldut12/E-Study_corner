@@ -42,6 +42,8 @@ export const JWT_SECRET = process.env.JWT_SECRET;
 export const JWT_EXPIRATION = process.env.JWT_EXPIRATION || '24h';
 
 export const MONGODB_URI = process.env.MONGODB_URI.trim();
+export const SECONDARY_MONGODB_URI = (process.env.SECONDARY_MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy').trim();
+export const ENABLE_TWO_STEP_DB = process.env.ENABLE_TWO_STEP_DB !== 'false';
 
 // Allowed CORS origins: strictly configured domains only
 const defaultOrigins = [

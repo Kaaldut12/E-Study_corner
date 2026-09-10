@@ -22,6 +22,7 @@ import Attendance from '../../models/Attendance.js';
 import Leave from '../../models/Leave.js';
 import { hashPassword, verifyPassword, hashOTP, isBcryptHash } from '../utils/password.js';
 import { getDefaultPermissions } from '../constants/permissions.js';
+import { twoStepDB } from './twoStepDB.js';
 import {
   seedUsers,
   seedCourses,
@@ -2162,5 +2163,11 @@ export const dataStore = {
       return memLeaves[idx];
     }
     return null;
-  }
+  },
+
+  // Two-Step Database Persistence Gateway
+  twoStep: twoStepDB
 };
+
+export { twoStepDB };
+
