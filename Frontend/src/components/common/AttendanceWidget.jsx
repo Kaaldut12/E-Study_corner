@@ -143,7 +143,7 @@ const AttendanceWidget = () => {
               <button
                 onClick={handleCheckIn}
                 disabled={checkingIn || loading}
-                className="py-3 px-5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-black rounded-2xl shadow-lg shadow-emerald-600/40 hover:scale-[1.02] active:scale-[0.98] transition flex items-center justify-center gap-2 disabled:opacity-50"
+                className="py-3 px-5 btn-dashboard-emerald text-white text-xs font-black rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {checkingIn ? (
                   <>

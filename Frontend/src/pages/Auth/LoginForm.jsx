@@ -53,8 +53,8 @@ const LoginForm = () => {
     <div className="min-h-screen bg-[#070a12] flex flex-col font-sans text-slate-100 relative overflow-hidden">
       {/* Background Ambient Lighting Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-1/4 left-1/4 w-[28rem] h-[28rem] bg-indigo-600/15 rounded-full blur-[140px] animate-float-slow" />
-        <div className="absolute bottom-1/4 right-1/4 w-[30rem] h-[30rem] bg-purple-600/15 rounded-full blur-[150px] animate-float-reverse" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/15 rounded-full blur-[140px] animate-float-slow" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/15 rounded-full blur-[150px] animate-float-reverse" />
       </div>
 
       <PublicNavbar />

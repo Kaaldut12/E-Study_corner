@@ -73,14 +73,14 @@ const TeacherDashboard = () => {
           <div className="relative z-10 shrink-0 flex flex-wrap items-center gap-2.5">
             <Link
               to="/teacher/students"
-              className="py-3 px-4 bg-slate-900/80 hover:bg-slate-800 text-slate-200 text-xs font-bold rounded-2xl border border-slate-700 transition flex items-center gap-2 shadow-sm"
+              className="py-3 px-4 btn-dashboard-secondary text-xs font-bold rounded-2xl flex items-center gap-2"
             >
               <span>👨‍🎓</span>
               <span>Student Actions Hub</span>
             </Link>
             <Link
               to="/teacher/create-assignment"
-              className="py-3 px-5 btn-premium text-white text-xs font-extrabold shadow-brand flex items-center justify-center gap-2"
+              className="py-3 px-5 btn-premium text-white text-xs font-extrabold flex items-center justify-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 4v16m8-8H4" />
@@ -174,7 +174,7 @@ const TeacherDashboard = () => {
                     <div className="text-right">
                       <Link
                         to={`/teacher/submissions/${sub.assignmentId}`}
-                        className="inline-block py-2 px-3.5 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-bold rounded-xl transition"
+                        className="inline-block py-2 px-3.5 btn-dashboard-amber text-white text-xs font-bold rounded-xl"
                       >
                         Grade Submission →
                       </Link>

@@ -196,21 +196,21 @@ const AdminDashboard = () => {
             <div className="flex flex-wrap gap-2.5 shrink-0">
               <Link
                 to="/admin/students"
-                className="py-2.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center gap-2"
+                className="py-2.5 px-4 btn-dashboard-emerald text-white text-xs font-bold rounded-xl flex items-center gap-2"
               >
                 <span>🎓</span>
                 <span>Student Actions Hub</span>
               </Link>
               <Link
                 to="/admin/analytics"
-                className="py-2.5 px-4 bg-linear-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center gap-2"
+                className="py-2.5 px-4 btn-premium text-white text-xs font-bold rounded-xl flex items-center gap-2"
               >
                 <span>📊</span>
                 <span>Deep Analytics Hub</span>
               </Link>
               <Link
                 to="/admin/users"
-                className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition flex items-center gap-2"
+                className="py-2.5 px-4 btn-dashboard-secondary text-xs font-bold rounded-xl flex items-center gap-2"
               >
                 <span>👥</span>
                 <span>User Directory</span>
@@ -254,7 +254,7 @@ const AdminDashboard = () => {
             {/* Action 1: Broadcast */}
             <button
               onClick={() => setShowBroadcastModal(true)}
-              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-indigo-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-indigo-400"
+              className="p-4 rounded-2xl dashboard-action-card border border-indigo-500/30 text-left space-y-1.5 group cursor-pointer hover:border-indigo-400"
             >
               <div className="flex justify-between items-center">
                 <span className="text-xl">📢</span>
@@ -267,7 +267,7 @@ const AdminDashboard = () => {
             {/* Action 2: Student Actions Hub */}
             <Link
               to="/admin/students"
-              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-emerald-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-emerald-400 block"
+              className="p-4 rounded-2xl dashboard-action-card border border-emerald-500/30 text-left space-y-1.5 group cursor-pointer hover:border-emerald-400 block"
             >
               <div className="flex justify-between items-center">
                 <span className="text-xl">🎓</span>
@@ -280,7 +280,7 @@ const AdminDashboard = () => {
             {/* Action 3: Leave Approvals */}
             <Link
               to="/admin/leaves"
-              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-purple-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-purple-400 block"
+              className="p-4 rounded-2xl dashboard-action-card border border-purple-500/30 text-left space-y-1.5 group cursor-pointer hover:border-purple-400 block"
             >
               <div className="flex justify-between items-center">
                 <span className="text-xl">🏖️</span>
@@ -303,7 +303,7 @@ const AdminDashboard = () => {
                   showToast('No pending support tickets found.');
                 }
               }}
-              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-amber-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-amber-400"
+              className="p-4 rounded-2xl dashboard-action-card border border-amber-500/30 text-left space-y-1.5 group cursor-pointer hover:border-amber-400"
             >
               <div className="flex justify-between items-center">
                 <span className="text-xl">🎫</span>
@@ -326,7 +326,7 @@ const AdminDashboard = () => {
                   showToast('All student doubts are currently answered!');
                 }
               }}
-              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-sky-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-sky-400"
+              className="p-4 rounded-2xl dashboard-action-card border border-sky-500/30 text-left space-y-1.5 group cursor-pointer hover:border-sky-400"
             >
               <div className="flex justify-between items-center">
                 <span className="text-xl">❓</span>
@@ -344,7 +344,7 @@ const AdminDashboard = () => {
             <button
               onClick={handleTriggerResync}
               disabled={resyncing}
-              className="p-4 rounded-2xl bg-slate-900/90 hover:bg-slate-850 border border-teal-500/30 text-left transition space-y-1.5 group cursor-pointer hover:border-teal-400 disabled:opacity-50"
+              className="p-4 rounded-2xl dashboard-action-card border border-teal-500/30 text-left space-y-1.5 group cursor-pointer hover:border-teal-400 disabled:opacity-50"
             >
               <div className="flex justify-between items-center">
                 <span className={`text-xl ${resyncing ? 'animate-spin' : ''}`}>🔄</span>

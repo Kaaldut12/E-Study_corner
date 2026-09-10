@@ -316,6 +316,10 @@ html.light .btn-premium:hover,
 [data-mode="light"] .btn-premium:hover,
 html.light .btn-premium:hover *,
 [data-mode="light"] .btn-premium:hover *,
+html.light [class*="btn-dashboard"]:not(.btn-dashboard-secondary):hover,
+[data-mode="light"] [class*="btn-dashboard"]:not(.btn-dashboard-secondary):hover,
+html.light [class*="btn-dashboard"]:not(.btn-dashboard-secondary):hover *,
+[data-mode="light"] [class*="btn-dashboard"]:not(.btn-dashboard-secondary):hover *,
 html.light .btn-shimmer:hover,
 [data-mode="light"] .btn-shimmer:hover,
 html.light .btn-shimmer:hover *,
@@ -350,6 +354,10 @@ html.light .btn-premium:active,
 [data-mode="light"] .btn-premium:active,
 html.light .btn-premium:active *,
 [data-mode="light"] .btn-premium:active *,
+html.light [class*="btn-dashboard"]:not(.btn-dashboard-secondary):active,
+[data-mode="light"] [class*="btn-dashboard"]:not(.btn-dashboard-secondary):active,
+html.light [class*="btn-dashboard"]:not(.btn-dashboard-secondary):active *,
+[data-mode="light"] [class*="btn-dashboard"]:not(.btn-dashboard-secondary):active *,
 html.light .btn-shimmer:active,
 [data-mode="light"] .btn-shimmer:active,
 html.light .btn-shimmer:active *,
@@ -493,7 +501,7 @@ html.light .gradient-text-primary,
 [data-mode="light"] .gradient-text-indigo,
 [data-mode="light"] .gradient-text-primary {
   background: linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 50%, var(--brand-3) 100%) !important;
-  -webkit-background-clip: text !important;
+  background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
 
@@ -595,20 +603,26 @@ html.light .bg-slate-800\/80,
 }
 
 html.light .btn-secondary,
-[data-mode="light"] .btn-secondary {
+html.light .btn-dashboard-secondary,
+[data-mode="light"] .btn-secondary,
+[data-mode="light"] .btn-dashboard-secondary {
   background: #f1f5f9 !important;
   border-color: #cbd5e1 !important;
   color: #1e293b !important;
 }
 
 html.light .btn-secondary:hover,
-[data-mode="light"] .btn-secondary:hover {
+html.light .btn-dashboard-secondary:hover,
+[data-mode="light"] .btn-secondary:hover,
+[data-mode="light"] .btn-dashboard-secondary:hover {
   background: #e2e8f0 !important;
   color: #0f172a !important;
 }
 
 html.light .btn-secondary:active,
-[data-mode="light"] .btn-secondary:active {
+html.light .btn-dashboard-secondary:active,
+[data-mode="light"] .btn-secondary:active,
+[data-mode="light"] .btn-dashboard-secondary:active {
   background: #cbd5e1 !important;
   border-color: #94a3b8 !important;
   color: #0f172a !important;
@@ -942,7 +956,7 @@ h3 {
 .gradient-text-indigo,
 .gradient-text-primary {
   background: linear-gradient(135deg, #ffffff 10%, var(--brand-t2) 55%, var(--brand-t1) 100%);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -981,17 +995,15 @@ h3 {
 }
 
 /* ============================================================
-   BUTTON SYSTEM
-   ============================================================ */
-
-/* ============================================================
-   BUTTON SYSTEM — Fully Dynamic Theme Binding
+   BUTTON SYSTEM — Ultra-Premium Dynamic Theme Binding
+   Redesigned Before-and-After Hover Color & Micro-Interaction Engine
    ============================================================ */
 
 /* Primary Dynamic Theme Buttons (Adopts Active Color Theme) */
 .btn-premium,
 .btn-primary,
 .btn-brand,
+.btn-dashboard-primary,
 button.btn-premium,
 a.btn-premium,
 button.bg-indigo-600,
@@ -1003,19 +1015,116 @@ a.bg-brand,
 button.bg-purple-600:not([data-static="true"]),
 a.bg-purple-600:not([data-static="true"]) {
   position: relative;
+  isolation: isolate;
   background: var(--brand-grad) !important;
   color: #ffffff !important;
   font-weight: 700;
   border-radius: 0.875rem;
-  box-shadow: 0 8px 20px -4px var(--brand-glow) !important;
-  border: 1px solid transparent !important;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32),
+              0 6px 20px -3px var(--brand-glow) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s ease,
+              filter 0.28s ease,
+              background 0.28s ease !important;
   overflow: hidden;
+  cursor: pointer;
 }
 
+/* ::before: Dynamic Specular Shimmer Sweep (Before Hover: Off-screen left; After Hover: Sweeps across) */
+.btn-premium::before,
+.btn-primary::before,
+.btn-brand::before,
+.btn-dashboard-primary::before,
+.btn-dashboard-emerald::before,
+.btn-dashboard-amber::before,
+.btn-dashboard-sky::before,
+.btn-dashboard-purple::before,
+button.btn-premium::before,
+a.btn-premium::before,
+button.bg-indigo-600::before,
+a.bg-indigo-600::before,
+button.bg-indigo-500::before,
+a.bg-indigo-500::before,
+button.bg-brand::before,
+a.bg-brand::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -140%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 255, 255, 0.42) 50%,
+    rgba(255, 255, 255, 0.08) 80%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-24deg);
+  transition: left 0.75s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ::after: Glass Specular Top Highlight & Color Richness (Before Hover: Ambient 0.65; After Hover: Vivid flare) */
+.btn-premium::after,
+.btn-primary::after,
+.btn-brand::after,
+.btn-dashboard-primary::after,
+.btn-dashboard-emerald::after,
+.btn-dashboard-amber::after,
+.btn-dashboard-sky::after,
+.btn-dashboard-purple::after,
+button.btn-premium::after,
+a.btn-premium::after,
+button.bg-indigo-600::after,
+a.bg-indigo-600::after,
+button.bg-indigo-500::after,
+a.bg-indigo-500::after,
+button.bg-brand::after,
+a.bg-brand::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    transparent 60%,
+    rgba(0, 0, 0, 0.14) 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity 0.3s ease, background 0.3s ease;
+  opacity: 0.65;
+  z-index: 1;
+}
+
+/* Keep button content (text, icons) crisp & on top of ::before and ::after */
+.btn-premium > *,
+.btn-primary > *,
+.btn-brand > *,
+.btn-dashboard-primary > *,
+.btn-dashboard-emerald > *,
+.btn-dashboard-amber > *,
+.btn-dashboard-sky > *,
+.btn-dashboard-purple > *,
+button.btn-premium > *,
+a.btn-premium > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* AFTER HOVER: Primary Buttons State (Redesigned Hover Palette & Luminous Bloom) */
 .btn-premium:hover,
 .btn-primary:hover,
 .btn-brand:hover,
+.btn-dashboard-primary:hover,
 button.btn-premium:hover,
 a.btn-premium:hover,
 button.bg-indigo-600:hover,
@@ -1026,10 +1135,241 @@ button.bg-brand:hover,
 a.bg-brand:hover,
 button.bg-purple-600:hover,
 a.bg-purple-600:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.12);
-  box-shadow: 0 12px 28px -4px var(--brand-glow) !important;
+  transform: translateY(-2.5px);
+  filter: brightness(1.15) contrast(1.06);
+  border-color: rgba(255, 255, 255, 0.48) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.55),
+              0 14px 30px -4px var(--brand-glow),
+              0 0 24px -2px var(--brand-glow) !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
   color: #ffffff !important;
+}
+
+/* AFTER HOVER: Trigger ::before and ::after */
+.btn-premium:hover::before,
+.btn-primary:hover::before,
+.btn-brand:hover::before,
+.btn-dashboard-primary:hover::before,
+.btn-dashboard-emerald:hover::before,
+.btn-dashboard-amber:hover::before,
+.btn-dashboard-sky:hover::before,
+.btn-dashboard-purple:hover::before,
+button.btn-premium:hover::before,
+a.btn-premium:hover::before,
+button.bg-indigo-600:hover::before,
+a.bg-indigo-600:hover::before,
+button.bg-indigo-500:hover::before,
+a.bg-indigo-500:hover::before,
+button.bg-brand:hover::before,
+a.bg-brand:hover::before {
+  left: 180%;
+  opacity: 1;
+}
+
+.btn-premium:hover::after,
+.btn-primary:hover::after,
+.btn-brand:hover::after,
+.btn-dashboard-primary:hover::after,
+.btn-dashboard-emerald:hover::after,
+.btn-dashboard-amber:hover::after,
+.btn-dashboard-sky:hover::after,
+.btn-dashboard-purple:hover::after,
+button.btn-premium:hover::after,
+a.btn-premium:hover::after,
+button.bg-indigo-600:hover::after,
+a.bg-indigo-600:hover::after,
+button.bg-indigo-500:hover::after,
+a.bg-indigo-500:hover::after,
+button.bg-brand:hover::after,
+a.bg-brand:hover::after {
+  opacity: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.08) 45%,
+    transparent 65%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+}
+
+/* ============================================================
+   DASHBOARD ACCENT BUTTON SYSTEM — Role & Color Specific
+   ============================================================ */
+
+/* Emerald Accent Button (Attendance Check-In, Hub Launch) */
+.btn-dashboard-emerald {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(135deg, #059669 0%, #10b981 50%, #0d9488 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32),
+              0 6px 20px -3px rgba(16, 185, 129, 0.45) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s ease,
+              filter 0.28s ease !important;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.btn-dashboard-emerald:hover {
+  transform: translateY(-2.5px);
+  filter: brightness(1.15) contrast(1.05);
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.55),
+              0 14px 30px -4px rgba(16, 185, 129, 0.55),
+              0 0 24px -2px rgba(16, 185, 129, 0.45) !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #ffffff !important;
+}
+
+/* Amber Accent Button (Grading, Reviews, Priority Actions) */
+.btn-dashboard-amber {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #f97316 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32),
+              0 6px 20px -3px rgba(245, 158, 11, 0.45) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s ease,
+              filter 0.28s ease !important;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.btn-dashboard-amber:hover {
+  transform: translateY(-2.5px);
+  filter: brightness(1.15) contrast(1.05);
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.55),
+              0 14px 30px -4px rgba(245, 158, 11, 0.55),
+              0 0 24px -2px rgba(245, 158, 11, 0.45) !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #ffffff !important;
+}
+
+/* Sky Accent Button (Analytics, Triaging Doubts) */
+.btn-dashboard-sky {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32),
+              0 6px 20px -3px rgba(14, 165, 233, 0.45) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s ease,
+              filter 0.28s ease !important;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.btn-dashboard-sky:hover {
+  transform: translateY(-2.5px);
+  filter: brightness(1.15) contrast(1.05);
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.55),
+              0 14px 30px -4px rgba(14, 165, 233, 0.55),
+              0 0 24px -2px rgba(14, 165, 233, 0.45) !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #ffffff !important;
+}
+
+/* Purple Accent Button (Admin Approvals, Faculty Evaluations) */
+.btn-dashboard-purple {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #a855f7 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  border-radius: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32),
+              0 6px 20px -3px rgba(139, 92, 246, 0.45) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s ease,
+              filter 0.28s ease !important;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.btn-dashboard-purple:hover {
+  transform: translateY(-2.5px);
+  filter: brightness(1.15) contrast(1.05);
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.55),
+              0 14px 30px -4px rgba(139, 92, 246, 0.55),
+              0 0 24px -2px rgba(139, 92, 246, 0.45) !important;
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.65), 0 1px 2px rgba(0, 0, 0, 0.4);
+  color: #ffffff !important;
+}
+
+/* ============================================================
+   DASHBOARD ACTION COMMAND CENTER CARDS
+   High-response tactile cards with dynamic hover glow & light beam
+   ============================================================ */
+.dashboard-action-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 1rem;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s ease,
+              background-color 0.28s ease;
+  cursor: pointer;
+}
+
+.dashboard-action-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -140%;
+  width: 70%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: left 0.75s cubic-bezier(0.19, 1, 0.22, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dashboard-action-card:hover {
+  transform: translateY(-3px);
+  background: rgba(26, 35, 60, 0.95);
+  box-shadow: 0 14px 32px -4px var(--brand-glow),
+              0 0 20px -2px var(--brand-glow) !important;
+}
+
+.dashboard-action-card:hover::before {
+  left: 180%;
+}
+
+.dashboard-action-card > * {
+  position: relative;
+  z-index: 2;
 }
 
 /* ============================================================
@@ -1195,21 +1535,90 @@ form button[type="submit"]:not(.btn-secondary):not([class*="bg-rose"]):not([clas
   box-shadow: 0 12px 28px -4px var(--brand-glow) !important;
 }
 
-.btn-secondary {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #f1f5f9;
+.btn-secondary,
+.btn-dashboard-secondary,
+button.btn-secondary,
+a.btn-secondary {
+  position: relative;
+  isolation: isolate;
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(148, 163, 184, 0.22) !important;
+  color: #e2e8f0 !important;
   font-weight: 600;
   border-radius: 0.875rem;
-  backdrop-filter: blur(8px);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.35),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s ease,
+              background-color 0.25s ease,
+              color 0.2s ease !important;
+  overflow: hidden;
+  cursor: pointer;
 }
 
-.btn-secondary:hover {
-  background: rgba(51, 65, 85, 0.7);
-  border-color: rgba(255, 255, 255, 0.2);
+.btn-secondary::before,
+.btn-dashboard-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -140%;
+  width: 65%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-24deg);
+  transition: left 0.7s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.btn-secondary::after,
+.btn-dashboard-secondary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+.btn-secondary > *,
+.btn-dashboard-secondary > * {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-secondary:hover,
+.btn-dashboard-secondary:hover,
+button.btn-secondary:hover,
+a.btn-secondary:hover {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(99, 102, 241, 0.55) !important;
+  color: #ffffff !important;
   transform: translateY(-2px);
-  color: #ffffff;
+  box-shadow: 0 8px 24px -4px var(--brand-glow),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.btn-secondary:hover::before,
+.btn-dashboard-secondary:hover::before {
+  left: 180%;
+  opacity: 1;
+}
+
+.btn-secondary:hover::after,
+.btn-dashboard-secondary:hover::after {
+  opacity: 1;
 }
 
 .btn-shimmer {
