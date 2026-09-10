@@ -1,6 +1,6 @@
 # 📚 E-Study Corner (v2.1 — Stability & Quality Release)
 
-> A production-grade, full-stack Academic Governance and E-Learning Platform engineered for **National Institute of Technology & Advanced Studies** — built with React 19, Tailwind CSS v4, Express 5, Mongoose 8, role-based access control, automated attendance governance, coursework file streaming, and a zero-dependency integration test suite.
+> A production-grade, full-stack Academic Governance and E-Learning Platform engineered for **National Institute of Technology & Advanced Studies** — built with React 19, Tailwind CSS v4, Express 5, Mongoose 9, role-based access control, automated attendance governance, coursework file streaming, and a zero-dependency integration test suite.
 
 ---
 
@@ -16,10 +16,10 @@
 
 ## 🌟 What's in E-Study Corner V2.1
 
-The **V2.1 Stability & Quality Release** prioritizes system hardening, test coverage, architectural hygiene, security compliance, and developer ergonomics:
+The **V2.1 Stability & Quality Release** prioritizes system hardening, test verification, architectural hygiene, security compliance, and developer ergonomics:
 
-1. **100% Automated Test Coverage**:
-   - 53 integration tests executing directly on Node's native test runner (`node:test`) across authentication, student, teacher, and admin services with 0 external mock dependencies.
+1. **Automated Integration Test Suite**:
+   - 53 automated backend tests covering authentication, student, teacher, and admin workflows, executing directly on Node's native test runner (`node:test`) with 0 external mock dependencies.
 2. **Hardened HTTP Security**:
    - Comprehensive OWASP-compliant security headers: Content-Security-Policy (CSP), Permissions-Policy, Cross-Origin-Opener-Policy (`COOP`), Cross-Origin-Resource-Policy (`CORP`), and anti-sniffing/anti-clickjacking headers.
    - Sliding-window rate limiters on sensitive authentication endpoints.
@@ -45,7 +45,7 @@ Comprehensive technical documentation is located in the [`docs/`](docs/README.md
 | 🔌 **API Catalog** | [`docs/api.md`](docs/api.md) | Route reference, request/response schemas, error status codes |
 | 🔐 **Authentication** | [`docs/authentication.md`](docs/authentication.md) | JWT token lifecycle, bcrypt hashing, rate limiting, OTP reset |
 | 🛡️ **Authorization & RBAC** | [`docs/authorization.md`](docs/authorization.md) | Role permission matrix, middleware guards, IDOR prevention |
-| 🗄️ **Database & Models** | [`docs/database.md`](docs/database.md) | 20 Mongoose models, compound indexes, seeding workflows |
+| 🗄️ **Database & Models** | [`docs/database.md`](docs/database.md) | 20 Mongoose 9 models, compound indexes, seeding workflows |
 | 🎨 **Frontend Architecture** | [`docs/frontend.md`](docs/frontend.md) | React 19, Tailwind v4 design tokens, layout hierarchy, context |
 | 🔒 **Security Hardening** | [`docs/security.md`](docs/security.md) | CSP, OWASP headers, input sanitization, DoS defense |
 | 🧪 **Testing & QA** | [`docs/testing.md`](docs/testing.md) | Native Node.js test suite (53 tests), ESLint, build verification |
