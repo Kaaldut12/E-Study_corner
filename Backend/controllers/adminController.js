@@ -1,7 +1,5 @@
-// backend/controllers/adminController.js
-import mongoose from 'mongoose';
 import { dataStore } from '../src/services/dataStore.js';
-import { sendBroadcastEmail, sendSupportReplyEmail } from '../src/services/emailService.js';
+import { sendEmail, verifyEmailConnection, sendBroadcastEmail, sendSupportReplyEmail } from '../src/services/emailService.js';
 
 export const getAdminDashboard = async (req, res) => {
   try {
@@ -399,21 +397,84 @@ export const deleteStudyMaterial = async (req, res) => {
   }
 };
 
-export const sendEmailBroadcast = async (req, res) => {
+export const getEmailStatus = async (req, res) => {
   try {
-    const { sendTo, subject, message } = req.body;
-    if (!sendTo || !subject || !message) {
-      return res.status(400).json({ success: false, message: 'Recipient, subject, and message body are required.' });
-    }
+    const status = await verifyEmailConnection();
+    return res.status(200).json({
+      success: true,
+      status
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 
-    await sendBroadcastEmail(sendTo, subject, message);
+export const sendTestEmail = async (req, res) => {
+  try {
+    const targetEmail = req.body.to || req.body.sendTo || req.user?.email || process.env.EMAIL_FROM || 'test@estudy.com';
+    const result = await sendEmail({
+      to: targetEmail,
+      subject: '🧪 E-Study Corner Nodemailer Test Verification',
+      text: 'Congratulations! Your Nodemailer SMTP integration is working successfully on E-Study Corner.',
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 28px; background: #0b0f19; color: #f8fafc; border-radius: 14px; max-width: 520px;">
+          <h2 style="color: #6366f1; margin: 0 0 10px 0; font-size: 20px;">✓ Nodemailer SMTP Test Successful</h2>
+          <p style="color: #cbd5e1; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">
+            This email confirms that your email transporter is configured properly and dispatching messages through Nodemailer.
+          </p>
+          <div style="background: #1e293b; padding: 14px; border-radius: 8px; font-family: monospace; font-size: 12px; color: #94a3b8; line-height: 1.6;">
+            <div><strong>Timestamp:</strong> ${new Date().toISOString()}</div>
+            <div><strong>Recipient:</strong> ${targetEmail}</div>
+            <div><strong>Status:</strong> Active Nodemailer Transporter</div>
+          </div>
+        </div>
+      `
+    });
 
     return res.status(200).json({
       success: true,
-      message: `Email broadcast dispatched to ${sendTo}.`
+      message: `Test email successfully sent to ${targetEmail}!`,
+      result
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      hint: error.hint
+    });
+  }
+};
+
+export const sendEmailBroadcast = async (req, res) => {
+  try {
+    const { sendTo, to, subject, message, text, html } = req.body;
+    const recipient = sendTo || to;
+    const emailSubject = subject;
+    const emailBody = message || text || html;
+
+    if (!recipient || !emailSubject || !emailBody) {
+      return res.status(400).json({
+        success: false,
+        message: 'Recipient, subject, and message body are required.'
+      });
+    }
+
+    const result = await sendBroadcastEmail(recipient, emailSubject, emailBody);
+
+    return res.status(200).json({
+      success: true,
+      message: `Email broadcast dispatched to ${recipient}.`,
+      result
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+      hint: error.hint
+    });
   }
 };
 

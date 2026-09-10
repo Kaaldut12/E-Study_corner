@@ -20,6 +20,8 @@ import {
   uploadStudyMaterial,
   deleteStudyMaterial,
   sendEmailBroadcast,
+  getEmailStatus,
+  sendTestEmail,
   toggleUserStatus,
   triggerDatabaseResync,
   adminReplyStudentQuestion
@@ -64,7 +66,9 @@ router.get(['/study-material', '/study-materials'], getAdminStudyMaterials);
 router.post(['/study-material', '/study-materials'], uploadStudyMaterial);
 router.delete(['/study-material/:id', '/study-materials/:id'], deleteStudyMaterial);
 
-// Email Sender (EmailSender)
+// Email Sender & Diagnostics (EmailSender)
+router.get('/email-status', getEmailStatus);
+router.post('/email-test', sendTestEmail);
 router.post('/send-email', sendEmailBroadcast);
 
 export default router;

@@ -41,7 +41,9 @@ export const adminService = {
     api.put(`/admin/questions/${questionId}/reply`, { replyText }).then(res => res.data),
 
   // --- EMAIL ---
-  sendEmail: (data) => api.post('/admin/send-email', data).then(res => res.data)
+  sendEmail: (data) => api.post('/admin/send-email', data).then(res => res.data),
+  getEmailStatus: () => api.get('/admin/email-status').then(res => res.data),
+  sendTestEmail: (data = {}) => api.post('/admin/email-test', data).then(res => res.data)
 };
 
 export default adminService;
