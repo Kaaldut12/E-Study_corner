@@ -188,7 +188,7 @@ const Navbar = ({ toggleSidebar }) => {
 
               {/* User Identity Details */}
               <div className="hidden md:flex flex-col text-left leading-tight pr-0.5">
-                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-brand transition-colors truncate max-w-[110px] xl:max-w-[140px]">
+                <span className="navbar-user-name text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-brand transition-colors truncate max-w-[110px] xl:max-w-[140px]">
                   {user.name}
                 </span>
                 <div className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">

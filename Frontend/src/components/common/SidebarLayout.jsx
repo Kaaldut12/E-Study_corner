@@ -254,7 +254,7 @@ const SidebarLayout = ({ children }) => {
                 {/* User Details */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-brand transition-colors">
+                    <span className="sidebar-user-name text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-brand transition-colors">
                       {user.name}
                     </span>
                   </div>

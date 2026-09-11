@@ -458,6 +458,22 @@ html.light .text-slate-200,
   color: #1e293b !important;
 }
 
+[data-mode="light"] .sidebar-user-name {
+  color: #1e293b !important;
+}
+
+[data-mode="dark"] .sidebar-user-name {
+  color: #f1f5f9 !important;
+}
+
+[data-mode="light"] .navbar-user-name {
+  color: #1e293b !important;
+}
+
+[data-mode="dark"] .navbar-user-name {
+  color: #f1f5f9 !important;
+}
+
 html.light .text-slate-300,
 html.light .text-slate-400,
 [data-mode="light"] .text-slate-300,
