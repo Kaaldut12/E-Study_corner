@@ -41,7 +41,7 @@ const ManageStudents = () => {
     setTimeout(() => setToast(null), 4000);
   };
 
-  const fetchTeacherStudents = async () => {
+  const fetchTeacherStudents = useCallback(async () => {
     try {
       const endpoint = currentUser?.role === 'admin' || currentUser?.role === 'superadmin' ? '/admin/students' : '/teacher/students';
       const res = await api.get(endpoint);
@@ -53,7 +53,7 @@ const ManageStudents = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser?.role]);
 
   const openStudentConsole = useCallback(async (student) => {
     setSelectedStudent(student);
@@ -73,7 +73,7 @@ const ManageStudents = () => {
 
   useEffect(() => {
     fetchTeacherStudents();
-  }, []);
+  }, [fetchTeacherStudents]);
 
   // Deep-linking from Admin or Teacher navigation
   useEffect(() => {

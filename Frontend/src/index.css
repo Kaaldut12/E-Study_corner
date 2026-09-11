@@ -1091,6 +1091,11 @@ h3 {
   }
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @keyframes ringPulse {
   0% {
     transform: scale(0.95);

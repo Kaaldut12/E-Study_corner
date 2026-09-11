@@ -1,67 +1,67 @@
 // frontend/src/App.jsx
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import PageLoader from './components/common/PageLoader';
 
 // Public Pages
-import Home from './pages/General/Home';
+const Home = lazy(() => import('./pages/General/Home'));
 
 // Auth Pages
-import LoginForm from './pages/Auth/LoginForm';
-import Register from './pages/Auth/Register';
-import ResetPassword from './pages/Auth/ResetPassword';
+const LoginForm = lazy(() => import('./pages/Auth/LoginForm'));
+const Register = lazy(() => import('./pages/Auth/Register'));
+const ResetPassword = lazy(() => import('./pages/Auth/ResetPassword'));
 
 // Student Pages
-import StudentDashboard from './pages/Student/StudentDashboard';
-import ViewAssignments from './pages/Student/ViewAssignments';
-import SubmitAssignment from './pages/Student/SubmitAssignment';
-import DownStudyMaterial from './pages/Student/DownStudyMaterial';
-import StudentFeedback from './pages/Student/StudentFeedback';
-import MyProfile from './pages/Student/MyProfile';
-import ChangePassword from './pages/Student/ChangePassword';
-import ContactAdmin from './pages/Student/ContactAdmin';
-import Courses from './pages/Student/Courses';
-import PersonalNotes from './pages/Student/PersonalNotes';
-import GlobalSearch from './pages/Student/GlobalSearch';
-import Quizzes from './pages/Student/Quizzes';
-import Bookmarks from './pages/Student/Bookmarks';
-import ProgressTracking from './pages/Student/ProgressTracking';
-import NotificationsFeed from './pages/Student/NotificationsFeed';
-import AICoach from './pages/Student/AICoach';
-import AIRecommendations from './pages/Student/AIRecommendations';
-import WeakTopicDetector from './pages/Student/WeakTopicDetector';
-import StudentQuestions from './pages/Student/StudentQuestions';
-import ApplyLeave from './pages/Student/ApplyLeave';
+const StudentDashboard = lazy(() => import('./pages/Student/StudentDashboard'));
+const ViewAssignments = lazy(() => import('./pages/Student/ViewAssignments'));
+const SubmitAssignment = lazy(() => import('./pages/Student/SubmitAssignment'));
+const DownStudyMaterial = lazy(() => import('./pages/Student/DownStudyMaterial'));
+const StudentFeedback = lazy(() => import('./pages/Student/StudentFeedback'));
+const Courses = lazy(() => import('./pages/Student/Courses'));
+const PersonalNotes = lazy(() => import('./pages/Student/PersonalNotes'));
+const GlobalSearch = lazy(() => import('./pages/Student/GlobalSearch'));
+const Quizzes = lazy(() => import('./pages/Student/Quizzes'));
+const Bookmarks = lazy(() => import('./pages/Student/Bookmarks'));
+const ProgressTracking = lazy(() => import('./pages/Student/ProgressTracking'));
+const NotificationsFeed = lazy(() => import('./pages/Student/NotificationsFeed'));
+const AICoach = lazy(() => import('./pages/Student/AICoach'));
+const AIRecommendations = lazy(() => import('./pages/Student/AIRecommendations'));
+const WeakTopicDetector = lazy(() => import('./pages/Student/WeakTopicDetector'));
+const StudentQuestions = lazy(() => import('./pages/Student/StudentQuestions'));
+const ApplyLeave = lazy(() => import('./pages/Student/ApplyLeave'));
+const ContactAdmin = lazy(() => import('./pages/Student/ContactAdmin'));
 
 // Teacher Pages
-import TeacherDashboard from './pages/Teacher/TeacherDashboard';
-import CreateAssignment from './pages/Teacher/CreateAssignment';
-import ViewSubmissions from './pages/Teacher/ViewSubmissions';
-import ManageCourses from './pages/Teacher/ManageCourses';
-import CreateCourse from './pages/Teacher/CreateCourse';
-import ManageStudents from './pages/Teacher/ManageStudents';
-import ManageAssignments from './pages/Teacher/ManageAssignments';
-import TeacherQuestions from './pages/Teacher/TeacherQuestions';
-import TeacherLeaves from './pages/Teacher/TeacherLeaves';
+const TeacherDashboard = lazy(() => import('./pages/Teacher/TeacherDashboard'));
+const CreateAssignment = lazy(() => import('./pages/Teacher/CreateAssignment'));
+const ViewSubmissions = lazy(() => import('./pages/Teacher/ViewSubmissions'));
+const ManageCourses = lazy(() => import('./pages/Teacher/ManageCourses'));
+const CreateCourse = lazy(() => import('./pages/Teacher/CreateCourse'));
+const ManageStudents = lazy(() => import('./pages/Teacher/ManageStudents'));
+const ManageAssignments = lazy(() => import('./pages/Teacher/ManageAssignments'));
+const TeacherQuestions = lazy(() => import('./pages/Teacher/TeacherQuestions'));
+const TeacherLeaves = lazy(() => import('./pages/Teacher/TeacherLeaves'));
 
 // Admin Pages
-import AdminDashboard from './pages/Admin/AdminDashboard';
-import UserManagement from './pages/Admin/UserManagement';
-import NotificationManagement from './pages/Admin/NotificationManagement';
-import EnquiryManagement from './pages/Admin/EnquiryManagement';
-import UploadStudyMaterial from './pages/Admin/UploadStudyMaterial';
-import ViewFeedback from './pages/Admin/ViewFeedback';
-import ViewMessages from './pages/Admin/ViewMessages';
-import SendEmail from './pages/Admin/SendEmail';
-import PlatformAnalytics from './pages/Admin/PlatformAnalytics';
-import SystemHealth from './pages/Admin/SystemHealth';
-import LeaveManagement from './pages/Admin/LeaveManagement';
+const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'));
+const UserManagement = lazy(() => import('./pages/Admin/UserManagement'));
+const NotificationManagement = lazy(() => import('./pages/Admin/NotificationManagement'));
+const EnquiryManagement = lazy(() => import('./pages/Admin/EnquiryManagement'));
+const UploadStudyMaterial = lazy(() => import('./pages/Admin/UploadStudyMaterial'));
+const ViewFeedback = lazy(() => import('./pages/Admin/ViewFeedback'));
+const ViewMessages = lazy(() => import('./pages/Admin/ViewMessages'));
+const SendEmail = lazy(() => import('./pages/Admin/SendEmail'));
+const PlatformAnalytics = lazy(() => import('./pages/Admin/PlatformAnalytics'));
+const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
+const LeaveManagement = lazy(() => import('./pages/Admin/LeaveManagement'));
 
 // Settings & Common Pages
-import Settings from './pages/Common/Settings';
-import ErrorBoundary from './components/common/ErrorBoundary';
-import NotFound from './pages/NotFound';
+const Settings = lazy(() => import('./pages/Common/Settings'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 function App() {
   return (
@@ -69,6 +69,7 @@ function App() {
       <ThemeProvider>
         <Router>
         <AuthProvider>
+        <Suspense fallback={<PageLoader />}>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -170,6 +171,7 @@ function App() {
           {/* Fallback */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
         </AuthProvider>
       </Router>
       </ThemeProvider>
