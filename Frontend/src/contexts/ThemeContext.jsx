@@ -37,11 +37,7 @@ export const ThemeProvider = ({ children }) => {
     localStorage.setItem('estudy_mode', mode);
 
     // Apply Color Theme
-    if (colorTheme === 'indigo') {
-      root.removeAttribute('data-theme');
-    } else {
-      root.setAttribute('data-theme', colorTheme);
-    }
+    root.setAttribute('data-theme', colorTheme);
     localStorage.setItem('estudy_theme', colorTheme);
   }, [mode, colorTheme]);
 
