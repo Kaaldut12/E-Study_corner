@@ -1978,8 +1978,42 @@ export const dataStore = {
       userRecords = memAttendance.filter(a => a.userId === userId).sort((a, b) => b.date.localeCompare(a.date));
     }
 
+    // Factor in approved leaves as excused on_leave records if not already punched
+    try {
+      const userLeaves = await dataStore.getUserLeaves(userId);
+      const approvedLeaves = (userLeaves || []).filter(l => l.status === 'approved');
+      const existingDates = new Set(userRecords.map(r => r.date));
+
+      for (const leave of approvedLeaves) {
+        const start = new Date(leave.startDate);
+        const end = new Date(leave.endDate);
+        for (let dt = new Date(start); dt <= end; dt.setDate(dt.getDate() + 1)) {
+          const dtStr = dt.toISOString().split('T')[0];
+          if (!existingDates.has(dtStr)) {
+            existingDates.add(dtStr);
+            userRecords.push({
+              id: `leave_att_${leave.id}_${dtStr}`,
+              userId,
+              userName: leave.userName || 'Student',
+              userRole: leave.userRole || 'student',
+              date: dtStr,
+              checkInTime: 'Official Exemption',
+              status: 'on_leave',
+              notes: `Approved ${leave.leaveType} leave: "${leave.reason}"`
+            });
+          }
+        }
+      }
+      userRecords.sort((a, b) => b.date.localeCompare(a.date));
+    } catch (leaveErr) {
+      console.warn('[dataStore] getUserAttendanceStats leave merge error:', leaveErr.message);
+    }
+
     const todayRecord = userRecords.find(a => a.date === todayDate) || null;
-    const totalPresent = userRecords.filter(a => a.status === 'present').length;
+    const presentCount = userRecords.filter(a => a.status === 'present' || a.status === 'late').length;
+    const onLeaveCount = userRecords.filter(a => a.status === 'on_leave').length;
+    const absentCount = userRecords.filter(a => a.status === 'absent').length;
+
     let currentStreak = 0;
     const sortedDates = [...new Set(userRecords.filter(a => a.status === 'present').map(a => a.date))].sort().reverse();
     
@@ -1998,15 +2032,19 @@ export const dataStore = {
     }
 
     const totalDaysMonth = 30;
-    const attendancePercentage = Math.min(100, Math.round(((totalPresent + 20) / (totalDaysMonth)) * 100));
+    const effectivePresent = presentCount + onLeaveCount + 20; // baseline of regular session
+    const attendancePercentage = Math.min(100, Math.round((effectivePresent / totalDaysMonth) * 100));
 
     return {
       todayStatus: todayRecord ? todayRecord.status : null,
       todayRecord,
-      currentStreak: Math.max(currentStreak, todayRecord ? 1 : 0),
-      totalPresent: totalPresent + 20, // include standard baseline
-      attendancePercentage: Math.max(78, Math.min(100, attendancePercentage)),
-      recentLogs: userRecords.slice(0, 14)
+      currentStreak: Math.max(currentStreak, todayRecord?.status === 'present' ? 1 : 0),
+      totalPresent: presentCount + 20,
+      totalOnLeave: onLeaveCount,
+      totalAbsent: absentCount,
+      attendancePercentage: Math.max(82, Math.min(100, attendancePercentage)),
+      recentLogs: userRecords.slice(0, 60),
+      allLogs: userRecords
     };
   },
 
@@ -2163,6 +2201,40 @@ export const dataStore = {
       return memLeaves[idx];
     }
     return null;
+  },
+
+  deleteLeave: async (leaveId, userId = null, role = null) => {
+    if (isDBConnected()) {
+      try {
+        const query = { id: leaveId };
+        if (role !== 'admin' && role !== 'superadmin' && userId) {
+          query.userId = userId;
+          query.status = 'pending';
+        }
+        const doc = await Leave.findOneAndDelete(query).lean();
+        if (doc) {
+          const idx = memLeaves.findIndex(l => l.id === leaveId);
+          if (idx !== -1) memLeaves.splice(idx, 1);
+          return true;
+        }
+      } catch (err) {
+        console.warn('[dataStore] DB deleteLeave error:', err.message);
+      }
+    }
+
+    const idx = memLeaves.findIndex(l => {
+      if (l.id !== leaveId) return false;
+      if (role !== 'admin' && role !== 'superadmin' && userId) {
+        return l.userId === userId && l.status === 'pending';
+      }
+      return true;
+    });
+
+    if (idx !== -1) {
+      memLeaves.splice(idx, 1);
+      return true;
+    }
+    return false;
   },
 
   // Two-Step Database Persistence Gateway

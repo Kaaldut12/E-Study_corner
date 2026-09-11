@@ -73,6 +73,7 @@ const SidebarLayout = ({ children }) => {
       {
         sectionTitle: 'Account & Service',
         items: [
+          { path: '/student/attendance', label: 'My Attendance', icon: CalendarCheck },
           { path: '/student/leave', label: 'Apply for Leave', icon: Calendar },
           { path: '/student/feedback', label: 'Grades & Feedback', icon: Award },
           { path: '/student/settings', label: 'Settings', icon: SettingsIcon },
@@ -96,6 +97,7 @@ const SidebarLayout = ({ children }) => {
         sectionTitle: 'Classroom & Service',
         items: [
           { path: '/teacher/students', label: 'Students Roster', icon: Users },
+          { path: '/teacher/attendance', label: 'Class Attendance', icon: CalendarCheck },
           { path: '/teacher/leave', label: 'Leave Requests', icon: Calendar },
           { path: '/teacher/settings', label: 'Settings', icon: SettingsIcon }
         ]
@@ -111,6 +113,7 @@ const SidebarLayout = ({ children }) => {
           { path: '/admin/students', label: 'Student Governance', icon: GraduationCap },
           { path: '/admin/study-material', label: 'Study Materials', icon: Download },
           { path: '/admin/leaves', label: 'Leave Approvals', icon: CalendarCheck },
+          { path: '/admin/attendance', label: 'Attendance Audit', icon: CalendarCheck },
           { path: '/admin/notifications', label: 'Notifications', icon: Bell },
           { path: '/admin/messages', label: 'Messages', icon: Mail },
           { path: '/admin/settings', label: 'Settings', icon: SettingsIcon }

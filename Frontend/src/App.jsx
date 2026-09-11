@@ -61,6 +61,7 @@ const LeaveManagement = lazy(() => import('./pages/Admin/LeaveManagement'));
 
 // Settings & Common Pages
 const Settings = lazy(() => import('./pages/Common/Settings'));
+const Attendance = lazy(() => import('./pages/Common/Attendance'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function App() {
@@ -115,6 +116,7 @@ function App() {
                   <Route path="/change-password" element={<Settings />} />
                   <Route path="/contact-admin" element={<ContactAdmin />} />
                   <Route path="/leave" element={<ApplyLeave />} />
+                  <Route path="/attendance" element={<Attendance />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </ProtectedRoute>
@@ -136,6 +138,7 @@ function App() {
                   <Route path="/submissions/:assignmentId" element={<ViewSubmissions />} />
                   <Route path="/questions" element={<TeacherQuestions />} />
                   <Route path="/leave" element={<TeacherLeaves />} />
+                  <Route path="/attendance" element={<Attendance />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
@@ -158,12 +161,23 @@ function App() {
                   <Route path="/enquiries" element={<EnquiryManagement />} />
                   <Route path="/study-material" element={<UploadStudyMaterial />} />
                   <Route path="/leaves" element={<LeaveManagement />} />
+                  <Route path="/attendance" element={<Attendance />} />
                   <Route path="/feedback" element={<ViewFeedback />} />
                   <Route path="/messages" element={<ViewMessages />} />
                   <Route path="/send-email" element={<SendEmail />} />
                   <Route path="/settings" element={<Settings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Universal Protected Attendance Route */}
+          <Route
+            path="/attendance"
+            element={
+              <ProtectedRoute>
+                <Attendance />
               </ProtectedRoute>
             }
           />

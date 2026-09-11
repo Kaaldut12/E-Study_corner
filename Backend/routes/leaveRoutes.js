@@ -4,7 +4,8 @@ import {
   applyForLeave,
   getMyLeaves,
   getAllLeaves,
-  updateLeaveStatus
+  updateLeaveStatus,
+  deleteLeave
 } from '../controllers/leaveController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -19,5 +20,8 @@ router.get('/my-leaves', verifyToken, getMyLeaves);
 // Administrative and faculty review of leave applications
 router.get('/all', verifyToken, requireRole(['admin', 'teacher']), getAllLeaves);
 router.patch('/:id/status', verifyToken, requireRole(['admin', 'teacher']), updateLeaveStatus);
+
+// Cancel / withdraw / delete leave application
+router.delete('/:id', verifyToken, deleteLeave);
 
 export default router;

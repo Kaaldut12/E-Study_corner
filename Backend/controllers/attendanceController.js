@@ -108,3 +108,105 @@ export const getStudentAttendance = async (req, res) => {
   }
 };
 
+export const getRosterAttendance = async (req, res) => {
+  try {
+    const targetDate = req.query.date || new Date().toISOString().split('T')[0];
+    const { course, role } = req.query;
+
+    const allUsers = await dataStore.getUsers();
+    let targetUsers = allUsers.filter(u => u.role === (role || 'student'));
+    if (course && course !== 'all') {
+      targetUsers = targetUsers.filter(u => u.course === course);
+    }
+
+    const attendanceRecords = await dataStore.getAllAttendanceRecords(targetDate, role || 'student');
+    const recordsByUserId = new Map(attendanceRecords.map(r => [r.userId, r]));
+
+    // Check approved leaves for this target date
+    const leaves = await dataStore.getAllLeaves({ status: 'approved', role: role || 'student' });
+    const onLeaveMap = new Map();
+    for (const l of leaves) {
+      if (targetDate >= l.startDate && targetDate <= l.endDate) {
+        onLeaveMap.set(l.userId, l);
+      }
+    }
+
+    const roster = targetUsers.map(u => {
+      const att = recordsByUserId.get(u.id);
+      let status = 'unmarked';
+      let checkInTime = null;
+      let notes = '';
+
+      if (att) {
+        status = att.status;
+        checkInTime = att.checkInTime;
+        notes = att.notes || '';
+      } else if (onLeaveMap.has(u.id)) {
+        const lv = onLeaveMap.get(u.id);
+        status = 'on_leave';
+        checkInTime = 'Official Exemption';
+        notes = `Approved ${lv.leaveType} leave: "${lv.reason}"`;
+      }
+
+      return {
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        role: u.role,
+        course: u.course || 'Computer Science & Engineering',
+        courseYear: u.courseYear || '1st Year',
+        status,
+        checkInTime,
+        notes
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      date: targetDate,
+      totalCount: roster.length,
+      presentCount: roster.filter(r => r.status === 'present').length,
+      lateCount: roster.filter(r => r.status === 'late').length,
+      onLeaveCount: roster.filter(r => r.status === 'on_leave').length,
+      absentCount: roster.filter(r => r.status === 'absent').length,
+      unmarkedCount: roster.filter(r => r.status === 'unmarked').length,
+      roster
+    });
+  } catch (error) {
+    console.error('getRosterAttendance error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const markBatchAttendance = async (req, res) => {
+  try {
+    const { records, date } = req.body;
+    const markedBy = req.user.name || req.user.role;
+
+    if (!Array.isArray(records) || records.length === 0) {
+      return res.status(400).json({ success: false, message: 'Records array is required.' });
+    }
+
+    const results = [];
+    for (const item of records) {
+      const rec = await dataStore.markStudentAttendanceOverride({
+        studentId: item.studentId,
+        date: date || item.date,
+        status: item.status || 'present',
+        notes: item.notes,
+        markedBy
+      });
+      if (rec) results.push(rec);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Batch attendance successfully updated for ${results.length} student(s).`,
+      count: results.length
+    });
+  } catch (error) {
+    console.error('markBatchAttendance error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
