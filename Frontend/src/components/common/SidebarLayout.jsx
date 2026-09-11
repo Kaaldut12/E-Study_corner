@@ -132,9 +132,9 @@ const SidebarLayout = ({ children }) => {
     <div className="app-shell min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
       {/* Dynamic Background Ambient Glowing Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-12 left-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-[140px] animate-float-slow" />
-        <div className="absolute bottom-16 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[150px] animate-float-reverse" />
-        <div className="absolute top-1/2 right-12 w-80 h-80 bg-emerald-600/5 rounded-full blur-[120px] animate-pulse-glow" />
+        <div className="ambient-blob-a absolute top-12 left-1/4 w-96 h-96 rounded-full blur-[140px] animate-float-slow" />
+        <div className="ambient-blob-b absolute bottom-16 right-1/4 w-96 h-96 rounded-full blur-[150px] animate-float-reverse" />
+        <div className="ambient-blob-c absolute top-1/2 right-12 w-80 h-80 rounded-full blur-[120px] animate-pulse-glow" />
       </div>
 
       <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />

@@ -51,9 +51,9 @@ const Home = () => {
     <div id="top" className="site-shell min-h-screen bg-[#070a12] text-slate-100 flex flex-col font-sans relative overflow-hidden">
       {/* Dynamic Background Ambient Glowing Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-16 left-10 w-120 h-120 bg-indigo-600/15 rounded-full blur-[140px] animate-float-slow" />
-        <div className="absolute top-96 right-10 w-120 h-120 bg-purple-600/15 rounded-full blur-[160px] animate-float-reverse" />
-        <div className="absolute bottom-20 left-1/3 w-120 h-120 bg-emerald-600/10 rounded-full blur-[120px] animate-pulse-glow" />
+        <div className="ambient-blob-a absolute top-16 left-10 w-120 h-120 rounded-full blur-[140px] animate-float-slow" />
+        <div className="ambient-blob-b absolute top-96 right-10 w-120 h-120 rounded-full blur-[160px] animate-float-reverse" />
+        <div className="ambient-blob-c absolute bottom-20 left-1/3 w-120 h-120 rounded-full blur-[120px] animate-pulse-glow" />
       </div>
 
       {/* Marquee Ticker */}
@@ -342,7 +342,7 @@ const Home = () => {
 
         {/* Project Introduction Card */}
         <div id="about" className="glass-panel p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3 sm:space-y-4 relative overflow-hidden scroll-mt-24">
-          <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="ambient-blob-a absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-3xl pointer-events-none" />
           <span className="text-xs font-extrabold t-brand uppercase tracking-widest block">Featured Portfolio Project</span>
           <h3 className="text-xl sm:text-3xl font-black text-white font-display">About E-Study Corner</h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify">

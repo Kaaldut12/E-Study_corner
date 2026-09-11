@@ -67,8 +67,8 @@ const Register = () => {
     <div className="min-h-screen bg-[#070a12] flex flex-col font-sans relative overflow-hidden">
       {/* Background Ambient Lighting Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-1/4 left-1/4 w-120 h-120 bg-indigo-600/15 rounded-full blur-[140px] animate-float-slow" />
-        <div className="absolute bottom-1/4 right-1/4 w-120 h-120 bg-purple-600/15 rounded-full blur-[150px] animate-float-reverse" />
+        <div className="ambient-blob-a absolute top-1/4 left-1/4 w-120 h-120 rounded-full blur-[140px] animate-float-slow" />
+        <div className="ambient-blob-b absolute bottom-1/4 right-1/4 w-120 h-120 rounded-full blur-[150px] animate-float-reverse" />
       </div>
 
       {/* Top Public Navigation Bar */}

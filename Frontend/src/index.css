@@ -123,6 +123,11 @@ html.light,
   color-scheme: light;
 }
 
+@keyframes meshDrift {
+  0%, 100% { background-position: 0% 0%, 100% 0%, 50% 100%, 0 0; }
+  50% { background-position: 8% 6%, 92% 10%, 46% 92%, 0 0; }
+}
+
 html.light body,
 [data-mode="light"] body,
 html.light #root,
@@ -130,6 +135,14 @@ html.light #root,
 html.light .min-h-screen,
 [data-mode="light"] .min-h-screen {
   background-color: #eef2f7 !important;
+  background-image:
+    radial-gradient(circle at 12% 15%, var(--brand-glow) 0%, transparent 42%),
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--brand-2) 22%, transparent) 0%, transparent 45%),
+    radial-gradient(circle at 50% 100%, color-mix(in srgb, var(--brand-3) 18%, transparent) 0%, transparent 50%),
+    linear-gradient(180deg, #f4f7fb 0%, #eef2f7 55%, #eef4f2 100%) !important;
+  background-repeat: no-repeat !important;
+  background-size: 140% 140%, 140% 140%, 160% 160%, 100% 100% !important;
+  animation: meshDrift 26s ease-in-out infinite !important;
   color: #0f172a !important;
 }
 
@@ -494,15 +507,22 @@ html.light .bg-rose-500\/15,
   border-color: #fecdd3 !important;
 }
 
+@keyframes textGradientDrift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
 html.light .t-brand-grad,
 html.light .gradient-text-indigo,
 html.light .gradient-text-primary,
 [data-mode="light"] .t-brand-grad,
 [data-mode="light"] .gradient-text-indigo,
 [data-mode="light"] .gradient-text-primary {
-  background: linear-gradient(135deg, var(--brand-1) 0%, var(--brand-2) 50%, var(--brand-3) 100%) !important;
+  background: linear-gradient(120deg, var(--brand-1) 0%, var(--brand-2) 35%, var(--brand-3) 60%, var(--brand-2) 100%) !important;
+  background-size: 250% auto !important;
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
+  animation: textGradientDrift 6s ease-in-out infinite !important;
 }
 
 html.light input:not([type="checkbox"]):not([type="radio"]),
@@ -967,9 +987,36 @@ html.light ::-webkit-scrollbar-thumb:hover,
   background: #94a3b8;
 }
 
-html.light .pointer-events-none div,
-[data-mode="light"] .pointer-events-none div {
+html.light .pointer-events-none div:not([class*="ambient-blob"]),
+[data-mode="light"] .pointer-events-none div:not([class*="ambient-blob"]) {
   opacity: 0.08 !important;
+}
+
+/* Light mode: let the ambient blobs actually show the chosen colour palette,
+   drifting a little wider and slower for a soft, living daylight backdrop. */
+@keyframes blobDriftLight {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(4%, -6%) scale(1.12); }
+  66% { transform: translate(-5%, 4%) scale(0.94); }
+}
+
+html.light .ambient-blob-a,
+[data-mode="light"] .ambient-blob-a {
+  opacity: 0.4 !important;
+  animation: blobDriftLight 18s ease-in-out infinite !important;
+}
+
+html.light .ambient-blob-b,
+[data-mode="light"] .ambient-blob-b {
+  opacity: 0.34 !important;
+  animation: blobDriftLight 22s ease-in-out infinite reverse !important;
+}
+
+html.light .ambient-blob-c,
+[data-mode="light"] .ambient-blob-c {
+  opacity: 0.26 !important;
+  animation: blobDriftLight 15s ease-in-out infinite !important;
+  animation-delay: -4s !important;
 }
 
 /* ============================================================
@@ -1248,6 +1295,13 @@ h3 {
 .bg-primary-grad {
   background: var(--brand-grad);
 }
+
+/* Ambient decorative blobs — recolor automatically with the active palette
+   (indigo / emerald / amber / rose / sapphire / amethyst / coral / slate)
+   so switching a theme changes the whole page's mood, not just buttons. */
+.ambient-blob-a { background-color: var(--brand-1); opacity: 0.14; }
+.ambient-blob-b { background-color: var(--brand-2); opacity: 0.13; }
+.ambient-blob-c { background-color: var(--brand-3); opacity: 0.09; }
 
 .scrollbar-none {
   -ms-overflow-style: none;
@@ -2130,13 +2184,37 @@ html.light .glass-panel,
   background: rgba(255, 255, 255, 0.92) !important;
   border-color: #dbe3ed !important;
   box-shadow: 0 18px 40px -30px rgba(15, 23, 42, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  position: relative;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+}
+
+html.light .glass-panel::before,
+[data-mode="light"] .glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 1.25rem; right: 1.25rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--brand-grad);
+  opacity: 0;
+  transform: scaleX(0.6);
+  transform-origin: center;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
 }
 
 html.light .glass-panel-hover:hover,
 [data-mode="light"] .glass-panel-hover:hover {
   background: #ffffff !important;
   border-color: var(--brand-2) !important;
-  box-shadow: 0 22px 42px -26px rgba(15, 23, 42, 0.42), 0 0 22px -10px var(--brand-glow) !important;
+  box-shadow: 0 24px 48px -22px color-mix(in srgb, var(--brand-2) 35%, rgba(15, 23, 42, 0.35)), 0 0 26px -8px var(--brand-glow) !important;
+  transform: translateY(-5px) !important;
+}
+
+html.light .glass-panel-hover:hover::before,
+[data-mode="light"] .glass-panel-hover:hover::before {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 html.light .dashboard-action-card,
@@ -2262,7 +2340,12 @@ html.light .public-navbar nav,
 
 html.light .home-hero,
 [data-mode="light"] .home-hero {
-  background: linear-gradient(135deg, #e8f1f3, #f8fafc 58%, #fff7ed) !important;
+  background:
+    radial-gradient(circle at 15% 20%, color-mix(in srgb, var(--brand-1) 20%, transparent) 0%, transparent 48%),
+    radial-gradient(circle at 85% 15%, color-mix(in srgb, var(--brand-3) 22%, transparent) 0%, transparent 45%),
+    linear-gradient(135deg, #eef4f8 0%, #f8fafc 55%, #fdf6ee 100%) !important;
+  background-size: 160% 160%, 160% 160%, 100% 100% !important;
+  animation: meshDrift 24s ease-in-out infinite !important;
 }
 
 html.light .home-hero h1,
