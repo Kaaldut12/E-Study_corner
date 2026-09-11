@@ -1583,6 +1583,12 @@ h3 {
   border: 1px solid var(--brand-border);
 }
 
+.theme-chip {
+  background: color-mix(in srgb, var(--brand-bg) 75%, rgba(255, 255, 255, 0.9));
+  border: 1px solid color-mix(in srgb, var(--brand-border) 82%, rgba(255,255,255,0.3));
+  color: var(--brand-2);
+}
+
 /* ============================================================
    BUTTON SYSTEM — Ultra-Premium Dynamic Theme Binding
    Redesigned Before-and-After Hover Color & Micro-Interaction Engine
@@ -2357,18 +2363,34 @@ html.light .btn-update-password:active *,
 
 body {
   background: #080d17;
+  margin: 0;
+  padding: 0;
 }
 
 .app-shell,
 .site-shell {
+  width: 100%;
+  max-width: 100%;
   background:
     radial-gradient(circle at 8% 0%, rgba(20, 184, 166, 0.09), transparent 28rem),
     radial-gradient(circle at 92% 12%, rgba(245, 158, 11, 0.06), transparent 24rem),
     #080d17 !important;
 }
 
-.app-shell main {
-  max-width: 90rem;
+.app-shell main,
+.site-shell main {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (max-width: 640px) {
+  .app-shell main,
+  .site-shell main {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
 }
 
 .app-navbar {
