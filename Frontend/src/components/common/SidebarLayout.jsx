@@ -137,7 +137,7 @@ const SidebarLayout = ({ children }) => {
   const navSections = navSectionsByRole[role] || navSectionsByRole.student;
 
   return (
-    <div className="app-shell min-h-screen dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
+    <div className="app-shell workspace-shell min-h-screen dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
       {/* Dynamic Background Ambient Glowing Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="ambient-blob-a absolute top-12 left-1/4 w-96 h-96 rounded-full blur-[140px] animate-float-slow" />
@@ -158,7 +158,7 @@ const SidebarLayout = ({ children }) => {
 
         {/* Fixed Sidebar */}
         <aside
-          className={`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl border-r border-slate-200/90 dark:border-slate-800/80 shadow-sm dark:shadow-2xl transform transition-transform duration-300 ease-out flex flex-col shrink-0 ${
+          className={`app-sidebar fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl border-r border-slate-200/90 dark:border-slate-800/80 shadow-sm dark:shadow-2xl transform transition-transform duration-300 ease-out flex flex-col shrink-0 ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
         >
@@ -279,8 +279,8 @@ const SidebarLayout = ({ children }) => {
         </aside>
 
         {/* Main Content with Fixed Sidebar Offset */}
-        <div className="flex-1 lg:pl-64 w-full min-w-0 flex flex-col">
-          <main className="flex-1 p-3.5 sm:p-5 lg:p-7 max-w-7xl w-full mx-auto animate-slide-up min-w-0">
+        <div className="app-main flex-1 lg:pl-64 w-full min-w-0 flex flex-col">
+          <main className="app-content flex-1 p-3.5 sm:p-5 lg:p-7 max-w-7xl w-full mx-auto animate-slide-up min-w-0">
             {children}
           </main>
         </div>

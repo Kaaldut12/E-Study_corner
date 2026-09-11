@@ -95,7 +95,7 @@ const PublicNavbar = () => {
           
           {/* Theme Palette Switcher */}
           <div
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100/90 dark:bg-slate-900/90 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs"
+            className="theme-palette hidden lg:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl shadow-xs"
             title="Switch Platform Theme"
           >
             {THEMES.map((t) => (
@@ -104,6 +104,7 @@ const PublicNavbar = () => {
                 onClick={() => changeTheme(t.id)}
                 title={`${t.label} Theme (${t.category})`}
                 aria-label={`${t.label} Theme`}
+                aria-pressed={colorTheme === t.id}
                 style={{ backgroundColor: t.hex }}
                 className={`w-3.5 h-3.5 rounded-full transition-all duration-200 cursor-pointer ${
                   colorTheme === t.id
@@ -117,7 +118,7 @@ const PublicNavbar = () => {
           {/* Quick Light/Dark Mode Switcher */}
           <button
             onClick={toggleMode}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-slate-100/90 dark:bg-slate-900/90 hover:bg-slate-200/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800/90 transition shadow-xs text-xs font-semibold cursor-pointer group"
+            className="theme-control flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl transition shadow-xs text-xs font-semibold cursor-pointer group"
             title={mode === 'dark' ? 'Switch to Lite Theme (Daylight)' : 'Switch to Dark Theme (Midnight)'}
             aria-label="Toggle theme mode"
           >
@@ -131,10 +132,10 @@ const PublicNavbar = () => {
           {/* Conditional Auth State */}
           {!user ? (
             /* WITHOUT LOGIN STATE */
-            <div className="hidden sm:flex items-center gap-2">
+            <div className="hidden lg:flex items-center gap-2">
               <Link
                 to="/login"
-                className="py-2 px-3 sm:py-2.5 sm:px-4 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:text-slate-950 dark:hover:text-white bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800/80 transition-all border border-slate-200 dark:border-slate-800"
+                className="theme-control portal-login-link py-2 px-3 sm:py-2.5 sm:px-4 rounded-xl transition-all text-xs font-bold"
               >
                 Portal Login
               </Link>
@@ -147,7 +148,7 @@ const PublicNavbar = () => {
             </div>
           ) : (
             /* LOGGED IN STATE */
-            <div className="flex items-center gap-2 sm:gap-2.5">
+            <div className="hidden lg:flex items-center gap-2 sm:gap-2.5">
               <span
                 className={`hidden md:inline-block px-2.5 py-1 text-[11px] font-bold rounded-full border capitalize ${
                   roleBadgeStyle[user.role] || 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
@@ -180,7 +181,7 @@ const PublicNavbar = () => {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition cursor-pointer"
+            className="theme-control lg:hidden p-2 rounded-xl transition cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? (
@@ -198,7 +199,7 @@ const PublicNavbar = () => {
 
       {/* Mobile Drawer Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden absolute top-16 sm:top-20 left-0 w-full bg-white/95 dark:bg-slate-950/95 backdrop-blur-2xl border-b border-slate-200 dark:border-slate-800 p-5 space-y-4 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="theme-mobile-drawer lg:hidden absolute top-16 sm:top-20 left-0 w-full backdrop-blur-2xl p-5 space-y-4 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col space-y-1.5 text-sm font-semibold text-slate-700 dark:text-slate-300">
             <a
               href="/"
@@ -241,12 +242,14 @@ const PublicNavbar = () => {
           {/* Mobile Theme Selector */}
           <div className="pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
             <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Theme Palette</span>
-            <div className="flex items-center gap-1.5 px-2 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+            <div className="theme-palette theme-mobile-palette flex items-center gap-1.5 px-2 py-1.5 rounded-xl">
               {THEMES.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => changeTheme(t.id)}
                   title={`${t.label} Theme`}
+                  aria-label={`${t.label} Theme`}
+                  aria-pressed={colorTheme === t.id}
                   style={{ backgroundColor: t.hex }}
                   className={`w-4 h-4 rounded-full transition-all cursor-pointer ${
                     colorTheme === t.id ? 'ring-2 ring-slate-900 dark:ring-white scale-110 shadow-xs' : 'opacity-40 hover:opacity-100'
@@ -263,7 +266,7 @@ const PublicNavbar = () => {
                 <Link
                   to="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800 transition"
+                  className="theme-control portal-login-link w-full text-center py-2.5 rounded-xl transition"
                 >
                   Portal Login
                 </Link>
