@@ -129,7 +129,7 @@ const SidebarLayout = ({ children }) => {
   const navSections = navSectionsByRole[role] || navSectionsByRole.student;
 
   return (
-    <div className="app-shell min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
+    <div className="app-shell min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
       {/* Dynamic Background Ambient Glowing Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="ambient-blob-a absolute top-12 left-1/4 w-96 h-96 rounded-full blur-[140px] animate-float-slow" />
@@ -144,23 +144,28 @@ const SidebarLayout = ({ children }) => {
         {sidebarOpen && (
           <div
             onClick={() => setSidebarOpen(false)}
-            className="fixed inset-0 top-16 z-30 bg-slate-950/80 backdrop-blur-md lg:hidden transition-opacity"
+            className="fixed inset-0 top-16 z-30 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-md lg:hidden transition-opacity"
           />
         )}
 
         {/* Fixed Sidebar */}
         <aside
-          className={`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-slate-900/90 backdrop-blur-2xl border-r border-slate-800/80 shadow-2xl transform transition-transform duration-300 ease-out flex flex-col shrink-0 ${
+          className={`fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl border-r border-slate-200/90 dark:border-slate-800/80 shadow-sm dark:shadow-2xl transform transition-transform duration-300 ease-out flex flex-col shrink-0 ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
         >
-          <nav className="flex-1 px-3.5 py-5 space-y-6 overflow-y-auto">
+          <nav className="flex-1 px-3.5 py-5 space-y-6 overflow-y-auto scrollbar-none">
             {navSections.map((sec, secIdx) => (
               <div key={secIdx} className="space-y-1.5">
-                <div className="px-3 py-1 flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand" />
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest font-display">
-                    {sec.sectionTitle}
+                <div className="px-3 py-1 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-brand shadow-xs" />
+                    <span className="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest font-display">
+                      {sec.sectionTitle}
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-bold text-slate-400 dark:text-slate-600">
+                    {sec.items.length}
                   </span>
                 </div>
                 {sec.items.map((item) => {
@@ -175,23 +180,32 @@ const SidebarLayout = ({ children }) => {
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                       }}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group relative ${
+                        `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group relative cursor-pointer ${
                           isActive
                             ? 'bg-brand text-white shadow-brand ring-1 ring-white/20 font-bold translate-x-1'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/70 hover:translate-x-0.5'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100/90 dark:hover:bg-slate-800/70 hover:translate-x-0.5'
                         }`
                       }
                     >
                       {({ isActive }) => (
                         <>
+                          {isActive && (
+                            <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-white shadow-xs" />
+                          )}
                           <Icon
                             className={`w-4 h-4 shrink-0 transition-transform duration-200 ${
-                              isActive ? 'text-white scale-110' : 'text-slate-500 dark:text-slate-400 group-hover:text-slate-950 dark:group-hover:text-white group-hover:scale-105'
+                              isActive
+                                ? 'text-white scale-110'
+                                : 'text-slate-500 dark:text-slate-400 group-hover:text-brand dark:group-hover:text-white group-hover:scale-105'
                             }`}
                           />
                           <span className="truncate">{item.label}</span>
-                          {isActive && (
-                            <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-sm" />
+                          {isActive ? (
+                            <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
+                          ) : (
+                            <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-[11px] text-slate-400">
+                              ›
+                            </span>
                           )}
                         </>
                       )}
@@ -204,10 +218,10 @@ const SidebarLayout = ({ children }) => {
 
           {/* Sidebar Footer User Quick Card */}
           {user && (
-            <div className="p-3.5 border-t border-slate-200 dark:border-slate-800/80 bg-slate-50 dark:bg-slate-950/50 flex items-center justify-between gap-2">
+            <div className="p-3 border-t border-slate-200/90 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-950/60 flex items-center justify-between gap-2">
               <Link
                 to={`/${role === 'superadmin' ? 'admin' : role}/settings`}
-                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-slate-200/60 dark:hover:bg-slate-800/60 transition group flex-1 min-w-0"
+                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-slate-200/70 dark:hover:bg-slate-800/70 transition group flex-1 min-w-0 cursor-pointer"
                 title="Open Settings"
               >
                 <div className="relative shrink-0">
@@ -217,7 +231,7 @@ const SidebarLayout = ({ children }) => {
                   <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-slate-950 dark:group-hover:text-white transition">
+                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-brand transition">
                     {user.name}
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize flex items-center gap-1">
@@ -229,11 +243,11 @@ const SidebarLayout = ({ children }) => {
 
               <Link
                 to={`/${role === 'superadmin' ? 'admin' : role}/settings`}
-                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/80 transition shrink-0"
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-slate-800/80 transition shrink-0 cursor-pointer"
                 title="Settings"
                 aria-label="Settings"
               >
-                <SettingsIcon className="w-4 h-4 text-slate-400 group-hover:text-white" />
+                <SettingsIcon className="w-4 h-4 text-slate-400 group-hover:text-brand transition-colors" />
               </Link>
             </div>
           )}
