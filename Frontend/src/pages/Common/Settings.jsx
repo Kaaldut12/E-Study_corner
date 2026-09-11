@@ -41,6 +41,7 @@ const Settings = () => {
   // Aliases for compatibility
   const currentTheme = colorTheme;
   const changeTheme = (name) => setColorTheme(name);
+  const activeThemeObj = THEMES.find((t) => t.id === currentTheme) || THEMES[0];
 
   // ==================== PROFILE STATE ====================
   const [firstName, setFirstName] = useState('');
@@ -179,13 +180,13 @@ const Settings = () => {
       <div className="space-y-4 sm:space-y-6 max-w-5xl mx-auto">
         {/* Header Title */}
         <div className="flex flex-col gap-1">
-          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2.5">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2.5">
             <span className="p-2 rounded-xl bg-brand/10 text-brand border border-brand/20">
               <SettingsIcon className="w-5 h-5 text-brand" />
             </span>
             Account Settings & Preferences
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Manage your personal profile information, system appearance themes, and account security.
           </p>
         </div>
@@ -234,20 +235,20 @@ const Settings = () => {
         {activeTab === 'profile' && (
           <div className="space-y-4 sm:space-y-6">
             {/* Quick Profile Summary Ribbon */}
-            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-brand flex items-center justify-center font-black text-2xl text-white shadow-brand shrink-0 ring-2 ring-white/20">
                   {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="space-y-0.5">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-base sm:text-lg font-bold text-white">{user?.name || 'User Account'}</h2>
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{user?.name || 'User Account'}</h2>
                     <span className="px-2.5 py-0.5 text-[11px] font-semibold rounded-full bg-brand/10 text-brand border border-brand/30 capitalize">
                       {roleLabels[user?.role] || user?.role}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 font-mono">{user?.email}</p>
-                  <p className="text-[11px] text-slate-400">{collegeName}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">{user?.email}</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{collegeName}</p>
                 </div>
               </div>
 
@@ -258,10 +259,10 @@ const Settings = () => {
             </div>
 
             {/* Profile Edit Form Card */}
-            <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
-              <div className="border-b border-slate-800/80 pb-3">
-                <h2 className="text-base sm:text-lg font-bold text-white">Personal Information</h2>
-                <p className="text-xs text-slate-400">Update your academic identity and contact coordinates.</p>
+            <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+              <div className="border-b border-slate-200 dark:border-slate-800/80 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Personal Information</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Update your academic identity and contact coordinates.</p>
               </div>
 
               {profileToast && (
@@ -424,38 +425,52 @@ const Settings = () => {
 
         {/* TAB 2: APPEARANCE & THEMES */}
         {activeTab === 'themes' && (
-          <div className="space-y-6">
-            {/* Appearance Mode (Lite vs Dark Theme) */}
-            <div className="glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
-              <div>
-                <h2 className="text-base sm:text-lg font-bold text-white">Appearance Mode</h2>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
-                  Switch between the crisp, luminous <strong>Lite Theme</strong> and the futuristic midnight <strong>Dark Theme</strong>.
-                </p>
+          <div className="space-y-6 sm:space-y-8">
+            {/* 1. Appearance Mode (Lite vs Dark Theme) */}
+            <div className="glass-panel p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 space-y-5 relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand/10 text-brand border border-brand/20">
+                      Display Canvas
+                    </span>
+                  </div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Appearance Mode</h2>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                    Switch between the luminous <strong>Lite Theme</strong> and the futuristic midnight <strong>Dark Theme</strong>.
+                  </p>
+                </div>
+
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400">
+                  <span>Active Mode:</span>
+                  <span className="font-bold text-slate-900 dark:text-white capitalize flex items-center gap-1">
+                    {mode === 'light' ? '☀️ Lite Mode' : '🌙 Dark Mode'}
+                  </span>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 {MODES.map((m) => {
                   const isModeActive = mode === m.id;
                   return (
                     <div
                       key={m.id}
                       onClick={() => setMode(m.id)}
-                      className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-0.5 ${
+                      className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:-translate-y-0.5 flex flex-col justify-between ${
                         isModeActive
                           ? m.id === 'light'
-                            ? 'bg-white text-slate-900 border-indigo-500 ring-2 ring-indigo-500/40 shadow-xl'
-                            : 'bg-slate-950 text-white border-indigo-500 ring-2 ring-indigo-500/40 shadow-xl'
-                          : 'bg-slate-900/60 text-slate-300 border-slate-800 hover:border-slate-700'
+                            ? 'bg-white text-slate-900 border-amber-400/80 ring-2 ring-amber-400/40 shadow-xl shadow-amber-500/10'
+                            : 'bg-slate-950 text-white border-indigo-500/80 ring-2 ring-indigo-500/40 shadow-xl shadow-indigo-500/20'
+                          : 'bg-white/70 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800/90 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900/80 shadow-xs'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-xs ${
+                            className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-xs transition-transform group-hover:scale-105 border ${
                               m.id === 'light'
-                                ? 'bg-amber-400/20 text-amber-500'
-                                : 'bg-indigo-500/20 text-indigo-400'
+                                ? 'bg-linear-to-br from-amber-400/20 to-orange-400/10 text-amber-500 border-amber-400/30'
+                                : 'bg-linear-to-br from-indigo-500/20 to-purple-500/10 text-indigo-400 border-indigo-500/30'
                             }`}
                           >
                             {m.id === 'light' ? (
@@ -465,27 +480,31 @@ const Settings = () => {
                             )}
                           </div>
                           <div>
-                            <h3 className="text-sm sm:text-base font-bold">
+                            <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                               {m.label}
                             </h3>
-                            <span className="text-[10px] font-mono uppercase tracking-wider opacity-70">
-                              {m.id === 'light' ? 'Daylight Canvas' : 'Midnight Obsidian'}
+                            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                              {m.badge || (m.id === 'light' ? 'Daylight Canvas' : 'Midnight Obsidian')}
                             </span>
                           </div>
                         </div>
 
                         {isModeActive ? (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-brand text-white shadow-xs">
+                          <span
+                            className={`px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-white shadow-xs ${
+                              m.id === 'light' ? 'bg-amber-500' : 'bg-brand'
+                            }`}
+                          >
                             ✓ Active
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-200/80 dark:bg-slate-800/80 group-hover:bg-slate-300 dark:group-hover:bg-slate-700 group-hover:text-slate-950 dark:group-hover:text-white transition">
+                          <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 group-hover:text-slate-950 dark:group-hover:text-white transition">
                             Select
                           </span>
                         )}
                       </div>
 
-                      <p className="text-xs opacity-75 leading-relaxed">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                         {m.description}
                       </p>
                     </div>
@@ -494,75 +513,123 @@ const Settings = () => {
               </div>
             </div>
 
-            {/* Color Accent Themes */}
-            <div className="glass-panel p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
-              <div>
-                <h2 className="text-base sm:text-lg font-bold text-white">Color Palettes & Accent Themes</h2>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
-                  Choose your signature color palette. This customizes buttons, gradient text, glow pills, and borders across every screen.
-                </p>
+            {/* 2. Color Palettes & Accent Themes */}
+            <div className="glass-panel p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 space-y-6 relative overflow-hidden">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand/10 text-brand border border-brand/20">
+                      Signature Styling
+                    </span>
+                  </div>
+                  <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Color Palettes & Accent Themes</h2>
+                  <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                    Choose your platform signature palette. Buttons, glowing pills, gradient typography, and border accents dynamically sync with your choice.
+                  </p>
+                </div>
+
+                {/* Active Theme Chip Indicator */}
+                <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-2xl bg-slate-100 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-xs shrink-0 self-start sm:self-auto">
+                  <div
+                    className="w-3.5 h-3.5 rounded-full shadow-xs ring-2 ring-white dark:ring-slate-950"
+                    style={{ backgroundColor: activeThemeObj?.hex || '#6366f1' }}
+                  />
+                  <div>
+                    <div className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Active Palette</div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white leading-none">
+                      {activeThemeObj?.label || 'Electric Indigo'}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Theme Grid Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
                 {THEMES.map((t) => {
                   const isSelected = currentTheme === t.id;
                   return (
                     <div
                       key={t.id}
                       onClick={() => changeTheme(t.id)}
-                      className={`p-4 rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden group hover:translate-y-0.5 ${
+                      className={`rounded-2xl border transition-all duration-300 cursor-pointer relative overflow-hidden flex flex-col justify-between group hover:-translate-y-1 ${
                         isSelected
-                          ? `${t.borderCol} ring-2 ring-white/30 shadow-xl bg-slate-900/90`
-                          : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-700'
+                          ? 'bg-white dark:bg-slate-900/95 border-slate-300 dark:border-slate-700 shadow-xl ring-2'
+                          : 'bg-white/80 dark:bg-slate-900/50 border-slate-200/90 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900/80 shadow-xs hover:shadow-lg'
                       }`}
                       style={{
-                        boxShadow: isSelected ? `0 12px 28px ${t.glowCol}` : undefined
+                        borderColor: isSelected ? t.hex : undefined,
+                        boxShadow: isSelected
+                          ? `0 14px 30px -8px ${t.glowCol}, 0 4px 12px rgba(0,0,0,0.06)`
+                          : undefined,
+                        '--tw-ring-color': isSelected ? t.hex : undefined
                       }}
                     >
-                      {/* Top Decorative Gradient Line */}
-                      <div className={`h-1.5 w-full bg-linear-to-r ${t.accentGrad} rounded-full mb-3`} />
+                      {/* Top Physical Swatch Ribbon */}
+                      <div
+                        className="h-2 w-full transition-opacity"
+                        style={{ background: t.gradientCss }}
+                      />
 
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <div
-                            className="w-5 h-5 rounded-full shrink-0 shadow-md ring-2 ring-white/30"
-                            style={{ backgroundColor: t.hex }}
-                          />
-                          <div>
-                            <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-slate-950 dark:group-hover:text-slate-100 transition">
-                              {t.label}
-                            </h3>
-                            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                              {t.hex}
-                            </span>
+                      <div className="p-4 sm:p-5 space-y-3.5 flex-1 flex flex-col justify-between">
+                        {/* Header: Color Orb + Title + Hex + Active Pill */}
+                        <div className="flex items-start justify-between gap-2.5">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div
+                              className="w-7 h-7 rounded-xl shrink-0 shadow-md ring-2 ring-white/80 dark:ring-slate-950 flex items-center justify-center transition-transform group-hover:scale-105"
+                              style={{
+                                backgroundColor: t.hex,
+                                boxShadow: `0 4px 14px ${t.glowCol}`
+                              }}
+                            />
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white group-hover:text-brand transition truncate">
+                                  {t.label}
+                                </h3>
+                                <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                                  {t.hex}
+                                </span>
+                              </div>
+                              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                {t.category}
+                              </span>
+                            </div>
                           </div>
+
+                          {isSelected ? (
+                            <span
+                              className="px-2.5 py-1 rounded-full flex items-center gap-1 text-[10px] font-extrabold text-white shadow-xs shrink-0"
+                              style={{ backgroundColor: t.hex }}
+                            >
+                              <Check className="w-3 h-3 stroke-3" />
+                              <span>Active</span>
+                            </span>
+                          ) : (
+                            <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 group-hover:bg-slate-200 dark:group-hover:bg-slate-700 group-hover:text-slate-950 dark:group-hover:text-white transition shrink-0">
+                              Apply
+                            </span>
+                          )}
                         </div>
 
-                        {isSelected ? (
-                          <span className="w-5 h-5 rounded-full flex items-center justify-center bg-white text-slate-950 shadow-xs">
-                            <Check className="w-3 h-3 stroke-3" />
-                          </span>
-                        ) : (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold text-slate-600 dark:text-slate-400 bg-slate-200/80 dark:bg-slate-800/80 group-hover:bg-slate-300 dark:group-hover:bg-slate-700 group-hover:text-slate-950 dark:group-hover:text-white transition">
-                            Pick
-                          </span>
-                        )}
-                      </div>
+                        {/* Description */}
+                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                          {t.description}
+                        </p>
 
-                      <p className="text-[11px] text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
-                        {t.description}
-                      </p>
-
-                      {/* Mini Preview Bar */}
-                      <div className="mt-3 pt-2.5 border-t border-slate-800/60 flex items-center justify-between">
-                        <span className="text-[10px] text-slate-500">Preview:</span>
-                        <div
-                          className="w-14 h-3 rounded-full shadow-xs"
-                          style={{
-                            background: `linear-gradient(to right, ${t.hex}, #a855f7)`
-                          }}
-                        />
+                        {/* Genuine 4-Stop Color Spectrum Palette Strip */}
+                        <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800/70 flex items-center justify-between gap-2">
+                          <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">Palette Swatches:</span>
+                          <div className="flex items-center gap-1.5">
+                            {t.swatches.map((swatchColor, sIdx) => (
+                              <div
+                                key={sIdx}
+                                title={`Tone ${sIdx + 1}: ${swatchColor}`}
+                                className="w-4 h-4 rounded-full border border-white/80 dark:border-slate-900 shadow-xs transition-transform hover:scale-125"
+                                style={{ backgroundColor: swatchColor }}
+                              />
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
@@ -570,80 +637,83 @@ const Settings = () => {
               </div>
             </div>
 
-            {/* Live Interactive Component Preview Card */}
-            <div className="glass-panel p-5 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
-              <div className="border-b border-slate-800/80 pb-3 flex flex-wrap items-center justify-between gap-2">
+            {/* 3. Live Interactive Component Preview Card */}
+            <div className="glass-panel p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 space-y-5 relative overflow-hidden">
+              <div className="border-b border-slate-200 dark:border-slate-800/80 pb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-white">Live Theme Component Preview</h3>
-                  <p className="text-xs text-slate-400">See how your active mode and accent palette style buttons, badges, and headings.</p>
+                  <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Live Theme Component Preview</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Observe real-time styling of buttons, gradient typography, and badges under your active mode and palette.</p>
                 </div>
-                <span className="px-3 py-1 rounded-full text-xs font-semibold bg-brand/10 text-brand border border-brand/30">
-                  {mode === 'light' ? '☀️ Lite Mode Active' : '🌙 Dark Mode Active'}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="px-3 py-1.5 rounded-full text-xs font-bold bg-brand/10 text-brand border border-brand/30 shadow-xs">
+                    ✨ {activeThemeObj?.label || 'Active Theme'} ({mode === 'light' ? 'Lite Mode' : 'Dark Mode'})
+                  </span>
+                </div>
               </div>
 
+              {/* Dynamic Button Matrix */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* 1. Primary Dynamic Button */}
-                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                <div className="p-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Primary Button</span>
-                    <Sparkles className="w-3 h-3 text-brand" />
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Primary Button</span>
+                    <Sparkles className="w-3.5 h-3.5 text-brand" />
                   </div>
                   <button type="button" className="w-full py-2.5 px-3 btn-premium text-white text-xs font-bold rounded-xl cursor-pointer">
                     Dynamic Primary
                   </button>
-                  <p className="text-[10px] text-slate-400">Filled with active theme gradient</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Signature gradient with interactive lift</p>
                 </div>
 
                 {/* 2. Shimmer Dynamic Button */}
-                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                <div className="p-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Shimmer Button</span>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Shimmer Button</span>
                     <span className="w-1.5 h-1.5 rounded-full bg-brand animate-ping" />
                   </div>
                   <button type="button" className="w-full py-2.5 px-3 btn-shimmer text-white text-xs font-bold rounded-xl cursor-pointer">
                     Shimmering Ray
                   </button>
-                  <p className="text-[10px] text-slate-400">Animated light ray sweep</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Continuous animated ray sweep</p>
                 </div>
 
                 {/* 3. Subtle Frosted Button */}
-                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                <div className="p-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Subtle Button</span>
-                    <span className="text-[10px] font-mono text-brand">Soft</span>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Subtle Button</span>
+                    <span className="text-[10px] font-mono text-brand font-bold">Soft</span>
                   </div>
-                  <button type="button" className="w-full py-2.5 px-3 btn-brand-subtle text-xs font-bold cursor-pointer">
+                  <button type="button" className="w-full py-2.5 px-3 btn-brand-subtle text-xs font-bold rounded-xl cursor-pointer">
                     Subtle Accent
                   </button>
-                  <p className="text-[10px] text-slate-400">Frosted theme tinted background</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Frosted theme-tinted background</p>
                 </div>
 
                 {/* 4. Outline Glow Button */}
-                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2.5">
+                <div className="p-4 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Outline Button</span>
-                    <span className="text-[10px] font-mono text-brand">Border</span>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Outline Button</span>
+                    <span className="text-[10px] font-mono text-brand font-bold">Border</span>
                   </div>
-                  <button type="button" className="w-full py-2.5 px-3 btn-outline-brand text-xs font-bold cursor-pointer">
+                  <button type="button" className="w-full py-2.5 px-3 btn-outline-brand text-xs font-bold rounded-xl cursor-pointer">
                     Outline Glow
                   </button>
-                  <p className="text-[10px] text-slate-400">Border tinted with active palette</p>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400">Crisp border tinted with palette</p>
                 </div>
               </div>
 
-              {/* Additional Typography & Badges preview */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Gradient Heading</span>
-                  <h4 className="text-base font-black t-brand-grad font-display">
-                    E-Study Corner Platform
+              {/* Typography & Badges Showcase */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                <div className="p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 space-y-2 shadow-xs">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Gradient Heading</span>
+                  <h4 className="text-base sm:text-lg font-black t-brand-grad font-display leading-snug">
+                    E-Study Corner Academic Platform
                   </h4>
-                  <p className="text-[11px] text-slate-400">Adaptive gradient typography matching active palette</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">Adaptive gradient typography matching active palette</p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/80 space-y-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Glow Pill & Badge</span>
+                <div className="p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 space-y-2 shadow-xs">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Interactive Badges</span>
                   <div className="flex items-center gap-2 pt-1 flex-wrap">
                     <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand/10 text-brand border border-brand/30 shadow-xs">
                       Active Theme Pill
@@ -651,6 +721,28 @@ const Settings = () => {
                     <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-brand text-white shadow-brand">
                       Filled Badge
                     </span>
+                    <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse" />
+                      Live Pulse
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4 sm:p-5 rounded-2xl bg-white/80 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-800/80 space-y-2 shadow-xs">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Theme Token Values</span>
+                  <div className="space-y-1.5 pt-1 text-xs">
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                      <span className="font-mono text-[11px]">Primary Hex:</span>
+                      <span className="font-mono font-bold text-slate-900 dark:text-white">{activeThemeObj?.hex}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                      <span className="font-mono text-[11px]">Vibe/Tag:</span>
+                      <span className="font-semibold text-brand">{activeThemeObj?.category}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-slate-600 dark:text-slate-400">
+                      <span className="font-mono text-[11px]">Mode:</span>
+                      <span className="font-semibold text-slate-900 dark:text-white capitalize">{mode} Canvas</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -661,10 +753,10 @@ const Settings = () => {
         {/* TAB 3: SECURITY & PASSWORD */}
         {activeTab === 'security' && (
           <div className="space-y-4 sm:space-y-6">
-            <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-800/80 space-y-4">
-              <div className="border-b border-slate-800/80 pb-3">
-                <h2 className="text-base sm:text-lg font-bold text-white">Update Account Password</h2>
-                <p className="text-xs text-slate-400">Ensure your account remains safe with strong, unique credentials.</p>
+            <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 space-y-4">
+              <div className="border-b border-slate-200 dark:border-slate-800/80 pb-3">
+                <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Update Account Password</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Ensure your account remains safe with strong, unique credentials.</p>
               </div>
 
               {passwordToast && (

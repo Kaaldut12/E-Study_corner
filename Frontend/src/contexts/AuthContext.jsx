@@ -25,8 +25,17 @@ export const AuthProvider = ({ children }) => {
             setUser(res.data.user);
           }
         } catch (err) {
-          console.warn('Session token verification failed, terminating invalid session:', err?.response?.data?.message || err?.message);
-          logout();
+          const cachedUser = localStorage.getItem('user_data');
+          if (cachedUser && (err.message === 'Network Error' || !err.response)) {
+            try {
+              setUser(JSON.parse(cachedUser));
+            } catch {
+              logout();
+            }
+          } else {
+            console.warn('Session token verification failed, terminating invalid session:', err?.response?.data?.message || err?.message);
+            logout();
+          }
         }
       }
       setLoading(false);

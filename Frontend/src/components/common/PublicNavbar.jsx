@@ -1,39 +1,17 @@
 // frontend/src/components/common/PublicNavbar.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-
-const THEMES = [
-  { id: 'indigo', label: 'Tidal Teal', hex: '#14b8a6' },
-  { id: 'emerald', label: 'Emerald', hex: '#10b981' },
-  { id: 'amber', label: 'Amber', hex: '#f59e0b' },
-  { id: 'rose', label: 'Rose', hex: '#f43f5e' },
-];
+import { useTheme } from '../../contexts/ThemeContext';
+import { THEMES } from '../../utils/themes';
 
 const PublicNavbar = () => {
   const { user, logout } = useAuth();
+  const { colorTheme, setColorTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState(
-    () => localStorage.getItem('estudy_theme') || 'indigo'
-  );
-
-  useEffect(() => {
-    const saved = localStorage.getItem('estudy_theme') || 'indigo';
-    applyTheme(saved);
-  }, []);
-
-  const applyTheme = (name) => {
-    if (name === 'indigo') {
-      document.documentElement.removeAttribute('data-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', name);
-    }
-  };
 
   const changeTheme = (name) => {
-    setCurrentTheme(name);
-    localStorage.setItem('estudy_theme', name);
-    applyTheme(name);
+    setColorTheme(name);
   };
 
   const openEnquiry = (e) => {
@@ -116,19 +94,19 @@ const PublicNavbar = () => {
           
           {/* Theme Palette Switcher */}
           <div
-            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-900/90 rounded-xl border border-slate-800"
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-100/90 dark:bg-slate-900/90 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs"
             title="Switch Platform Theme"
           >
             {THEMES.map((t) => (
               <button
                 key={t.id}
                 onClick={() => changeTheme(t.id)}
-                title={`${t.label} Theme`}
+                title={`${t.label} Theme (${t.category})`}
                 aria-label={`${t.label} Theme`}
                 style={{ backgroundColor: t.hex }}
-                className={`w-3.5 h-3.5 rounded-full transition-all duration-200 ${
-                  currentTheme === t.id
-                    ? 'ring-2 ring-white ring-offset-1 ring-offset-slate-950 scale-110'
+                className={`w-3.5 h-3.5 rounded-full transition-all duration-200 cursor-pointer ${
+                  colorTheme === t.id
+                    ? 'ring-2 ring-slate-900 dark:ring-white ring-offset-1 ring-offset-white dark:ring-offset-slate-950 scale-110 shadow-xs'
                     : 'opacity-40 hover:opacity-100 hover:scale-105'
                 }`}
               />
@@ -246,17 +224,17 @@ const PublicNavbar = () => {
           </nav>
 
           {/* Mobile Theme Selector */}
-          <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
-            <span className="text-xs text-slate-400 font-medium">Theme Palette</span>
-            <div className="flex items-center gap-2 px-2 py-1.5 bg-slate-900 rounded-xl border border-slate-800">
+          <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between">
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Theme Palette</span>
+            <div className="flex items-center gap-1.5 px-2 py-1.5 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
               {THEMES.map((t) => (
                 <button
                   key={t.id}
                   onClick={() => changeTheme(t.id)}
                   title={`${t.label} Theme`}
                   style={{ backgroundColor: t.hex }}
-                  className={`w-4 h-4 rounded-full transition-all ${
-                    currentTheme === t.id ? 'ring-2 ring-white scale-110' : 'opacity-40'
+                  className={`w-4 h-4 rounded-full transition-all cursor-pointer ${
+                    colorTheme === t.id ? 'ring-2 ring-slate-900 dark:ring-white scale-110 shadow-xs' : 'opacity-40 hover:opacity-100'
                   }`}
                 />
               ))}

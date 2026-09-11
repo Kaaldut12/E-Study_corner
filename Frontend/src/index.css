@@ -9,62 +9,35 @@
   font-family: 'Manrope', system-ui, sans-serif;
   color-scheme: dark;
 
-  /* === INDIGO THEME (Default) === */
-  --brand-1: #0f766e;
-  --brand-2: #0d9488;
-  --brand-3: #2dd4bf;
-  --brand-t1: #2dd4bf;
-  --brand-t2: #99f6e4;
-  --brand-glow: rgba(20, 184, 166, 0.3);
-  --brand-border: rgba(20, 184, 166, 0.3);
-  --brand-bg: rgba(13, 148, 136, 0.12);
-  --brand-bg-hover: rgba(13, 148, 136, 0.22);
-  --brand-grad: linear-gradient(135deg, #0f766e 0%, #0d9488 52%, #2563eb 100%);
+  /* === ELECTRIC INDIGO (Default Signature AI Theme) === */
+  --brand-1: #4338ca;
+  --brand-2: #6366f1;
+  --brand-3: #818cf8;
+  --brand-t1: #a5b4fc;
+  --brand-t2: #e0e7ff;
+  --brand-glow: rgba(99, 102, 241, 0.35);
+  --brand-border: rgba(99, 102, 241, 0.3);
+  --brand-bg: rgba(99, 102, 241, 0.12);
+  --brand-bg-hover: rgba(99, 102, 241, 0.22);
+  --brand-grad: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #8b5cf6 100%);
 }
 
-[data-theme="emerald"] {
-  --brand-1: #059669;
-  --brand-2: #10b981;
-  --brand-3: #34d399;
-  --brand-t1: #34d399;
-  --brand-t2: #a7f3d0;
-  --brand-glow: rgba(16, 185, 129, 0.35);
-  --brand-border: rgba(16, 185, 129, 0.3);
-  --brand-bg: rgba(5, 150, 105, 0.12);
-  --brand-bg-hover: rgba(5, 150, 105, 0.22);
-  --brand-grad: linear-gradient(135deg, #059669 0%, #10b981 50%, #06b6d4 100%);
+[data-theme="indigo"] {
+  --brand-1: #4338ca;
+  --brand-2: #6366f1;
+  --brand-3: #818cf8;
+  --brand-t1: #a5b4fc;
+  --brand-t2: #e0e7ff;
+  --brand-glow: rgba(99, 102, 241, 0.35);
+  --brand-border: rgba(99, 102, 241, 0.3);
+  --brand-bg: rgba(99, 102, 241, 0.12);
+  --brand-bg-hover: rgba(99, 102, 241, 0.22);
+  --brand-grad: linear-gradient(135deg, #4338ca 0%, #6366f1 50%, #8b5cf6 100%);
 }
 
-[data-theme="amber"] {
-  --brand-1: #d97706;
-  --brand-2: #f59e0b;
-  --brand-3: #fbbf24;
-  --brand-t1: #fbbf24;
-  --brand-t2: #fde68a;
-  --brand-glow: rgba(245, 158, 11, 0.35);
-  --brand-border: rgba(245, 158, 11, 0.3);
-  --brand-bg: rgba(217, 119, 6, 0.12);
-  --brand-bg-hover: rgba(217, 119, 6, 0.22);
-  --brand-grad: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #f97316 100%);
-}
-
-[data-theme="rose"] {
-  --brand-1: #e11d48;
-  --brand-2: #f43f5e;
-  --brand-3: #fb7185;
-  --brand-t1: #fb7185;
-  --brand-t2: #fecdd3;
-  --brand-glow: rgba(225, 29, 72, 0.35);
-  --brand-border: rgba(225, 29, 72, 0.3);
-  --brand-bg: rgba(225, 29, 72, 0.12);
-  --brand-bg-hover: rgba(225, 29, 72, 0.22);
-  --brand-grad: linear-gradient(135deg, #e11d48 0%, #f43f5e 50%, #ec4899 100%);
-}
-
-/* === EXPANDED COLOR THEMES === */
 [data-theme="sapphire"] {
-  --brand-1: #0284c7;
-  --brand-2: #0ea5e9;
+  --brand-1: #0369a1;
+  --brand-2: #0284c7;
   --brand-3: #38bdf8;
   --brand-t1: #38bdf8;
   --brand-t2: #bae6fd;
@@ -72,12 +45,64 @@
   --brand-border: rgba(14, 165, 233, 0.3);
   --brand-bg: rgba(2, 132, 199, 0.12);
   --brand-bg-hover: rgba(2, 132, 199, 0.22);
-  --brand-grad: linear-gradient(135deg, #0284c7 0%, #0ea5e9 50%, #2563eb 100%);
+  --brand-grad: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #2563eb 100%);
+}
+
+[data-theme="emerald"] {
+  --brand-1: #047857;
+  --brand-2: #059669;
+  --brand-3: #34d399;
+  --brand-t1: #34d399;
+  --brand-t2: #a7f3d0;
+  --brand-glow: rgba(16, 185, 129, 0.35);
+  --brand-border: rgba(16, 185, 129, 0.3);
+  --brand-bg: rgba(5, 150, 105, 0.12);
+  --brand-bg-hover: rgba(5, 150, 105, 0.22);
+  --brand-grad: linear-gradient(135deg, #047857 0%, #059669 50%, #10b981 100%);
+}
+
+[data-theme="teal"] {
+  --brand-1: #0f766e;
+  --brand-2: #0d9488;
+  --brand-3: #2dd4bf;
+  --brand-t1: #2dd4bf;
+  --brand-t2: #99f6e4;
+  --brand-glow: rgba(20, 184, 166, 0.35);
+  --brand-border: rgba(20, 184, 166, 0.3);
+  --brand-bg: rgba(13, 148, 136, 0.12);
+  --brand-bg-hover: rgba(13, 148, 136, 0.22);
+  --brand-grad: linear-gradient(135deg, #0f766e 0%, #0d9488 50%, #06b6d4 100%);
+}
+
+[data-theme="amber"] {
+  --brand-1: #b45309;
+  --brand-2: #d97706;
+  --brand-3: #fbbf24;
+  --brand-t1: #fbbf24;
+  --brand-t2: #fde68a;
+  --brand-glow: rgba(245, 158, 11, 0.35);
+  --brand-border: rgba(245, 158, 11, 0.3);
+  --brand-bg: rgba(217, 119, 6, 0.12);
+  --brand-bg-hover: rgba(217, 119, 6, 0.22);
+  --brand-grad: linear-gradient(135deg, #b45309 0%, #d97706 50%, #f59e0b 100%);
+}
+
+[data-theme="rose"] {
+  --brand-1: #be123c;
+  --brand-2: #e11d48;
+  --brand-3: #fb7185;
+  --brand-t1: #fb7185;
+  --brand-t2: #fecdd3;
+  --brand-glow: rgba(225, 29, 72, 0.35);
+  --brand-border: rgba(225, 29, 72, 0.3);
+  --brand-bg: rgba(225, 29, 72, 0.12);
+  --brand-bg-hover: rgba(225, 29, 72, 0.22);
+  --brand-grad: linear-gradient(135deg, #be123c 0%, #e11d48 50%, #ec4899 100%);
 }
 
 [data-theme="amethyst"] {
-  --brand-1: #7e22ce;
-  --brand-2: #9333ea;
+  --brand-1: #581c87;
+  --brand-2: #7e22ce;
   --brand-3: #c084fc;
   --brand-t1: #c084fc;
   --brand-t2: #e9d5ff;
@@ -85,12 +110,12 @@
   --brand-border: rgba(147, 51, 234, 0.3);
   --brand-bg: rgba(126, 34, 206, 0.12);
   --brand-bg-hover: rgba(126, 34, 206, 0.22);
-  --brand-grad: linear-gradient(135deg, #7e22ce 0%, #a855f7 50%, #ec4899 100%);
+  --brand-grad: linear-gradient(135deg, #581c87 0%, #7e22ce 50%, #a855f7 100%);
 }
 
 [data-theme="coral"] {
-  --brand-1: #c2410c;
-  --brand-2: #ea580c;
+  --brand-1: #9a3412;
+  --brand-2: #c2410c;
   --brand-3: #fb923c;
   --brand-t1: #fb923c;
   --brand-t2: #fed7aa;
@@ -98,12 +123,12 @@
   --brand-border: rgba(234, 88, 12, 0.3);
   --brand-bg: rgba(194, 65, 12, 0.12);
   --brand-bg-hover: rgba(194, 65, 12, 0.22);
-  --brand-grad: linear-gradient(135deg, #ea580c 0%, #f97316 50%, #f43f5e 100%);
+  --brand-grad: linear-gradient(135deg, #9a3412 0%, #ea580c 50%, #f97316 100%);
 }
 
 [data-theme="slate"] {
-  --brand-1: #475569;
-  --brand-2: #64748b;
+  --brand-1: #1e293b;
+  --brand-2: #475569;
   --brand-3: #94a3b8;
   --brand-t1: #94a3b8;
   --brand-t2: #e2e8f0;
@@ -111,7 +136,7 @@
   --brand-border: rgba(100, 116, 139, 0.3);
   --brand-bg: rgba(71, 85, 105, 0.14);
   --brand-bg-hover: rgba(71, 85, 105, 0.25);
-  --brand-grad: linear-gradient(135deg, #334155 0%, #64748b 50%, #94a3b8 100%);
+  --brand-grad: linear-gradient(135deg, #1e293b 0%, #475569 50%, #64748b 100%);
 }
 
 /* ============================================================
@@ -859,28 +884,43 @@ html.light .btn-dashboard-purple:hover,
 /* 4. Subtle & Outline Buttons in Light Mode */
 html.light .btn-brand-subtle,
 [data-mode="light"] .btn-brand-subtle {
-  background-color: rgba(79, 70, 229, 0.09) !important;
-  color: #4338ca !important;
-  border: 1px solid rgba(99, 102, 241, 0.28) !important;
+  background-color: var(--brand-bg) !important;
+  color: var(--brand-1) !important;
+  border: 1px solid var(--brand-border) !important;
 }
 html.light .btn-brand-subtle:hover,
 [data-mode="light"] .btn-brand-subtle:hover {
-  background-color: rgba(79, 70, 229, 0.18) !important;
-  color: #3730a3 !important;
-  border-color: rgba(99, 102, 241, 0.5) !important;
+  background-color: var(--brand-bg-hover) !important;
+  color: var(--brand-1) !important;
+  border-color: var(--brand-2) !important;
 }
 
 html.light .btn-outline-brand,
 [data-mode="light"] .btn-outline-brand {
   background: #ffffff !important;
-  color: #4f46e5 !important;
-  border: 1.5px solid #6366f1 !important;
+  color: var(--brand-1) !important;
+  border: 1.5px solid var(--brand-2) !important;
 }
 html.light .btn-outline-brand:hover,
 [data-mode="light"] .btn-outline-brand:hover {
-  background: rgba(79, 70, 229, 0.08) !important;
-  color: #3730a3 !important;
-  border-color: #4338ca !important;
+  background: var(--brand-bg) !important;
+  color: var(--brand-1) !important;
+  border-color: var(--brand-1) !important;
+}
+
+/* Dynamic brand text and badge contrast in Light Mode */
+html.light .text-brand,
+[data-mode="light"] .text-brand,
+html.light .t-brand,
+[data-mode="light"] .t-brand {
+  color: var(--brand-1) !important;
+}
+
+html.light .badge-brand,
+[data-mode="light"] .badge-brand {
+  background-color: var(--brand-bg) !important;
+  color: var(--brand-1) !important;
+  border-color: var(--brand-border) !important;
 }
 
 /* 5. Generic Utility Buttons (like Slate-800/900 buttons, pills, filters) in Light Mode */
@@ -1279,7 +1319,8 @@ h3 {
    BRAND & GRADIENT UTILITIES
    ============================================================ */
 
-.t-brand { color: var(--brand-t1); }
+.t-brand,
+.text-brand { color: var(--brand-t1); }
 .t-brand-2 { color: var(--brand-t2); }
 
 .t-brand-grad,
