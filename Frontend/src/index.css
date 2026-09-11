@@ -1567,8 +1567,38 @@ h3 {
   filter: brightness(1.1);
 }
 
-.bg-brand-subtle { background: var(--brand-bg); }
+.bg-brand-subtle {
+  background: var(--brand-bg);
+  border-color: var(--brand-border);
+}
 .bg-brand-subtle-hover:hover { background: var(--brand-bg-hover); }
+
+html.light .bg-brand-subtle,
+[data-mode="light"] .bg-brand-subtle {
+  background: color-mix(in srgb, var(--brand-bg) 60%, #ffffff) !important;
+  border-color: color-mix(in srgb, var(--brand-border) 70%, #cbd5e1) !important;
+}
+
+/* Ensure pill badges with bg-brand-subtle adopt active theme color */
+.bg-brand-subtle.text-indigo-400,
+.bg-brand-subtle.text-indigo-300,
+.bg-brand-subtle .text-indigo-400,
+.bg-brand-subtle .text-indigo-300,
+span.bg-brand-subtle {
+  color: var(--brand-t1);
+}
+
+html.light .bg-brand-subtle.text-indigo-400,
+html.light .bg-brand-subtle.text-indigo-300,
+html.light .bg-brand-subtle .text-indigo-400,
+html.light .bg-brand-subtle .text-indigo-300,
+html.light span.bg-brand-subtle,
+[data-mode="light"] .bg-brand-subtle.text-indigo-400,
+[data-mode="light"] .bg-brand-subtle.text-indigo-300,
+[data-mode="light"] span.bg-brand-subtle {
+  color: var(--brand-1) !important;
+  font-weight: 750 !important;
+}
 
 .border-brand { border-color: var(--brand-border) !important; }
 .border-brand-solid { border-color: var(--brand-t1); }
@@ -1583,10 +1613,25 @@ h3 {
   border: 1px solid var(--brand-border);
 }
 
+/* Theme Chip Component (Adapts to Active Palette in both Light & Dark modes) */
 .theme-chip {
-  background: color-mix(in srgb, var(--brand-bg) 75%, rgba(255, 255, 255, 0.9));
-  border: 1px solid color-mix(in srgb, var(--brand-border) 82%, rgba(255,255,255,0.3));
-  color: var(--brand-2);
+  transition: all 0.2s ease;
+}
+
+html.light .theme-chip,
+[data-mode="light"] .theme-chip {
+  background: color-mix(in srgb, var(--brand-bg) 40%, #ffffff) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-border) 60%, #cbd5e1) !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05);
+}
+
+html.dark .theme-chip,
+[data-mode="dark"] .theme-chip,
+.theme-chip {
+  background: color-mix(in srgb, var(--brand-bg) 35%, rgba(15, 23, 42, 0.85)) !important;
+  border: 1px solid color-mix(in srgb, var(--brand-border) 60%, rgba(255, 255, 255, 0.12)) !important;
+  color: #f1f5f9 !important;
 }
 
 /* ============================================================
@@ -2708,3 +2753,15 @@ html.light .app-shell .bg-slate-950\/80.backdrop-blur-md,
 [data-mode="light"] .app-shell .bg-slate-950\/80.backdrop-blur-md {
   background-color: rgba(255, 255, 255, 0.78) !important;
 }
+
+html.light .bg-\[\#070a12\],
+[data-mode="light"] .bg-\[\#070a12\] {
+  background-color: transparent !important;
+}
+
+html.light .site-shell,
+[data-mode="light"] .site-shell {
+  background-color: var(--theme-bg-light) !important;
+  color: #0f172a !important;
+}
+

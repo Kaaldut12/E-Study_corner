@@ -724,9 +724,11 @@ const Settings = () => {
                     <span
                       className="px-2.5 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1.5 border shadow-xs"
                       style={{
-                        background: activeThemeObj ? `color-mix(in srgb, ${activeThemeObj.hex} 12%, white)` : 'rgba(99,102,241,0.12)',
+                        background: activeThemeObj
+                          ? `color-mix(in srgb, ${activeThemeObj.hex} ${mode === 'light' ? '14%' : '22%'}, ${mode === 'light' ? 'white' : 'transparent'})`
+                          : 'rgba(99,102,241,0.12)',
                         borderColor: activeThemeObj ? `${activeThemeObj.hex}55` : 'rgba(99,102,241,0.35)',
-                        color: activeThemeObj?.hex || '#6366f1'
+                        color: mode === 'light' ? (activeThemeObj?.hex || '#6366f1') : (activeThemeObj?.swatches?.[2] || activeThemeObj?.hex || '#a5b4fc')
                       }}
                     >
                       <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: activeThemeObj?.hex || '#6366f1' }} />

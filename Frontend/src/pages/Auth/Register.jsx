@@ -64,7 +64,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070a12] flex flex-col font-sans relative overflow-hidden">
+    <div className="min-h-screen dark:bg-[#070a12] flex flex-col font-sans text-slate-900 dark:text-slate-100 relative overflow-hidden">
       {/* Background Ambient Lighting Blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div className="ambient-blob-a absolute top-1/4 left-1/4 w-120 h-120 rounded-full blur-[140px] animate-float-slow" />
