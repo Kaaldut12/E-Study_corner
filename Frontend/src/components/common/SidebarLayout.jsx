@@ -24,7 +24,8 @@ import {
   BarChart3,
   Mail,
   CalendarCheck,
-  GraduationCap
+  GraduationCap,
+  ChevronRight
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../Navbar';
@@ -39,6 +40,13 @@ const SidebarLayout = ({ children }) => {
   }, [location.pathname]);
 
   const role = user?.role || 'student';
+
+  const roleBadgeStyles = {
+    student: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20',
+    teacher: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 border-indigo-200 dark:border-indigo-500/20',
+    admin: 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border-amber-200 dark:border-amber-500/20',
+    superadmin: 'bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300 border-rose-200 dark:border-rose-500/30 font-bold',
+  };
 
   const navSectionsByRole = {
     student: [
@@ -216,38 +224,55 @@ const SidebarLayout = ({ children }) => {
             ))}
           </nav>
 
-          {/* Sidebar Footer User Quick Card */}
+          {/* Sidebar Footer User Profile Card */}
           {user && (
-            <div className="p-3 border-t border-slate-200/90 dark:border-slate-800/80 bg-slate-50/80 dark:bg-slate-950/60 flex items-center justify-between gap-2">
+            <div className="p-3 border-t border-slate-200/90 dark:border-slate-800/80 bg-slate-100/60 dark:bg-slate-950/60">
               <Link
                 to={`/${role === 'superadmin' ? 'admin' : role}/settings`}
-                className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-slate-200/70 dark:hover:bg-slate-800/70 transition group flex-1 min-w-0 cursor-pointer"
-                title="Open Settings"
+                onClick={() => {
+                  setSidebarOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="group relative flex items-center gap-3 p-2.5 rounded-2xl bg-white dark:bg-slate-900/90 hover:bg-slate-50/90 dark:hover:bg-slate-850 border border-slate-200/90 dark:border-slate-800 hover:border-brand/40 dark:hover:border-brand/40 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden"
+                title="Open Profile & Settings"
+                aria-label="Open User Profile"
               >
+                {/* Subtle top ambient accent highlight on hover */}
+                <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                {/* Avatar with dynamic brand accent, dual ring, and status */}
                 <div className="relative shrink-0">
-                  <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand group-hover:scale-105 transition-transform">
+                  <div className="w-9 h-9 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-xs ring-2 ring-slate-100 dark:ring-slate-800 group-hover:scale-105 group-hover:ring-brand/30 transition-all duration-200">
                     {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900" />
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border-2 border-white dark:border-slate-900" />
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate group-hover:text-brand transition">
-                    {user.name}
-                  </div>
-                  <div className="text-[10px] text-slate-500 dark:text-slate-400 capitalize flex items-center gap-1">
-                    <span className="w-1 h-1 rounded-full bg-emerald-400 inline-block animate-ping" />
-                    <span>Active {user.role}</span>
-                  </div>
-                </div>
-              </Link>
 
-              <Link
-                to={`/${role === 'superadmin' ? 'admin' : role}/settings`}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-slate-800/80 transition shrink-0 cursor-pointer"
-                title="Settings"
-                aria-label="Settings"
-              >
-                <SettingsIcon className="w-4 h-4 text-slate-400 group-hover:text-brand transition-colors" />
+                {/* User Details */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate group-hover:text-brand transition-colors">
+                      {user.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold border capitalize leading-none ${roleBadgeStyles[user.role] || 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                      {user.role === 'superadmin' ? 'Super Admin' : user.role}
+                    </span>
+                    <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      Online
+                    </span>
+                  </div>
+                </div>
+
+                {/* Tactile Action Cue */}
+                <div className="w-7 h-7 rounded-xl bg-slate-100 dark:bg-slate-800/80 group-hover:bg-brand group-hover:text-white text-slate-400 flex items-center justify-center transition-all duration-200 shrink-0 shadow-2xs">
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform duration-200" />
+                </div>
               </Link>
             </div>
           )}

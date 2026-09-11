@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Sun, Moon, Settings, LogOut, Menu, Crown, Palette, Check } from 'lucide-react';
+import { Sun, Moon, Settings, LogOut, Menu, Crown, Palette, Check, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { THEMES } from '../utils/themes';
@@ -161,39 +161,51 @@ const Navbar = ({ toggleSidebar }) => {
             {/* Settings Shortcut Button */}
             <Link
               to={settingsPath}
-              className="flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-700 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white bg-slate-100/90 dark:bg-slate-900/90 hover:bg-slate-200/90 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800/90 transition shadow-xs text-xs font-semibold group cursor-pointer"
+              className="flex items-center gap-1.5 p-2 sm:px-2.5 sm:py-1.5 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-900/80 hover:bg-white dark:hover:bg-slate-800 border border-slate-200/90 dark:border-slate-800/90 hover:border-slate-300 dark:hover:border-slate-700 transition shadow-2xs hover:shadow-xs text-xs font-semibold group cursor-pointer"
               title="Account Settings"
             >
-              <Settings className="w-4 h-4 text-brand group-hover:rotate-45 transition-transform duration-300" />
-              <span className="hidden lg:inline-block text-[11px] font-bold">Settings</span>
+              <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:text-brand group-hover:rotate-45 transition-transform duration-300" />
+              <span className="hidden xl:inline-block text-[11px] font-bold">Settings</span>
             </Link>
 
-            {/* User Profile Mini Card */}
+            {/* Executive User Profile Capsule Button */}
             <Link
               to={settingsPath}
-              className="flex items-center gap-2 sm:gap-2.5 pl-1 sm:pl-2 border-l border-slate-200 dark:border-slate-800/80 hover:opacity-95 transition group cursor-pointer"
+              className="group relative flex items-center gap-2 sm:gap-2.5 p-1 sm:py-1.5 sm:px-2.5 rounded-2xl bg-slate-100/90 dark:bg-slate-900/90 hover:bg-white dark:hover:bg-slate-800/95 border border-slate-200/90 dark:border-slate-800/90 hover:border-brand/40 dark:hover:border-brand/40 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer"
               title="Open Profile & Settings"
+              aria-label="Open User Profile"
             >
-              <div className="relative">
-                <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-brand ring-1 ring-white/20 group-hover:scale-105 transition-transform">
+              {/* Avatar with brand accent, crisp light ring, and active pulse dot */}
+              <div className="relative shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-brand flex items-center justify-center font-bold text-white text-xs shadow-xs ring-2 ring-white dark:ring-slate-900 group-hover:scale-105 group-hover:ring-brand/30 transition-all duration-200">
                   {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900" />
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border-2 border-white dark:border-slate-900" />
+                </span>
               </div>
-              <div className="hidden md:flex flex-col leading-tight">
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-brand transition truncate max-w-[130px]">
+
+              {/* User Identity Details */}
+              <div className="hidden md:flex flex-col text-left leading-tight pr-0.5">
+                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-brand transition-colors truncate max-w-[110px] xl:max-w-[140px]">
                   {user.name}
                 </span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate max-w-[130px]">
-                  {user.email}
-                </span>
+                <div className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">
+                  <span className="capitalize font-medium">{user.role}</span>
+                  <span className="text-slate-300 dark:text-slate-600">•</span>
+                  <span className="text-brand font-semibold group-hover:underline">Profile</span>
+                </div>
               </div>
+
+              {/* Action Affordance Chevron */}
+              <ChevronDown className="hidden sm:block w-3.5 h-3.5 text-slate-400 group-hover:text-brand group-hover:translate-y-0.5 transition-all duration-200 shrink-0" />
             </Link>
 
             {/* Logout Button */}
             <button
               onClick={logout}
-              className="p-2 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer"
+              className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-all cursor-pointer border border-transparent hover:border-rose-200/80 dark:hover:border-rose-900/40"
               title="Log Out"
               aria-label="Logout"
             >
