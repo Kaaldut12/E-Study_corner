@@ -144,15 +144,37 @@ npm run dev:frontend
 Execute the automated test and code quality suites:
 
 ```bash
-# Run 53 automated backend integration tests (node:test)
+# Run 61 automated backend integration tests (node:test)
 npm test
 
-# Run strict frontend ESLint verification (0 errors, 0 warnings)
+# Run strict frontend ESLint verification
 npm run lint
 
 # Verify frontend production build bundle
 npm run build
 ```
+
+---
+
+## 🌐 Production Vercel Deployment
+
+For high reliability and serverless stability, deploy Frontend and Backend as **two distinct Vercel projects** from this repository:
+
+### 1. Backend Project (API)
+1. In Vercel, import this repository and set **Root Directory** to `Backend`.
+2. Configure Environment Variables in Vercel:
+   - `MONGODB_URI`: Your MongoDB Atlas connection string (`mongodb+srv://...`).
+   - `JWT_SECRET`: A secure 32+ character random string.
+   - `NODE_ENV`: `production`
+   - `FRONTEND_URL`: URL of your deployed frontend (e.g. `https://estudycorner.vercel.app`).
+3. Deploy! Your API will be live at `https://your-backend.vercel.app`.
+
+### 2. Frontend Project (Client)
+1. In Vercel, import this repository again and set **Root Directory** to `Frontend`.
+2. Configure Environment Variables in Vercel:
+   - `VITE_API_URL`: `https://your-backend.vercel.app/api`
+3. Deploy! Your UI will be live at `https://estudycorner.vercel.app`.
+
 
 ---
 

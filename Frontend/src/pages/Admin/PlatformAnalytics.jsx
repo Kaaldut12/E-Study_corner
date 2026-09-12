@@ -266,15 +266,15 @@ const PlatformAnalytics = () => {
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Doubts Raised</span>
                     <p className="text-3xl font-black text-sky-400">{data?.totalDoubts || 0}</p>
                     <p className="text-[11px] text-emerald-400 font-medium">
-                      {data?.doubtResolutionRate || 100}% SLA resolution
+                      {data?.doubtResolutionRate ?? 0}% SLA resolution
                     </p>
                   </div>
 
                   <div className="glass-panel p-5 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Exam Pass Rate</span>
-                    <p className="text-3xl font-black text-emerald-400">{data?.quizPassRate || 90}%</p>
+                    <p className="text-3xl font-black text-emerald-400">{data?.quizPassRate ?? 0}%</p>
                     <p className="text-[11px] text-slate-400 font-medium">
-                      Avg score: {data?.avgQuizScore || 85}%
+                      Avg score: {data?.avgQuizScore ?? 0}%
                     </p>
                   </div>
 
@@ -288,7 +288,7 @@ const PlatformAnalytics = () => {
 
                   <div className="glass-panel p-5 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Satisfaction</span>
-                    <p className="text-3xl font-black text-rose-400">⭐ {data?.feedbackAvgRating || 4.9}</p>
+                    <p className="text-3xl font-black text-rose-400">⭐ {data?.feedbackAvgRating ?? 0}</p>
                     <p className="text-[11px] text-slate-400 font-medium">
                       {data?.feedbackTotal || 0} verified reviews
                     </p>
@@ -460,7 +460,7 @@ const PlatformAnalytics = () => {
 
                   <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Avg Submission Mark</span>
-                    <p className="text-3xl font-black text-amber-400">{data?.avgSubmissionGrade || 88}%</p>
+                    <p className="text-3xl font-black text-amber-400">{data?.avgSubmissionGrade ?? 0}%</p>
                     <p className="text-xs text-slate-400">Across verified assignments</p>
                   </div>
                 </div>
@@ -476,13 +476,13 @@ const PlatformAnalytics = () => {
                       <div className="flex justify-between text-xs font-semibold">
                         <span className="text-emerald-400">Graded Assignments ({data?.gradedSubmissions || 0})</span>
                         <span className="text-slate-400">
-                          {data?.totalSubmissions ? Math.round(((data?.gradedSubmissions || 0) / data?.totalSubmissions) * 100) : 100}%
+                          {data?.totalSubmissions ? Math.round(((data?.gradedSubmissions || 0) / data?.totalSubmissions) * 100) : 0}%
                         </span>
                       </div>
                       <div className="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-800 p-0.5">
                         <div
                           className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
-                          style={{ width: `${data?.totalSubmissions ? Math.round(((data?.gradedSubmissions || 0) / data?.totalSubmissions) * 100) : 100}%` }}
+                          style={{ width: `${data?.totalSubmissions ? Math.round(((data?.gradedSubmissions || 0) / data?.totalSubmissions) * 100) : 0}%` }}
                         ></div>
                       </div>
                     </div>
@@ -541,7 +541,7 @@ const PlatformAnalytics = () => {
 
                   <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Faculty SLA</span>
-                    <p className="text-3xl font-black text-indigo-400">{data?.doubtResolutionRate || 100}%</p>
+                    <p className="text-3xl font-black text-indigo-400">{data?.doubtResolutionRate ?? 0}%</p>
                     <p className="text-xs text-slate-400">Resolution fulfillment rate</p>
                   </div>
                 </div>
@@ -631,13 +631,13 @@ const PlatformAnalytics = () => {
 
                   <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pass Rate</span>
-                    <p className="text-3xl font-black text-emerald-400">{data?.quizPassRate || 92}%</p>
+                    <p className="text-3xl font-black text-emerald-400">{data?.quizPassRate ?? 0}%</p>
                     <p className="text-xs text-emerald-400">Score &ge; 50% benchmark</p>
                   </div>
 
                   <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Average Score</span>
-                    <p className="text-3xl font-black text-amber-400">{data?.avgQuizScore || 86}%</p>
+                    <p className="text-3xl font-black text-amber-400">{data?.avgQuizScore ?? 0}%</p>
                     <p className="text-xs text-slate-400">Institutional grade average</p>
                   </div>
                 </div>
@@ -684,13 +684,13 @@ const PlatformAnalytics = () => {
 
                   <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Resolution Rate</span>
-                    <p className="text-3xl font-black text-emerald-400">{data?.supportMetrics?.resolutionRate || 100}%</p>
+                    <p className="text-3xl font-black text-emerald-400">{data?.supportMetrics?.resolutionRate ?? 0}%</p>
                     <p className="text-xs text-emerald-400">Tickets closed successfully</p>
                   </div>
 
                   <div className="glass-panel p-6 rounded-3xl border border-slate-800 space-y-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Platform Rating</span>
-                    <p className="text-3xl font-black text-rose-400">⭐ {data?.feedbackAvgRating || 4.9} / 5.0</p>
+                    <p className="text-3xl font-black text-rose-400">⭐ {data?.feedbackAvgRating ?? 0} / 5.0</p>
                     <p className="text-xs text-slate-400">Overall user satisfaction</p>
                   </div>
                 </div>

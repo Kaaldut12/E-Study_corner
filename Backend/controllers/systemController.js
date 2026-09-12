@@ -28,8 +28,8 @@ export const getSystemHealth = async (req, res) => {
       },
       database: {
         connected: dbConnected,
-        mode: dbConnected ? 'MongoDB Live' : 'In-Memory Fallback',
-        host: dbConnected ? (mongoose.connection.host || 'localhost') : 'Local Memory Storage'
+        mode: dbConnected ? 'MongoDB Live' : (process.env.NODE_ENV === 'production' || process.env.DATA_STORE_MODE === 'strict' ? 'Disconnected (Strict Mode - Fallback Disabled)' : 'In-Memory Fallback'),
+        host: dbConnected ? (mongoose.connection.host || 'localhost') : (process.env.NODE_ENV === 'production' || process.env.DATA_STORE_MODE === 'strict' ? 'Unavailable' : 'Local Memory Storage')
       },
       system: {
         platform: process.platform,
@@ -84,7 +84,12 @@ export const getSystemMetrics = async (req, res) => {
         errorRatePercentage: 0,
         activeWebsocketConnections: 0,
         cacheHitRate: isDbConnected ? '100% (Direct MongoDB)' : '100% (Memory)',
-        securityBlocksCount: 0
+        securityBlocksCount: 0,
+        provenance: {
+          dbPing: isDbConnected ? 'Real measured DB admin ping roundtrip' : 'DB disconnected',
+          throughput: 'Real 60-second sliding window request rate',
+          uptime: 'Real process uptime from server launch'
+        }
       }
     });
   } catch (error) {

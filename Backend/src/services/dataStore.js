@@ -43,25 +43,32 @@ import {
   seedTeacherQuestions
 } from '../../seed.js';
 
-// In-memory fallback stores populated with seed data
-const memUsers = [...seedUsers];
-const memCourses = [...seedCourses];
-const memLessons = [...seedLessons];
-const memQuizzes = [...seedQuizzes];
-const memQuestions = [...seedQuestions];
-const memQuizAttempts = [...seedQuizAttempts];
-const memNotes = [...seedNotes];
-const memBookmarks = [...seedBookmarks];
-const memProgress = [...seedProgress];
-const memNotifications = [...seedNotifications];
-const memEnquiries = [...seedEnquiries];
-const memStudyMaterials = [...seedStudyMaterials];
-const memAssignments = [...seedAssignments];
-const memSubmissions = [...seedSubmissions];
-const memSupportMessages = [...seedSupportMessages];
-const memFeedback = [...seedFeedback];
+const isDBConnected = () => mongoose.connection.readyState === 1;
+const shouldEnforceDB = () => process.env.NODE_ENV === 'production' || process.env.DATA_STORE_MODE === 'strict';
+const isDevFallback = !shouldEnforceDB();
 
-const memAttendance = [
+// In-memory fallback stores populated with seed data strictly in development mode
+const memUsers = isDevFallback ? [...seedUsers] : [];
+const memCourses = isDevFallback ? [...seedCourses] : [];
+const memLessons = isDevFallback ? [...seedLessons] : [];
+const memQuizzes = isDevFallback ? [...seedQuizzes] : [];
+const memQuestions = isDevFallback ? [...seedQuestions] : [];
+const memQuizAttempts = isDevFallback ? [...seedQuizAttempts] : [];
+const memNotes = isDevFallback ? [...seedNotes] : [];
+const memBookmarks = isDevFallback ? [...seedBookmarks] : [];
+const memProgress = isDevFallback ? [...seedProgress] : [];
+const memNotifications = isDevFallback ? [...seedNotifications] : [];
+const memEnquiries = isDevFallback ? [...seedEnquiries] : [];
+const memStudyMaterials = isDevFallback ? [...seedStudyMaterials] : [];
+const memAssignments = isDevFallback ? [...seedAssignments] : [];
+const memSubmissions = isDevFallback ? [...seedSubmissions] : [];
+const memSupportMessages = isDevFallback ? [...seedSupportMessages] : [];
+const memFeedback = isDevFallback ? [...seedFeedback] : [];
+const memTeacherQuestions = isDevFallback ? [...seedTeacherQuestions] : [];
+const memEnrollments = [];
+const memQuizSessions = new Map();
+
+const memAttendance = isDevFallback ? [
   {
     id: 'att_seed_1',
     userId: 'user_student_1',
@@ -82,9 +89,9 @@ const memAttendance = [
     status: 'present',
     notes: 'Morning session'
   }
-];
+] : [];
 
-const memLeaves = [
+const memLeaves = isDevFallback ? [
   {
     id: 'leave_seed_1',
     userId: 'user_student_1',
@@ -136,14 +143,9 @@ const memLeaves = [
     reviewedAt: null,
     createdAt: new Date()
   }
-];
-const memTeacherQuestions = [...seedTeacherQuestions];
-const memEnrollments = [];
-const memQuizSessions = new Map();
+] : [];
 
 const generateId = (prefix) => `${prefix}_${crypto.randomUUID().slice(0, 8)}`;
-const isDBConnected = () => mongoose.connection.readyState === 1;
-const shouldEnforceDB = () => process.env.NODE_ENV === 'production' || process.env.DATA_STORE_MODE === 'strict';
 
 const handleDbFailure = (msg, err) => {
   if (shouldEnforceDB()) {
@@ -154,6 +156,16 @@ const handleDbFailure = (msg, err) => {
     throw error;
   }
   console.warn(msg, err);
+};
+
+const ensureLiveDB = (operationName = 'operation') => {
+  if (shouldEnforceDB()) {
+    const error = new Error(`Database service is unavailable. Operation '${operationName}' rejected in production mode without active database connection.`);
+    error.status = 503;
+    error.statusCode = 503;
+    error.code = 'DATABASE_UNAVAILABLE';
+    throw error;
+  }
 };
 
 const rawDataStore = {
@@ -329,7 +341,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB confirmResetOTP lookup error:', err.message);
       }
     }
-    if (!user) {
+    if (!user && isDevFallback) {
       user = memUsers.find(x => x.email.toLowerCase() === cleanEmail);
     }
     if (!user) return { success: false, message: 'No account found with this email.' };
@@ -353,11 +365,13 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB password update error:', err.message);
       }
     }
-    const mUser = memUsers.find(x => x.email.toLowerCase() === cleanEmail);
-    if (mUser) {
-      mUser.password = hashed;
-      mUser.resetCode = null;
-      mUser.resetExpires = null;
+    if (isDevFallback) {
+      const mUser = memUsers.find(x => x.email.toLowerCase() === cleanEmail);
+      if (mUser) {
+        mUser.password = hashed;
+        mUser.resetCode = null;
+        mUser.resetExpires = null;
+      }
     }
 
     return { success: true, message: 'Password reset successfully! You can now log in with your new password.' };
@@ -372,7 +386,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB changeUserPassword error:', err.message);
       }
     }
-    if (!user) {
+    if (!user && isDevFallback) {
       user = memUsers.find(x => x.id === id);
     }
     if (!user) return { success: false, message: 'User not found' };
@@ -386,9 +400,11 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB update password error:', err.message);
       }
     }
-    const mUser = memUsers.find(x => x.id === id);
-    if (mUser) {
-      mUser.password = hashed;
+    if (isDevFallback) {
+      const mUser = memUsers.find(x => x.id === id);
+      if (mUser) {
+        mUser.password = hashed;
+      }
     }
     return { success: true, message: 'Password updated successfully' };
   },
@@ -1604,7 +1620,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB course lookup error:', err.message);
       }
     }
-    if (!course) {
+    if (!course && isDevFallback) {
       course = memCourses.find(c => c.id === courseId);
     }
     if (!course) {
@@ -1620,7 +1636,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB lesson lookup error:', err.message);
       }
     }
-    if (!lesson) {
+    if (!lesson && isDevFallback) {
       lesson = memLessons.find(l => l.id === lessonId);
     }
     if (!lesson) {
@@ -1639,7 +1655,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB lookup enrollment error:', err.message);
       }
     }
-    if (!enrollment) {
+    if (!enrollment && isDevFallback) {
       enrollment = memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId);
     }
 
@@ -1656,7 +1672,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB lessons lookup error:', err.message);
       }
     }
-    if (!courseLessons || courseLessons.length === 0) {
+    if ((!courseLessons || courseLessons.length === 0) && isDevFallback) {
       courseLessons = memLessons.filter(l => l.courseId === courseId);
     }
     const totalCount = courseLessons.length > 0 ? courseLessons.length : 1;
@@ -1670,13 +1686,15 @@ const rawDataStore = {
     const isFinished = progressPercentage >= 100;
 
     // 6. Update in-memory cache if active
-    const memEnrollment = memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId);
-    if (memEnrollment) {
-      memEnrollment.completedLessons = completedArray;
-      memEnrollment.progressPercentage = progressPercentage;
-      if (isFinished) {
-        memEnrollment.status = 'completed';
-        memEnrollment.completedAt = new Date();
+    if (isDevFallback) {
+      const memEnrollment = memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId);
+      if (memEnrollment) {
+        memEnrollment.completedLessons = completedArray;
+        memEnrollment.progressPercentage = progressPercentage;
+        if (isFinished) {
+          memEnrollment.status = 'completed';
+          memEnrollment.completedAt = new Date();
+        }
       }
     }
 
@@ -1997,7 +2015,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB getUserAttendanceStats error:', err.message);
       }
     }
-    if (!userRecords || userRecords.length === 0) {
+    if ((!userRecords || userRecords.length === 0) && isDevFallback) {
       userRecords = memAttendance.filter(a => a.userId === userId).sort((a, b) => b.date.localeCompare(a.date));
     }
 
@@ -2054,18 +2072,28 @@ const rawDataStore = {
       }
     }
 
-    const totalDaysMonth = 30;
-    const effectivePresent = presentCount + onLeaveCount + 20; // baseline of regular session
-    const attendancePercentage = Math.min(100, Math.round((effectivePresent / totalDaysMonth) * 100));
+    const totalDaysRecorded = presentCount + onLeaveCount + absentCount;
+    let totalPresent = presentCount;
+    let attendancePercentage = 0;
+
+    if (isDevFallback && totalDaysRecorded <= 1) {
+      const totalDaysMonth = 30;
+      const effectivePresent = presentCount + onLeaveCount + 20;
+      attendancePercentage = Math.max(82, Math.min(100, Math.round((effectivePresent / totalDaysMonth) * 100)));
+      totalPresent = presentCount + 20;
+    } else {
+      const effectivePresent = presentCount + onLeaveCount;
+      attendancePercentage = totalDaysRecorded > 0 ? Math.min(100, Math.round((effectivePresent / totalDaysRecorded) * 100)) : 0;
+    }
 
     return {
       todayStatus: todayRecord ? todayRecord.status : null,
       todayRecord,
       currentStreak: Math.max(currentStreak, todayRecord?.status === 'present' ? 1 : 0),
-      totalPresent: presentCount + 20,
+      totalPresent,
       totalOnLeave: onLeaveCount,
       totalAbsent: absentCount,
-      attendancePercentage: Math.max(82, Math.min(100, attendancePercentage)),
+      attendancePercentage,
       recentLogs: userRecords.slice(0, 60),
       allLogs: userRecords
     };
@@ -2083,7 +2111,7 @@ const rawDataStore = {
         handleDbFailure('[dataStore] DB getAllAttendanceRecords error:', err.message);
       }
     }
-    if (!records || records.length === 0) {
+    if ((!records || records.length === 0) && isDevFallback) {
       records = memAttendance.filter(a => {
         if (filterDate && a.date !== filterDate) return false;
         if (filterRole && a.userRole !== filterRole) return false;

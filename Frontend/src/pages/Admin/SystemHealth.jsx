@@ -125,7 +125,7 @@ const SystemHealth = () => {
                     <div className="w-full bg-slate-900 h-3 rounded-full overflow-hidden p-0.5 border border-slate-800">
                       <div
                         className="h-full bg-linear-to-r from-indigo-500 to-purple-500 rounded-full"
-                        style={{ width: `${Math.round(((healthData?.memory?.heapUsedMB || 45) / (healthData?.memory?.heapTotalMB || 120)) * 100)}%` }}
+                        style={{ width: `${Math.round(((healthData?.memory?.heapUsedMB ?? 0) / (healthData?.memory?.heapTotalMB || 1)) * 100)}%` }}
                       ></div>
                     </div>
                   </div>
@@ -133,15 +133,15 @@ const SystemHealth = () => {
                   <div className="grid grid-cols-3 gap-2 sm:gap-3 p-3 sm:p-4 bg-slate-950 rounded-xl sm:rounded-2xl border border-slate-800 text-center">
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold">RSS Memory</span>
-                      <p className="text-xs sm:text-sm font-bold text-white mt-0.5">{healthData?.memory?.rssMB || 85} MB</p>
+                      <p className="text-xs sm:text-sm font-bold text-white mt-0.5">{healthData?.memory?.rssMB ?? 0} MB</p>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold">Heap Total</span>
-                      <p className="text-xs sm:text-sm font-bold text-indigo-400 mt-0.5">{healthData?.memory?.heapTotalMB || 120} MB</p>
+                      <p className="text-xs sm:text-sm font-bold text-indigo-400 mt-0.5">{healthData?.memory?.heapTotalMB ?? 0} MB</p>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 uppercase font-semibold">Free OS RAM</span>
-                      <p className="text-xs sm:text-sm font-bold text-emerald-400 mt-0.5">{healthData?.system?.freeMemMB || 4096} MB</p>
+                      <p className="text-xs sm:text-sm font-bold text-emerald-400 mt-0.5">{healthData?.system?.freeMemMB ?? 0} MB</p>
                     </div>
                   </div>
                 </div>
