@@ -2594,6 +2594,10 @@ html.light .dashboard-action-card,
   text-shadow: 0 12px 40px rgba(0, 0, 0, 0.38);
 }
 
+.home-hero__title {
+  color: #ffffff !important;
+}
+
 .home-hero p {
   max-width: 42rem;
 }
@@ -2846,6 +2850,71 @@ html.light .site-shell,
 [data-mode="light"] .site-shell {
   background-color: var(--theme-bg-light) !important;
   color: #0f172a !important;
+}
+
+/* Public hero and ticker keep their intentional dark contrast in Lite mode. */
+html.light .site-shell .home-hero .home-slide,
+[data-mode="light"] .site-shell .home-hero .home-slide {
+  color: #f8fafc !important;
+}
+
+html.light .site-shell .home-hero .home-slide h1,
+[data-mode="light"] .site-shell .home-hero .home-slide h1 {
+  color: #ffffff !important;
+  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.38) !important;
+}
+
+html.light .site-shell .home-hero .home-slide p,
+[data-mode="light"] .site-shell .home-hero .home-slide p {
+  color: #cbd5e1 !important;
+}
+
+html.light .site-shell .home-hero .home-slide .btn-secondary,
+[data-mode="light"] .site-shell .home-hero .home-slide .btn-secondary {
+  color: #1e293b !important;
+}
+
+html.light .notice-marquee,
+[data-mode="light"] .notice-marquee {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-bottom-color: #dbe3ed !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.06);
+}
+
+html.light .notice-marquee__label,
+[data-mode="light"] .notice-marquee__label {
+  background: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+
+html.light .notice-marquee__pause,
+[data-mode="light"] .notice-marquee__pause {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+html.light .notice-marquee__pause:hover,
+[data-mode="light"] .notice-marquee__pause:hover {
+  background: #eef2f7 !important;
+  color: #0f172a !important;
+}
+
+html.light .notice-marquee__item,
+[data-mode="light"] .notice-marquee__item {
+  color: #334155 !important;
+}
+
+html.light .notice-marquee__item > span:last-child:hover,
+[data-mode="light"] .notice-marquee__item > span:last-child:hover {
+  color: #0f172a !important;
+}
+
+html.light .notice-marquee__dot,
+[data-mode="light"] .notice-marquee__dot {
+  color: #2563eb !important;
 }
 
 /* Shared workspace frame: consistent hierarchy across student, teacher, and admin pages. */

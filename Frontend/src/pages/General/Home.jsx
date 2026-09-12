@@ -75,7 +75,7 @@ const Home = () => {
               <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-linear-to-r ${slide.badgeColor} text-[10px] sm:text-xs font-extrabold uppercase tracking-widest border backdrop-blur-md shadow-lg`}>
                 ✨ {slide.tag}
               </span>
-              <h1 className="text-2xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight font-display drop-shadow-lg">
+              <h1 className="home-hero__title text-2xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight font-display drop-shadow-lg">
                 {slide.title}
               </h1>
               <p className="text-xs sm:text-lg text-slate-300 italic font-serif max-w-2xl mx-auto leading-relaxed drop-shadow">

@@ -527,7 +527,7 @@ const Attendance = () => {
               </div>
 
               {/* Leave Exemption Prompt (5 cols) */}
-              <div className="lg:col-span-5 glass-panel p-6 sm:p-7 rounded-3xl space-y-4 shadow-xl flex flex-col justify-between bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/20 dark:to-purple-950/20 border border-indigo-200/70 dark:border-indigo-500/20">
+              <div className="lg:col-span-5 glass-panel p-6 sm:p-7 rounded-3xl space-y-4 shadow-xl flex flex-col justify-between bg-linear-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-950/20 dark:to-purple-950/20 border border-indigo-200/70 dark:border-indigo-500/20">
                 <div className="space-y-2.5">
                   <div className="flex items-center gap-2">
                     <span className="p-2 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
@@ -617,7 +617,6 @@ const Attendance = () => {
                     const isLate = d.status === 'late';
                     const isOnLeave = d.status === 'on_leave';
                     const isAbsent = d.status === 'absent';
-                    const isUnmarked = d.status === 'unmarked';
 
                     return (
                       <div
@@ -934,7 +933,6 @@ const Attendance = () => {
                   const isPresent = student.status === 'present';
                   const isOnLeave = student.status === 'on_leave';
                   const isAbsent = student.status === 'absent';
-                  const isUnmarked = student.status === 'unmarked';
 
                   return (
                     <div

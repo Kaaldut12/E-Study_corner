@@ -241,7 +241,7 @@ const SidebarLayout = ({ children }) => {
                 aria-label="Open User Profile"
               >
                 {/* Subtle top ambient accent highlight on hover */}
-                <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-brand/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-transparent via-brand/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 {/* Avatar with dynamic brand accent, dual ring, and status */}
                 <div className="relative shrink-0">

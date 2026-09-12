@@ -344,8 +344,8 @@ const LeaveManagement = () => {
                         <div
                           className={`w-10 h-10 rounded-xl font-black text-xs flex items-center justify-center text-white shadow-brand ${
                             isTeacher
-                              ? 'bg-gradient-to-br from-indigo-600 to-purple-600'
-                              : 'bg-gradient-to-br from-rose-600 to-amber-600'
+                              ? 'bg-linear-to-br from-indigo-600 to-purple-600'
+                              : 'bg-linear-to-br from-rose-600 to-amber-600'
                           }`}
                         >
                           {leave.userName?.charAt(0).toUpperCase() || 'U'}
