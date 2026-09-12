@@ -1,5 +1,5 @@
 // frontend/src/pages/Common/Attendance.jsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   CalendarCheck,
@@ -81,13 +81,13 @@ const Attendance = () => {
 
   // Global Toast
   const [toast, setToast] = useState(null);
-  const showToast = (message, isError = false) => {
+  const showToast = useCallback((message, isError = false) => {
     setToast({ message, isError });
     setTimeout(() => setToast(null), 4500);
-  };
+  }, []);
 
   // 1. Fetch Personal Attendance Stats
-  const fetchPersonalStats = async (silent = false) => {
+  const fetchPersonalStats = useCallback(async (silent = false) => {
     if (!silent) setPersonalLoading(true);
     try {
       const res = await api.get('/attendance/status');
@@ -101,10 +101,10 @@ const Attendance = () => {
     } finally {
       if (!silent) setPersonalLoading(false);
     }
-  };
+  }, [showToast]);
 
   // 2. Fetch Classroom Roster Attendance (Faculty/Admin)
-  const fetchRosterAttendance = async (dateParam = rosterDate) => {
+  const fetchRosterAttendance = useCallback(async (dateParam = rosterDate) => {
     setRosterLoading(true);
     try {
       const res = await api.get(`/attendance/roster?date=${dateParam}`);
@@ -118,14 +118,14 @@ const Attendance = () => {
     } finally {
       setRosterLoading(false);
     }
-  };
+  }, [rosterDate, showToast]);
 
   useEffect(() => {
     fetchPersonalStats();
     if (isFacultyOrAdmin) {
       fetchRosterAttendance(rosterDate);
     }
-  }, []);
+  }, [fetchPersonalStats, fetchRosterAttendance, isFacultyOrAdmin, rosterDate]);
 
   // Handle Daily Self Check-in
   const handleCheckIn = async (e) => {
