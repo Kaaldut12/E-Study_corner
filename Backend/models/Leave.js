@@ -6,10 +6,10 @@ const leaveSchema = new mongoose.Schema({
   userId: { type: String, required: true },
   userName: { type: String, required: true },
   userEmail: { type: String, required: true },
-  userRole: { type: String, enum: ['student', 'teacher'], required: true },
+  userRole: { type: String, enum: ['student', 'teacher', 'admin', 'superadmin'], required: true },
   leaveType: {
     type: String,
-    enum: ['sick', 'casual', 'academic', 'emergency', 'vacation'],
+    enum: ['sick', 'casual', 'academic', 'emergency', 'vacation', 'medical', 'other'],
     default: 'casual'
   },
   startDate: { type: String, required: true }, // Format: YYYY-MM-DD

@@ -150,7 +150,7 @@ app.use(['/api/student', '/student'], studentRoutes);
 app.use(['/api/teacher', '/teacher'], teacherRoutes);
 app.use(['/api/admin', '/admin'], adminRoutes);
 app.use(['/api/attendance', '/attendance'], attendanceRoutes);
-app.use(['/api/leaves', '/leaves'], leaveRoutes);
+app.use(['/api/leaves', '/leaves', '/api/leave', '/leave'], leaveRoutes);
 app.use(['/api/files', '/files'], fileRoutes);
 app.use(['/api/system', '/system'], systemRoutes);
 

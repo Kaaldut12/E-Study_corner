@@ -152,6 +152,7 @@ function App() {
             <Route path="enquiries" element={<EnquiryManagement />} />
             <Route path="study-material" element={<UploadStudyMaterial />} />
             <Route path="leaves" element={<LeaveManagement />} />
+            <Route path="leave" element={<LeaveManagement />} />
             <Route path="attendance" element={<Attendance />} />
             <Route path="feedback" element={<ViewFeedback />} />
             <Route path="messages" element={<ViewMessages />} />

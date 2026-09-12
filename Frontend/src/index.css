@@ -862,6 +862,40 @@ html.light .bg-slate-800\/80,
    LIGHT THEME BUTTON SYSTEM — Text & Background Specifications
    ============================================================ */
 
+.theme-neutral-control {
+  border: 1px solid #cbd5e1;
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.theme-neutral-control:hover {
+  background-color: #e2e8f0;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+[data-mode="dark"] .theme-neutral-control {
+  border-color: #334155;
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+[data-mode="dark"] .theme-neutral-control:hover {
+  background-color: #334155;
+  border-color: #475569;
+  color: #f8fafc;
+}
+
+[data-mode="light"] .theme-neutral-control,
+[data-mode="light"] .theme-neutral-control * {
+  color: #1e293b !important;
+}
+
+[data-mode="dark"] .theme-neutral-control,
+[data-mode="dark"] .theme-neutral-control * {
+  color: #e2e8f0 !important;
+}
+
 /* 1. Primary & Theme Gradient Buttons in Light Mode */
 html.light .btn-premium,
 html.light .btn-primary,
@@ -1627,11 +1661,39 @@ html.light .theme-chip,
 }
 
 html.dark .theme-chip,
-[data-mode="dark"] .theme-chip,
-.theme-chip {
+[data-mode="dark"] .theme-chip {
   background: color-mix(in srgb, var(--brand-bg) 35%, rgba(15, 23, 42, 0.85)) !important;
   border: 1px solid color-mix(in srgb, var(--brand-border) 60%, rgba(255, 255, 255, 0.12)) !important;
   color: #f1f5f9 !important;
+}
+
+[data-mode="light"] .btn-brand-subtle {
+  background: color-mix(in srgb, var(--brand-2) 8%, #ffffff) !important;
+  border-color: color-mix(in srgb, var(--brand-2) 28%, #cbd5e1) !important;
+  color: var(--brand-1) !important;
+}
+
+[data-mode="light"] .btn-brand-subtle:hover {
+  background: color-mix(in srgb, var(--brand-2) 14%, #ffffff) !important;
+  border-color: var(--brand-2) !important;
+  color: var(--brand-1) !important;
+}
+
+[data-mode="dark"] .btn-brand-subtle {
+  background: color-mix(in srgb, var(--brand-1) 18%, #0f172a) !important;
+  border-color: color-mix(in srgb, var(--brand-2) 42%, #334155) !important;
+  color: var(--brand-t1) !important;
+}
+
+[data-mode="dark"] .btn-brand-subtle:hover {
+  background: color-mix(in srgb, var(--brand-1) 28%, #0f172a) !important;
+  border-color: var(--brand-3) !important;
+  color: var(--brand-t2) !important;
+}
+
+[data-mode="light"] .btn-brand-subtle *,
+[data-mode="dark"] .btn-brand-subtle * {
+  color: inherit !important;
 }
 
 /* ============================================================

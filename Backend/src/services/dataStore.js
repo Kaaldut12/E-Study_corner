@@ -2164,7 +2164,7 @@ const rawDataStore = {
   // ==================== LEAVE MANAGEMENT ====================
   applyLeave: async (leaveData) => {
     const payload = {
-      id: `leave_${crypto.randomUUID()}`,
+      id: leaveData.id || `leave_${crypto.randomUUID()}`,
       userId: leaveData.userId,
       userName: leaveData.userName || 'User',
       userEmail: leaveData.userEmail || '',
@@ -2174,11 +2174,11 @@ const rawDataStore = {
       endDate: leaveData.endDate,
       totalDays: Number(leaveData.totalDays) || 1,
       reason: leaveData.reason || '',
-      status: 'pending',
-      reviewedBy: null,
-      reviewerNotes: '',
-      reviewedAt: null,
-      createdAt: new Date()
+      status: leaveData.status || 'pending',
+      reviewedBy: leaveData.reviewedBy || null,
+      reviewerNotes: leaveData.reviewerNotes || '',
+      reviewedAt: leaveData.reviewedAt || null,
+      createdAt: leaveData.createdAt || new Date()
     };
 
     if (isDBConnected()) {
@@ -2235,8 +2235,11 @@ const rawDataStore = {
 
     if (isDBConnected()) {
       try {
+        const query = mongoose.isValidObjectId(leaveId)
+          ? { $or: [{ id: leaveId }, { _id: leaveId }] }
+          : { id: leaveId };
         const doc = await Leave.findOneAndUpdate(
-          { id: leaveId },
+          query,
           { $set: updateData },
           { new: true }
         ).lean();
@@ -2246,7 +2249,7 @@ const rawDataStore = {
       }
     }
 
-    const idx = memLeaves.findIndex(l => l.id === leaveId);
+    const idx = memLeaves.findIndex(l => l.id === leaveId || l._id?.toString() === leaveId?.toString());
     if (idx !== -1) {
       memLeaves[idx] = { ...memLeaves[idx], ...updateData };
       return memLeaves[idx];
@@ -2257,14 +2260,17 @@ const rawDataStore = {
   deleteLeave: async (leaveId, userId = null, role = null) => {
     if (isDBConnected()) {
       try {
-        const query = { id: leaveId };
+        const idFilter = mongoose.isValidObjectId(leaveId)
+          ? { $or: [{ id: leaveId }, { _id: leaveId }] }
+          : { id: leaveId };
+        const query = { ...idFilter };
         if (role !== 'admin' && role !== 'superadmin' && userId) {
           query.userId = userId;
           query.status = 'pending';
         }
         const doc = await Leave.findOneAndDelete(query).lean();
         if (doc) {
-          const idx = memLeaves.findIndex(l => l.id === leaveId);
+          const idx = memLeaves.findIndex(l => l.id === leaveId || l._id?.toString() === leaveId?.toString());
           if (idx !== -1) memLeaves.splice(idx, 1);
           return true;
         }
@@ -2274,7 +2280,7 @@ const rawDataStore = {
     }
 
     const idx = memLeaves.findIndex(l => {
-      if (l.id !== leaveId) return false;
+      if (l.id !== leaveId && l._id?.toString() !== leaveId?.toString()) return false;
       if (role !== 'admin' && role !== 'superadmin' && userId) {
         return l.userId === userId && l.status === 'pending';
       }

@@ -355,7 +355,7 @@ const Attendance = () => {
                 }
                 showToast('Attendance records refreshed.');
               }}
-              className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition flex items-center gap-1.5 shadow-xs"
+              className="theme-neutral-control px-3.5 py-2.5 text-xs font-bold rounded-xl transition flex items-center gap-1.5 shadow-xs"
               title="Refresh attendance records"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -545,10 +545,16 @@ const Attendance = () => {
 
                 <div className="pt-3">
                   <Link
-                    to={role === 'teacher' ? '/teacher/leave' : '/student/leave'}
+                    to={role === 'admin' || role === 'superadmin' ? '/admin/leaves' : role === 'teacher' ? '/teacher/leave' : '/student/leave'}
                     className="w-full py-3 px-4 btn-premium text-white text-xs font-bold rounded-xl shadow-brand flex items-center justify-center gap-2"
                   >
-                    <span>Apply for Leave Exemption →</span>
+                    <span>
+                      {role === 'admin' || role === 'superadmin'
+                        ? 'Manage Campus Leaves →'
+                        : role === 'teacher'
+                          ? 'Faculty Leaves & Approvals →'
+                          : 'Apply for Leave Exemption →'}
+                    </span>
                   </Link>
                 </div>
               </div>

@@ -3,10 +3,15 @@ import { dataStore } from '../src/services/dataStore.js';
 
 export const applyForLeave = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const userName = req.user.name;
-    const userEmail = req.user.email;
-    const userRole = req.user.role;
+    let userId = req.user.id;
+    let userName = req.user.name;
+    let userEmail = req.user.email;
+    let userRole = req.user.role || 'student';
+    let initialStatus = 'pending';
+    let reviewedBy = null;
+    let reviewerNotes = '';
+    let reviewedAt = null;
+
     const { leaveType, startDate, endDate, totalDays, reason } = req.body;
 
     if (!startDate || !endDate || !reason) {
@@ -34,6 +39,43 @@ export const applyForLeave = async (req, res) => {
 
     const calculatedDays = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1);
 
+    const isAdminOrSuper = req.user.role === 'admin' || req.user.role === 'superadmin';
+
+    // Allow Admin to grant leave for a specific student/teacher directly
+    if (isAdminOrSuper && (req.body.targetUserId || (req.body.userId && req.body.userId !== req.user.id))) {
+      const targetId = req.body.targetUserId || req.body.userId;
+      const targetUser = await dataStore.getUserById(targetId);
+      if (targetUser) {
+        userId = targetUser.id;
+        userName = targetUser.name;
+        userEmail = targetUser.email;
+        userRole = targetUser.role;
+      } else if (req.body.targetUserName) {
+        userId = targetId;
+        userName = req.body.targetUserName;
+        userEmail = req.body.targetUserEmail || '';
+        userRole = req.body.targetUserRole || 'student';
+      }
+      initialStatus = req.body.status || 'approved';
+      reviewedBy = req.user.name || 'Department Administrator';
+      reviewerNotes = req.body.reviewerNotes || 'Sanctioned directly by Department Administration.';
+      reviewedAt = new Date();
+    } else if (isAdminOrSuper && req.body.targetUserName) {
+      userId = `ext_${Date.now()}`;
+      userName = req.body.targetUserName;
+      userEmail = req.body.targetUserEmail || '';
+      userRole = req.body.targetUserRole || 'student';
+      initialStatus = req.body.status || 'approved';
+      reviewedBy = req.user.name || 'Department Administrator';
+      reviewerNotes = req.body.reviewerNotes || 'Sanctioned directly by Department Administration.';
+      reviewedAt = new Date();
+    } else if (isAdminOrSuper && req.body.status === 'approved') {
+      initialStatus = 'approved';
+      reviewedBy = req.user.name || 'Department Administrator';
+      reviewerNotes = req.body.reviewerNotes || 'Self-sanctioned administrative leave.';
+      reviewedAt = new Date();
+    }
+
     const leave = await dataStore.applyLeave({
       userId,
       userName,
@@ -43,13 +85,17 @@ export const applyForLeave = async (req, res) => {
       startDate,
       endDate,
       totalDays: Number(totalDays) || calculatedDays,
-      reason: reason.trim()
+      reason: reason.trim(),
+      status: initialStatus,
+      reviewedBy,
+      reviewerNotes,
+      reviewedAt
     });
 
     // Broadcast system notification
     try {
       await dataStore.createNotification(
-        `Leave Request: ${userName} (${userRole}) applied for ${leave.totalDays} day(s) ${leave.leaveType} leave (${startDate} to ${endDate}).`
+        `Leave Record: ${userName} (${userRole}) ${initialStatus === 'approved' ? 'granted' : 'applied for'} ${leave.totalDays} day(s) ${leave.leaveType} leave (${startDate} to ${endDate}).`
       );
     } catch (notiErr) {
       console.warn('[leaveController] Failed to send notification:', notiErr.message);
@@ -57,7 +103,9 @@ export const applyForLeave = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: 'Leave application submitted successfully. Awaiting administrative review.',
+      message: initialStatus === 'approved'
+        ? 'Leave sanctioned successfully and recorded in institutional archives.'
+        : 'Leave application submitted successfully. Awaiting administrative review.',
       leave
     });
   } catch (error) {

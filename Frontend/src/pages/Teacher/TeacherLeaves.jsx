@@ -308,7 +308,7 @@ const TeacherLeaves = () => {
             <button
               onClick={() => fetchData(true)}
               disabled={refreshing}
-              className="p-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl border border-slate-200 dark:border-slate-800 transition shadow-xs"
+              className="theme-neutral-control p-2.5 rounded-xl transition shadow-xs"
               title="Sync latest data"
             >
               <span className={refreshing ? 'inline-block animate-spin' : ''}>🔄</span>
@@ -381,28 +381,28 @@ const TeacherLeaves = () => {
                     <button
                       type="button"
                       onClick={() => handleApplyPreset(1)}
-                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-semibold rounded-lg transition"
+                      className="theme-neutral-control px-2.5 py-1 text-[11px] font-semibold rounded-lg transition"
                     >
                       Today (1d)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApplyPreset('tomorrow')}
-                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-semibold rounded-lg transition"
+                      className="theme-neutral-control px-2.5 py-1 text-[11px] font-semibold rounded-lg transition"
                     >
                       Tomorrow (1d)
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApplyPreset(3)}
-                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-semibold rounded-lg transition"
+                      className="theme-neutral-control px-2.5 py-1 text-[11px] font-semibold rounded-lg transition"
                     >
                       3 Days
                     </button>
                     <button
                       type="button"
                       onClick={() => handleApplyPreset(5)}
-                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-semibold rounded-lg transition"
+                      className="theme-neutral-control px-2.5 py-1 text-[11px] font-semibold rounded-lg transition"
                     >
                       5 Days (Week)
                     </button>

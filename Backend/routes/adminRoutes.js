@@ -26,6 +26,12 @@ import {
   triggerDatabaseResync,
   adminReplyStudentQuestion
 } from '../controllers/adminController.js';
+import {
+  getAllLeaves,
+  updateLeaveStatus,
+  deleteLeave,
+  applyForLeave
+} from '../controllers/leaveController.js';
 import { getStudentFullDetails, getTeacherStudents } from '../controllers/teacherController.js';
 import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 
@@ -66,6 +72,14 @@ router.delete('/enquiries/:id', deleteEnquiry);
 router.get(['/study-material', '/study-materials'], getAdminStudyMaterials);
 router.post(['/study-material', '/study-materials'], uploadStudyMaterial);
 router.delete(['/study-material/:id', '/study-materials/:id'], deleteStudyMaterial);
+
+// Leave Management (Campus Leave Approvals & Administrative Sanctioning)
+router.get(['/leaves', '/leave', '/leaves/all'], getAllLeaves);
+router.post(['/leaves/apply', '/leave/apply', '/leaves', '/leave'], applyForLeave);
+router.route(['/leaves/:id/status', '/leave/:id/status'])
+  .patch(updateLeaveStatus)
+  .put(updateLeaveStatus);
+router.delete(['/leaves/:id', '/leave/:id'], deleteLeave);
 
 // Email Sender & Diagnostics (EmailSender)
 router.get('/email-status', getEmailStatus);

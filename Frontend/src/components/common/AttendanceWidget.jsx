@@ -20,8 +20,9 @@ const AttendanceWidget = () => {
   const [feedbackMsg, setFeedbackMsg] = useState('');
 
   const role = user?.role || 'student';
-  const leaveRoute = role === 'teacher' ? '/teacher/leave' : '/student/leave';
-  const attendanceRoute = role === 'teacher' ? '/teacher/attendance' : '/student/attendance';
+  const isAdmin = role === 'admin' || role === 'superadmin';
+  const leaveRoute = isAdmin ? '/admin/leaves' : role === 'teacher' ? '/teacher/leave' : '/student/leave';
+  const attendanceRoute = isAdmin ? '/admin/attendance' : role === 'teacher' ? '/teacher/attendance' : '/student/attendance';
 
   const fetchAttendance = async () => {
     try {
@@ -170,7 +171,7 @@ const AttendanceWidget = () => {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowHistoryModal(true)}
-                className="py-3 px-3.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-2xl border border-slate-200 dark:border-slate-700 transition"
+                className="theme-neutral-control py-3 px-3.5 text-xs font-bold rounded-2xl transition"
                 title="View previous attendance logs"
               >
                 📜 Logs
@@ -179,7 +180,7 @@ const AttendanceWidget = () => {
                 to={leaveRoute}
                 className="py-3 px-4 bg-rose-50 hover:bg-rose-100 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 text-xs font-bold rounded-2xl transition flex items-center gap-1.5 whitespace-nowrap shadow-xs"
               >
-                <span>Apply for Leave →</span>
+                <span>{isAdmin ? 'Campus Leaves →' : role === 'teacher' ? 'Faculty Leaves →' : 'Apply for Leave →'}</span>
               </Link>
             </div>
           </div>

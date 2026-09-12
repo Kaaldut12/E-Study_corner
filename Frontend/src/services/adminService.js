@@ -43,7 +43,14 @@ export const adminService = {
   // --- EMAIL ---
   sendEmail: (data) => api.post('/admin/send-email', data).then(res => res.data),
   getEmailStatus: () => api.get('/admin/email-status').then(res => res.data),
-  sendTestEmail: (data = {}) => api.post('/admin/email-test', data).then(res => res.data)
+  sendTestEmail: (data = {}) => api.post('/admin/email-test', data).then(res => res.data),
+
+  // --- LEAVE MANAGEMENT & AUDIT ---
+  getLeaves: (params) => api.get('/leaves/all', { params }).then(res => res.data),
+  getAllLeaves: (params) => api.get('/leaves/all', { params }).then(res => res.data),
+  applyLeave: (leaveData) => api.post('/leaves/apply', leaveData).then(res => res.data),
+  updateLeaveStatus: (leaveId, payload) => api.patch(`/leaves/${leaveId}/status`, payload).then(res => res.data),
+  deleteLeave: (leaveId) => api.delete(`/leaves/${leaveId}`).then(res => res.data)
 };
 
 export default adminService;

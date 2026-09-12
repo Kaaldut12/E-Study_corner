@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { SkeletonCardList } from '../../components/common/SkeletonLoader';
+import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 
 const ADMIN_REMARK_TEMPLATES = [
@@ -12,6 +13,7 @@ const ADMIN_REMARK_TEMPLATES = [
 ];
 
 const LeaveManagement = () => {
+  const { user: currentUser } = useAuth();
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,10 +32,34 @@ const LeaveManagement = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
+  // Direct Grant / Apply Leave Modal state
+  const [grantModalOpen, setGrantModalOpen] = useState(false);
+  const [grantSubmitting, setGrantSubmitting] = useState(false);
+  const [grantForm, setGrantForm] = useState({
+    applyMode: 'self', // 'self' | 'other'
+    targetUserName: '',
+    targetUserEmail: '',
+    targetUserRole: 'student',
+    leaveType: 'casual',
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: new Date().toISOString().split('T')[0],
+    reason: '',
+    status: 'approved',
+    reviewerNotes: 'Official institutional leave sanctioned by Administration.'
+  });
+
   const showToast = (message, isError = false) => {
     setToast({ message, isError });
     setTimeout(() => setToast(null), 4500);
   };
+
+  const grantCalculatedDays = useMemo(() => {
+    if (!grantForm.startDate || !grantForm.endDate) return 1;
+    const s = new Date(grantForm.startDate);
+    const e = new Date(grantForm.endDate);
+    if (isNaN(s.getTime()) || isNaN(e.getTime()) || e < s) return 1;
+    return Math.max(1, Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1);
+  }, [grantForm.startDate, grantForm.endDate]);
 
   const fetchLeaves = async (isManual = false) => {
     if (isManual) setRefreshing(true);
@@ -81,7 +107,8 @@ const LeaveManagement = () => {
 
     setReviewing(true);
     try {
-      const res = await api.patch(`/leaves/${selectedLeave.id}/status`, {
+      const targetId = selectedLeave.id || selectedLeave._id;
+      const res = await api.patch(`/leaves/${targetId}/status`, {
         status: reviewStatus,
         reviewerNotes: reviewerNotes.trim()
       });
@@ -104,7 +131,8 @@ const LeaveManagement = () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      const res = await api.delete(`/leaves/${deleteTarget.id}`);
+      const targetId = deleteTarget.id || deleteTarget._id;
+      const res = await api.delete(`/leaves/${targetId}`);
       if (res.data?.success) {
         showToast('Leave record purged from institutional archives.');
         setDeleteTarget(null);
@@ -115,6 +143,61 @@ const LeaveManagement = () => {
       showToast(msg, true);
     } finally {
       setDeleting(false);
+    }
+  };
+
+  const handleGrantSubmit = async (e) => {
+    e.preventDefault();
+    if (!grantForm.startDate || !grantForm.endDate || !grantForm.reason.trim()) {
+      showToast('Please specify start date, end date, and reason.', true);
+      return;
+    }
+    if (grantForm.applyMode === 'other' && !grantForm.targetUserName.trim()) {
+      showToast('Please enter the recipient applicant name.', true);
+      return;
+    }
+
+    setGrantSubmitting(true);
+    try {
+      const payload = {
+        leaveType: grantForm.leaveType,
+        startDate: grantForm.startDate,
+        endDate: grantForm.endDate,
+        totalDays: grantCalculatedDays,
+        reason: grantForm.reason.trim(),
+        status: grantForm.status,
+        reviewerNotes: grantForm.reviewerNotes.trim()
+      };
+
+      if (grantForm.applyMode === 'other') {
+        payload.targetUserName = grantForm.targetUserName.trim();
+        payload.targetUserEmail = grantForm.targetUserEmail.trim();
+        payload.targetUserRole = grantForm.targetUserRole;
+      }
+
+      const res = await api.post('/leaves/apply', payload);
+      if (res.data?.success) {
+        showToast(res.data.message || 'Leave recorded successfully in archives!');
+        setGrantModalOpen(false);
+        setGrantForm({
+          applyMode: 'self',
+          targetUserName: '',
+          targetUserEmail: '',
+          targetUserRole: 'student',
+          leaveType: 'casual',
+          startDate: new Date().toISOString().split('T')[0],
+          endDate: new Date().toISOString().split('T')[0],
+          reason: '',
+          status: 'approved',
+          reviewerNotes: 'Official institutional leave sanctioned by Administration.'
+        });
+        fetchLeaves();
+      }
+    } catch (err) {
+      const msg = err.parsedMessage || err.response?.data?.message || 'Failed to record leave';
+      showToast(msg, true);
+    } finally {
+      setGrantSubmitting(false);
     }
   };
 
@@ -175,11 +258,33 @@ const LeaveManagement = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-end">
+          <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-end flex-wrap">
+            <button
+              onClick={() => {
+                setGrantForm({
+                  applyMode: 'self',
+                  targetUserName: '',
+                  targetUserEmail: '',
+                  targetUserRole: 'student',
+                  leaveType: 'casual',
+                  startDate: new Date().toISOString().split('T')[0],
+                  endDate: new Date().toISOString().split('T')[0],
+                  reason: '',
+                  status: 'approved',
+                  reviewerNotes: 'Official institutional leave sanctioned by Administration.'
+                });
+                setGrantModalOpen(true);
+              }}
+              className="btn-premium px-4 py-2.5 text-xs font-bold rounded-xl text-white shadow-brand flex items-center gap-2"
+              title="Record or sanction leave exemption"
+            >
+              <span>➕</span>
+              <span>Grant / Apply Leave</span>
+            </button>
             <button
               onClick={() => fetchLeaves(true)}
               disabled={refreshing}
-              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-900/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-800 transition flex items-center gap-2 shadow-xs"
+              className="theme-neutral-control px-4 py-2.5 text-xs font-bold rounded-xl transition flex items-center gap-2 shadow-xs"
               title="Refresh database records"
             >
               <span className={refreshing ? 'animate-spin' : ''}>🔄</span>
@@ -283,6 +388,7 @@ const LeaveManagement = () => {
               <option value="all">All Roles</option>
               <option value="student">Students Only</option>
               <option value="teacher">Teachers Only</option>
+              <option value="admin">Administrators Only</option>
             </select>
 
             {/* Status Filter */}
@@ -327,6 +433,8 @@ const LeaveManagement = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {filteredLeaves.map((leave) => {
+              const leaveKey = leave.id || leave._id;
+              const isAdmin = leave.userRole === 'admin' || leave.userRole === 'superadmin';
               const isTeacher = leave.userRole === 'teacher';
               const isApproved = leave.status === 'approved';
               const isRejected = leave.status === 'rejected';
@@ -334,7 +442,7 @@ const LeaveManagement = () => {
 
               return (
                 <div
-                  key={leave.id}
+                  key={leaveKey}
                   className="glass-panel glass-panel-hover p-5 sm:p-6 rounded-3xl flex flex-col justify-between space-y-4 shadow-md"
                 >
                   <div className="space-y-3">
@@ -343,9 +451,11 @@ const LeaveManagement = () => {
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-10 h-10 rounded-xl font-black text-xs flex items-center justify-center text-white shadow-brand ${
-                            isTeacher
-                              ? 'bg-linear-to-br from-indigo-600 to-purple-600'
-                              : 'bg-linear-to-br from-rose-600 to-amber-600'
+                            isAdmin
+                              ? 'bg-linear-to-br from-amber-500 to-rose-600 ring-2 ring-amber-400/40'
+                              : isTeacher
+                                ? 'bg-linear-to-br from-indigo-600 to-purple-600'
+                                : 'bg-linear-to-br from-emerald-600 to-teal-600'
                           }`}
                         >
                           {leave.userName?.charAt(0).toUpperCase() || 'U'}
@@ -357,9 +467,11 @@ const LeaveManagement = () => {
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <span
                               className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
-                                isTeacher
-                                  ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20'
-                                  : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
+                                isAdmin
+                                  ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20'
+                                  : isTeacher
+                                    ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500/20'
+                                    : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20'
                               }`}
                             >
                               {leave.userRole}
@@ -417,14 +529,14 @@ const LeaveManagement = () => {
                       {isPending && (
                         <>
                           <button
-                            onClick={() => handleQuickDecision(leave.id, 'approved')}
+                            onClick={() => handleQuickDecision(leaveKey, 'approved')}
                             className="py-1.5 px-3 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold rounded-xl transition"
                             title="Quick Approve"
                           >
                             ✓ Approve
                           </button>
                           <button
-                            onClick={() => handleQuickDecision(leave.id, 'rejected')}
+                            onClick={() => handleQuickDecision(leaveKey, 'rejected')}
                             className="py-1.5 px-3 bg-rose-600/10 hover:bg-rose-600/20 text-rose-700 dark:text-rose-300 border border-rose-500/30 text-xs font-bold rounded-xl transition"
                             title="Quick Reject"
                           >
@@ -469,7 +581,7 @@ const LeaveManagement = () => {
                 </h3>
                 <button
                   onClick={() => setDeleteTarget(null)}
-                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                  className="theme-neutral-control p-1.5 rounded-xl"
                 >
                   ✕
                 </button>
@@ -487,7 +599,7 @@ const LeaveManagement = () => {
                   type="button"
                   onClick={() => setDeleteTarget(null)}
                   disabled={deleting}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition"
+                  className="theme-neutral-control px-4 py-2 text-xs font-bold rounded-xl transition"
                 >
                   Cancel
                 </button>
@@ -514,7 +626,7 @@ const LeaveManagement = () => {
                 </h3>
                 <button
                   onClick={() => setSelectedLeave(null)}
-                  className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white"
+                  className="theme-neutral-control p-1.5 rounded-xl"
                 >
                   ✕
                 </button>
@@ -540,7 +652,7 @@ const LeaveManagement = () => {
                       className={`py-2 text-xs font-bold rounded-xl border transition ${
                         reviewStatus === 'approved'
                           ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                          : 'theme-neutral-control'
                       }`}
                     >
                       ✓ Grant / Approve
@@ -551,7 +663,7 @@ const LeaveManagement = () => {
                       className={`py-2 text-xs font-bold rounded-xl border transition ${
                         reviewStatus === 'rejected'
                           ? 'bg-rose-600 text-white border-rose-500 shadow-md'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                          : 'theme-neutral-control'
                       }`}
                     >
                       ✕ Decline / Reject
@@ -573,7 +685,7 @@ const LeaveManagement = () => {
                         key={idx}
                         type="button"
                         onClick={() => setReviewerNotes(tmpl)}
-                        className="text-[10px] px-2 py-0.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-md transition text-left truncate max-w-[220px]"
+                        className="theme-neutral-control text-[10px] px-2 py-0.5 rounded-md transition text-left truncate max-w-55"
                         title={tmpl}
                       >
                         + {tmpl}
@@ -594,7 +706,7 @@ const LeaveManagement = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedLeave(null)}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl transition"
+                    className="theme-neutral-control px-4 py-2 text-xs font-bold rounded-xl transition"
                   >
                     Cancel
                   </button>
@@ -604,6 +716,259 @@ const LeaveManagement = () => {
                     className="px-5 py-2 btn-premium text-white text-xs font-bold rounded-xl shadow-brand"
                   >
                     {reviewing ? 'Saving...' : 'Save Official Decision'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+        {/* Direct Grant / Apply Leave Modal */}
+        {grantModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
+            <div className="glass-panel p-5 sm:p-7 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 shadow-2xl bg-white dark:bg-slate-900">
+              <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400 font-display">
+                    Administrative Action
+                  </span>
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white font-display">
+                    Grant / Apply Institutional Leave
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setGrantModalOpen(false)}
+                  className="theme-neutral-control p-1.5 rounded-xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Mode Toggle */}
+              <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-950/80 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setGrantForm(prev => ({ ...prev, applyMode: 'self' }))}
+                  className={`py-2 px-3 rounded-xl transition ${
+                    grantForm.applyMode === 'self'
+                      ? 'bg-white dark:bg-slate-800 text-brand shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  👤 Apply For Myself (Admin)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGrantForm(prev => ({ ...prev, applyMode: 'other' }))}
+                  className={`py-2 px-3 rounded-xl transition ${
+                    grantForm.applyMode === 'other'
+                      ? 'bg-white dark:bg-slate-800 text-brand shadow-xs'
+                      : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  🏛️ Grant Exemption for User
+                </button>
+              </div>
+
+              <form onSubmit={handleGrantSubmit} className="space-y-4">
+                {grantForm.applyMode === 'self' ? (
+                  <div className="text-xs bg-slate-50 dark:bg-slate-950/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 space-y-1">
+                    <p><strong>Applicant Name:</strong> {currentUser?.name || 'Administrator'}</p>
+                    <p><strong>Email Address:</strong> {currentUser?.email || 'admin@estudy.edu'}</p>
+                    <p><strong>Designation:</strong> Campus Administrator ({currentUser?.role || 'admin'})</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 bg-slate-50 dark:bg-slate-950/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                        Target Applicant Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. John Doe, Prof. Smith"
+                        value={grantForm.targetUserName}
+                        onChange={(e) => setGrantForm(prev => ({ ...prev, targetUserName: e.target.value }))}
+                        className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                          Applicant Email
+                        </label>
+                        <input
+                          type="email"
+                          placeholder="e.g. user@campus.edu"
+                          value={grantForm.targetUserEmail}
+                          onChange={(e) => setGrantForm(prev => ({ ...prev, targetUserEmail: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                          Role *
+                        </label>
+                        <select
+                          value={grantForm.targetUserRole}
+                          onChange={(e) => setGrantForm(prev => ({ ...prev, targetUserRole: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand"
+                        >
+                          <option value="student">Student</option>
+                          <option value="teacher">Faculty / Teacher</option>
+                          <option value="admin">Administrator</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Leave Type & Dates */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                    Leave Category
+                  </label>
+                  <select
+                    value={grantForm.leaveType}
+                    onChange={(e) => setGrantForm(prev => ({ ...prev, leaveType: e.target.value }))}
+                    className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand capitalize font-medium"
+                  >
+                    <option value="casual">Casual Leave</option>
+                    <option value="sick">Sick / Medical Leave</option>
+                    <option value="academic">Academic Exemption / Representation</option>
+                    <option value="emergency">Emergency Absence</option>
+                    <option value="vacation">Vacation / Term Break</option>
+                    <option value="other">Institutional Official Duty / Other</option>
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                      Start Date *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={grantForm.startDate}
+                      onChange={(e) => setGrantForm(prev => ({ ...prev, startDate: e.target.value }))}
+                      className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                      End Date *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      min={grantForm.startDate}
+                      value={grantForm.endDate}
+                      onChange={(e) => setGrantForm(prev => ({ ...prev, endDate: e.target.value }))}
+                      className="w-full px-3.5 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-[11px] text-indigo-700 dark:text-indigo-300 font-semibold bg-indigo-50 dark:bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800 flex items-center justify-between">
+                  <span>Computed Absence Duration:</span>
+                  <span className="font-bold">{grantCalculatedDays} Day{grantCalculatedDays > 1 ? 's' : ''}</span>
+                </div>
+
+                {/* Reason */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                    Absence Reason & Justification *
+                  </label>
+                  <textarea
+                    rows={2}
+                    required
+                    placeholder="Provide official rationale or justification for the leave..."
+                    value={grantForm.reason}
+                    onChange={(e) => setGrantForm(prev => ({ ...prev, reason: e.target.value }))}
+                    className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand resize-none"
+                  />
+                </div>
+
+                {/* Status Decision */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                    Initial Record Status
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setGrantForm(prev => ({ ...prev, status: 'approved' }))}
+                      className={`py-2 text-xs font-bold rounded-xl border transition ${
+                        grantForm.status === 'approved'
+                          ? 'bg-emerald-600 text-white border-emerald-500 shadow-md'
+                          : 'theme-neutral-control'
+                      }`}
+                    >
+                      ✓ Pre-Sanctioned (Approved)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setGrantForm(prev => ({ ...prev, status: 'pending' }))}
+                      className={`py-2 text-xs font-bold rounded-xl border transition ${
+                        grantForm.status === 'pending'
+                          ? 'bg-amber-600 text-white border-amber-500 shadow-md'
+                          : 'theme-neutral-control'
+                      }`}
+                    >
+                      ⏳ Pending Verification
+                    </button>
+                  </div>
+                </div>
+
+                {/* Administrative Remarks */}
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider font-display">
+                      Administrative Notes / Sanction Reference
+                    </label>
+                    <span className="text-[10px] text-slate-400">Templates</span>
+                  </div>
+
+                  <div className="flex flex-wrap gap-1 mb-1">
+                    {ADMIN_REMARK_TEMPLATES.map((tmpl, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setGrantForm(prev => ({ ...prev, reviewerNotes: tmpl }))}
+                        className="theme-neutral-control text-[10px] px-2 py-0.5 rounded-md transition text-left truncate max-w-55"
+                        title={tmpl}
+                      >
+                        + {tmpl}
+                      </button>
+                    ))}
+                  </div>
+
+                  <input
+                    type="text"
+                    placeholder="Enter sanction reference or comments..."
+                    value={grantForm.reviewerNotes}
+                    onChange={(e) => setGrantForm(prev => ({ ...prev, reviewerNotes: e.target.value }))}
+                    className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-brand"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setGrantModalOpen(false)}
+                    className="theme-neutral-control px-4 py-2 text-xs font-bold rounded-xl transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={grantSubmitting}
+                    className="px-5 py-2 btn-premium text-white text-xs font-bold rounded-xl shadow-brand"
+                  >
+                    {grantSubmitting ? 'Recording...' : 'Record & Grant Leave'}
                   </button>
                 </div>
               </form>

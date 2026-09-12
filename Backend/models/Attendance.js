@@ -5,7 +5,7 @@ const attendanceSchema = new mongoose.Schema({
   id: { type: String, required: true, unique: true },
   userId: { type: String, required: true },
   userName: { type: String, required: true },
-  userRole: { type: String, enum: ['student', 'teacher', 'admin'], required: true },
+  userRole: { type: String, enum: ['student', 'teacher', 'admin', 'superadmin'], required: true },
   date: { type: String, required: true }, // Format: YYYY-MM-DD
   checkInTime: { type: String, required: true }, // e.g. 09:30 AM
   status: { type: String, enum: ['present', 'late', 'on_leave', 'absent'], default: 'present' },
