@@ -1,5 +1,5 @@
 // frontend/src/components/common/ProtectedRoute.jsx
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
 
   // Super Admin has universal authorization across all portals
   if (user.role === 'superadmin') {
-    return children;
+    return children ? children : <Outlet />;
   }
 
   if (requiredRole && user.role !== requiredRole) {
@@ -36,7 +36,8 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to={roleRedirects[user.role] || '/login'} replace />;
   }
 
-  return children;
+  return children ? children : <Outlet />;
 };
 
 export default ProtectedRoute;
+

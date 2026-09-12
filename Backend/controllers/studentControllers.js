@@ -178,6 +178,19 @@ export const sendContactMessage = async (req, res) => {
   }
 };
 
+export const getStudentTickets = async (req, res) => {
+  try {
+    const studentId = req.user.id;
+    const tickets = await dataStore.getSupportMessagesByUserId(studentId);
+    return res.status(200).json({
+      success: true,
+      tickets: tickets || []
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const getStudyMaterials = async (req, res) => {
   try {
     const materials = await dataStore.getStudyMaterials();
@@ -834,23 +847,82 @@ export const getStudentProgressStats = async (req, res) => {
     const studentId = req.user.id;
     const progressRecords = await dataStore.getStudentProgress(studentId);
     const notes = await dataStore.getStudentNotes(studentId);
+    const quizAttempts = await dataStore.getQuizAttempts(studentId);
+    const submissions = await dataStore.getSubmissionsForStudent(studentId);
+    const courses = await dataStore.getCourses();
+    const quizzes = await dataStore.getQuizzes();
+    const assignments = await dataStore.getAssignments();
 
-    const totalStudyMinutes = progressRecords.reduce((acc, curr) => acc + (curr.totalStudyMinutes || 0), 240);
-    const studyStreakDays = progressRecords.length > 0 ? (progressRecords[0].studyStreakDays || 5) : 5;
+    // Genuine study time & streak calculation (starting at 0 for students with no activity)
+    const totalStudyMinutes = progressRecords.reduce((acc, curr) => acc + (curr.totalStudyMinutes || 0), 0);
+    const studyStreakDays = progressRecords.length > 0 ? (progressRecords[0].studyStreakDays || 0) : 0;
+    const completedCoursesCount = progressRecords.filter(p => (p.progressPercentage || 0) >= 100 || p.completed).length;
 
-    const subjectSkills = [
-      { name: 'Data Structures & Algorithms', percentage: 80, color: 'from-indigo-500 to-purple-500' },
-      { name: 'Database Management Systems (SQL)', percentage: 65, color: 'from-purple-500 to-pink-500' },
-      { name: 'Web Development & React.js', percentage: 55, color: 'from-emerald-500 to-teal-500' },
-      { name: 'Computer Networks & TCP/IP', percentage: 40, color: 'from-amber-500 to-orange-500' }
+    // Calculate subject mastery from real student quiz performance, completed coursework, and progress
+    const subjectMap = new Map();
+    const colorGradients = [
+      'from-indigo-500 to-purple-500',
+      'from-purple-500 to-pink-500',
+      'from-emerald-500 to-teal-500',
+      'from-amber-500 to-orange-500'
     ];
+
+    // Seed from available courses
+    (courses || []).slice(0, 4).forEach(c => {
+      const subjectName = c.subject || c.title || 'Coursework';
+      if (!subjectMap.has(subjectName)) {
+        subjectMap.set(subjectName, []);
+      }
+    });
+
+    // Factor in student quiz performance
+    (quizAttempts || []).forEach(qa => {
+      const qz = (quizzes || []).find(q => q.id === qa.quizId);
+      const subjectName = qz?.subject || 'Examinations';
+      const qCount = qa.totalQuestions || 5;
+      const pct = Math.min(100, Math.round(((qa.score || 0) / qCount) * 100));
+      if (!subjectMap.has(subjectName)) subjectMap.set(subjectName, []);
+      subjectMap.get(subjectName).push(pct);
+    });
+
+    // Factor in graded assignment performance
+    (submissions || []).filter(s => s.status === 'graded').forEach(sub => {
+      const asg = (assignments || []).find(a => a.id === sub.assignmentId);
+      const subjectName = asg?.subject || 'Assignments';
+      const maxPts = sub.totalPoints || 100;
+      const pct = Math.min(100, Math.round(((sub.grade || 0) / maxPts) * 100));
+      if (!subjectMap.has(subjectName)) subjectMap.set(subjectName, []);
+      subjectMap.get(subjectName).push(pct);
+    });
+
+    // Factor in course progress
+    (progressRecords || []).forEach(pr => {
+      const c = (courses || []).find(course => course.id === pr.courseId);
+      const subjectName = c?.subject || pr.courseTitle;
+      if (subjectName) {
+        if (!subjectMap.has(subjectName)) subjectMap.set(subjectName, []);
+        if (pr.progressPercentage) subjectMap.get(subjectName).push(pr.progressPercentage);
+      }
+    });
+
+    // If no records yet, provide subject names with honest 0% mastery
+    const subjectSkills = Array.from(subjectMap.entries()).slice(0, 4).map(([name, scores], idx) => {
+      const percentage = scores.length > 0
+        ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+        : 0;
+      return {
+        name,
+        percentage,
+        color: colorGradients[idx % colorGradients.length]
+      };
+    });
 
     return res.status(200).json({
       success: true,
       stats: {
         totalStudyMinutes,
         studyStreakDays,
-        completedCoursesCount: 2,
+        completedCoursesCount,
         activeNotesCount: notes.length,
         subjectSkills
       },

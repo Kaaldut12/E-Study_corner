@@ -1,6 +1,7 @@
 // backend/index.js
 import express from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
 
 // Import environment & database configuration
 import { PORT, ALLOWED_ORIGINS, COLLEGE_NAME, IS_PRODUCTION, MONGODB_URI } from './src/config/env.js';
@@ -40,18 +41,12 @@ app.use(cors({
     // Allow non-browser or same-origin requests without origin header (e.g. mobile apps, curl, server-to-server)
     if (!requestOrigin) return callback(null, true);
 
-    // 1. Explicitly configured origins
+    // 1. Explicitly configured origins (from ALLOWED_ORIGINS and FRONTEND_URL)
     if (ALLOWED_ORIGINS.includes(requestOrigin)) {
       return callback(null, true);
     }
 
-    // 2. Verified project deployment domains on Vercel
-    const isAppVercelDomain = /^https:\/\/[a-z0-9._-]+\.vercel\.app$/i.test(requestOrigin);
-    if (isAppVercelDomain) {
-      return callback(null, true);
-    }
-
-    // 3. Local development origins (restricted strictly to non-production environments)
+    // 2. Local development origins (restricted strictly to non-production environments)
     if (process.env.NODE_ENV !== 'production') {
       if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin)) {
         return callback(null, true);
@@ -87,10 +82,12 @@ app.use(async (req, res, next) => {
     return next();
   }
 
+  const isProduction = process.env.DATA_STORE_MODE === 'strict' || process.env.NODE_ENV === 'production';
+
   try {
     await connectDB();
   } catch (err) {
-    if (process.env.DATA_STORE_MODE === 'strict' || process.env.NODE_ENV === 'production') {
+    if (isProduction) {
       return res.status(503).json({
         success: false,
         message: 'Database service is currently unavailable. Please try again later.',
@@ -99,6 +96,15 @@ app.use(async (req, res, next) => {
     }
     console.warn('[Database Connection Notice]: Operating in fallback mode for local development:', err.message);
   }
+
+  if (isProduction && mongoose.connection.readyState !== 1) {
+    return res.status(503).json({
+      success: false,
+      message: 'Database service is currently unavailable. Please try again later.',
+      code: 'DATABASE_UNAVAILABLE'
+    });
+  }
+
   next();
 });
 

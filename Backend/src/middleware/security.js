@@ -3,6 +3,35 @@
 // Sliding window rate limiter store
 const requestStore = new Map();
 
+// Periodic cleanup of stale rate limiter buckets to prevent memory accumulation
+if (typeof setInterval !== 'undefined') {
+  const cleanupTimer = setInterval(() => {
+    const now = Date.now();
+    for (const [key, timestamps] of requestStore.entries()) {
+      const active = timestamps.filter(t => now - t < 5 * 60 * 1000);
+      if (active.length === 0) {
+        requestStore.delete(key);
+      } else {
+        requestStore.set(key, active);
+      }
+    }
+  }, 5 * 60 * 1000);
+  if (cleanupTimer.unref) cleanupTimer.unref();
+}
+
+/**
+ * Calculates genuine real-time requests handled within the last 60-second sliding window
+ */
+export const getActiveThroughput = () => {
+  const windowStart = Date.now() - 60 * 1000;
+  let count = 0;
+  for (const timestamps of requestStore.values()) {
+    count += timestamps.filter(t => t > windowStart).length;
+  }
+  return count;
+};
+
+
 /**
  * Production Security Headers Middleware
  * Implements OWASP recommended security headers.

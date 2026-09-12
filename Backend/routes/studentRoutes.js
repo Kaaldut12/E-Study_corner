@@ -6,6 +6,7 @@ import {
   submitAssignment,
   getStudentFeedback,
   sendContactMessage,
+  getStudentTickets,
   getStudyMaterials,
   getProfile,
   updateProfile,
@@ -54,6 +55,8 @@ router.post('/assignments/:id/submissions', validateSubmission, submitAssignment
 router.post('/submit', validateSubmission, submitAssignment);
 
 router.get('/feedback', getStudentFeedback);
+router.get('/contact-admin', getStudentTickets);
+router.get('/tickets', getStudentTickets);
 router.post('/contact-admin', sendContactMessage);
 
 // Direct Student-Teacher Q&A & Doubts

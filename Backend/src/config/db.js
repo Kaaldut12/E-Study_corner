@@ -112,10 +112,10 @@ export const connectDB = async () => {
 
         return cached.conn;
       } catch (err) {
-        if (!process.env.VERCEL && process.env.NODE_ENV !== 'production' && !MONGODB_URI.includes('127.0.0.1') && !MONGODB_URI.includes('localhost')) {
-          console.warn(`[MongoDB] Cloud Atlas connection failed (${err.message}). Attempting local fallback (mongodb://127.0.0.1:27017/estudy)...`);
+        if (!process.env.VERCEL && process.env.NODE_ENV !== 'production' && SECONDARY_MONGODB_URI && !MONGODB_URI.includes('127.0.0.1') && !MONGODB_URI.includes('localhost')) {
+          console.warn(`[MongoDB] Cloud Atlas connection failed (${err.message}). Attempting local fallback (${SECONDARY_MONGODB_URI})...`);
           try {
-            const localInstance = await mongoose.connect(SECONDARY_MONGODB_URI || 'mongodb://127.0.0.1:27017/estudy', opts);
+            const localInstance = await mongoose.connect(SECONDARY_MONGODB_URI, opts);
             console.log(`[MongoDB] Connected to local MongoDB fallback: ${localInstance.connection.host}/${localInstance.connection.name}`);
             cached.conn = localInstance.connection;
             return cached.conn;

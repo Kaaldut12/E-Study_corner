@@ -18,7 +18,10 @@ const resolveApiBaseUrl = () => {
         const clean = envUrl.replace(/\/+$/, '');
         return clean.endsWith('/api') ? clean : `${clean}/api`;
       }
-      // If VITE_API_URL is missing or was defaulted to localhost, route to same-origin /api
+      // If VITE_API_URL is missing or was defaulted to localhost, alert developer in console and route to same-origin /api
+      console.warn(
+        '[API Configuration Notice]: VITE_API_URL is not set for remote deployment. Falling back to same-origin /api. If your backend is deployed separately, specify VITE_API_URL=https://your-backend.vercel.app/api in Vercel Environment Variables.'
+      );
       return `${window.location.origin}/api`;
     }
   }

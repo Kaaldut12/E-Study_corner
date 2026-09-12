@@ -10,6 +10,7 @@ const EnquiryModal = () => {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   // Listen to open-enquiry-modal custom event from navbar or any page element
   useEffect(() => {
@@ -22,6 +23,7 @@ const EnquiryModal = () => {
     e.preventDefault();
     setSubmitting(true);
     setSuccessMsg('');
+    setErrorMsg('');
 
     try {
       const res = await publicService.submitEnquiry({
@@ -43,12 +45,8 @@ const EnquiryModal = () => {
         }, 2000);
       }
     } catch (err) {
-      console.warn('Enquiry submit offline fallback:', err);
-      setSuccessMsg('Enquiry saved successfully! (Local Session)');
-      setTimeout(() => {
-        setIsOpen(false);
-        setSuccessMsg('');
-      }, 2000);
+      console.error('Enquiry submit error:', err);
+      setErrorMsg(err?.parsedMessage || err?.response?.data?.message || 'Unable to submit enquiry. Please check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -89,6 +87,12 @@ const EnquiryModal = () => {
             {successMsg && (
               <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
                 ✓ {successMsg}
+              </div>
+            )}
+
+            {errorMsg && (
+              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-semibold">
+                ✕ {errorMsg}
               </div>
             )}
 

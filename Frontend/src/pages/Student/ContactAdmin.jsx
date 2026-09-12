@@ -9,27 +9,33 @@ const ContactAdmin = () => {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+  const [loadingTickets, setLoadingTickets] = useState(true);
   const [myTickets, setMyTickets] = useState([]);
 
-  useEffect(() => {
-    // Initial sample ticket
-    setMyTickets([
-      {
-        id: 'msg_1',
-        subject: 'Issue submitting large PDF files',
-        category: 'Technical Support',
-        message: 'Hello, when I try to attach a PDF larger than 5MB, the form takes long. Is there a size limit?',
-        status: 'pending',
-        createdAt: '2026-09-06T14:10:00.000Z',
-        adminReply: ''
+  const fetchTickets = async () => {
+    try {
+      setLoadingTickets(true);
+      const data = await studentService.getMyTickets();
+      if (data?.success && Array.isArray(data.tickets)) {
+        setMyTickets(data.tickets);
       }
-    ]);
+    } catch (err) {
+      console.warn('Failed to fetch student tickets:', err);
+    } finally {
+      setLoadingTickets(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTickets();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     setSuccessMsg('');
+    setErrorMsg('');
 
     try {
       const data = await studentService.contactAdmin({
@@ -47,20 +53,8 @@ const ContactAdmin = () => {
         setMessage('');
       }
     } catch (err) {
-      console.warn('Sending ticket offline mode:', err);
-      const newTicket = {
-        id: `msg_${Date.now()}`,
-        subject,
-        category,
-        message,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        adminReply: ''
-      };
-      setMyTickets((prev) => [newTicket, ...prev]);
-      setSuccessMsg('Support ticket created (Local Session).');
-      setSubject('');
-      setMessage('');
+      console.error('Error submitting support ticket:', err);
+      setErrorMsg(err?.parsedMessage || err?.response?.data?.message || 'Unable to submit your ticket. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -82,6 +76,12 @@ const ContactAdmin = () => {
             {successMsg && (
               <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
                 ✓ {successMsg}
+              </div>
+            )}
+
+            {errorMsg && (
+              <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">
+                ✕ {errorMsg}
               </div>
             )}
 
@@ -138,7 +138,11 @@ const ContactAdmin = () => {
           <div className="glass-panel p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4">
             <h2 className="text-lg font-bold text-white">Your Submitted Tickets</h2>
 
-            {myTickets.length > 0 ? (
+            {loadingTickets ? (
+              <div className="flex justify-center py-8">
+                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : myTickets.length > 0 ? (
               <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
                 {myTickets.map((t) => (
                   <div key={t.id} className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-2">

@@ -588,6 +588,19 @@ export const getAdminAnalytics = async (req, res) => {
     const resolvedSupport = supportMessages.filter(m => m.status === 'resolved').length;
     const supportResolutionRate = supportMessages.length > 0 ? Math.round((resolvedSupport / supportMessages.length) * 100) : 0;
 
+    const resolvedWithDates = supportMessages.filter(m => m.status === 'resolved' && m.createdAt && (m.resolvedAt || m.updatedAt));
+    let totalResolutionHours = 0;
+    resolvedWithDates.forEach(m => {
+      const start = new Date(m.createdAt).getTime();
+      const end = new Date(m.resolvedAt || m.updatedAt).getTime();
+      if (end > start) {
+        totalResolutionHours += (end - start) / (1000 * 60 * 60);
+      }
+    });
+    const avgResolutionHours = resolvedWithDates.length > 0
+      ? Number((totalResolutionHours / resolvedWithDates.length).toFixed(1))
+      : 0;
+
     // 6. Platform Sentiment & Feedback Breakdown
     let totalRatingSum = 0;
     const starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
@@ -598,20 +611,36 @@ export const getAdminAnalytics = async (req, res) => {
       totalRatingSum += (fb.rating || 5);
     });
 
-    const avgRating = feedbackList.length > 0 ? Number((totalRatingSum / feedbackList.length).toFixed(1)) : 4.9;
+    const avgRating = feedbackList.length > 0 ? Number((totalRatingSum / feedbackList.length).toFixed(1)) : 0;
 
-    // 7. Dynamic Monthly Activity Trends
-    const monthNames = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
-    const monthlyTrends = monthNames.map((month, idx) => {
-      const factor = (idx + 1) / monthNames.length;
-      return {
-        month,
-        students: Math.max(15, Math.round(users.length * (0.4 + 0.6 * factor))),
-        submissions: Math.max(20, Math.round(submissions.length * (0.3 + 0.7 * factor))),
-        supportTickets: Math.max(3, Math.round((supportMessages.length + 5) * (0.5 + 0.5 * factor))),
-        doubtsAsked: Math.max(2, Math.round((totalDoubts + 4) * (0.3 + 0.7 * factor)))
+    // 7. Dynamic Monthly Activity Trends computed from actual entity timestamps
+    const now = new Date();
+    const monthlyTrends = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthLabel = d.toLocaleString('en-US', { month: 'short' });
+      const year = d.getFullYear();
+      const month = d.getMonth();
+
+      const isInMonth = (dateStr) => {
+        if (!dateStr) return false;
+        const itemDate = new Date(dateStr);
+        return itemDate.getFullYear() === year && itemDate.getMonth() === month;
       };
-    });
+
+      const monthStudents = users.filter(u => u.role === 'student' && isInMonth(u.joinedAt || u.createdAt)).length;
+      const monthSubmissions = submissions.filter(s => isInMonth(s.submittedAt || s.createdAt)).length;
+      const monthTickets = supportMessages.filter(m => isInMonth(m.createdAt)).length;
+      const monthDoubts = teacherQuestions.filter(q => isInMonth(q.createdAt)).length;
+
+      monthlyTrends.push({
+        month: monthLabel,
+        students: monthStudents,
+        submissions: monthSubmissions,
+        supportTickets: monthTickets,
+        doubtsAsked: monthDoubts
+      });
+    }
 
     return res.status(200).json({
       success: true,
@@ -654,7 +683,7 @@ export const getAdminAnalytics = async (req, res) => {
           pending: pendingSupport,
           resolved: resolvedSupport,
           resolutionRate: supportResolutionRate,
-          avgResolutionHours: 3.8
+          avgResolutionHours
         },
 
         feedbackAvgRating: avgRating,

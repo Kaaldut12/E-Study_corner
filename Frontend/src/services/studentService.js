@@ -58,6 +58,7 @@ export const studentService = {
     return api.post('/student/change-password', body).then(res => res.data);
   },
   contactAdmin: (payload) => api.post('/student/contact-admin', payload).then(res => res.data),
+  getMyTickets: () => api.get('/student/contact-admin').then(res => res.data),
   searchAll: (query) => api.get(`/student/search?q=${encodeURIComponent(query)}`).then(res => res.data)
 };
 

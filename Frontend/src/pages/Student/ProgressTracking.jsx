@@ -49,7 +49,7 @@ const ProgressTracking = () => {
               <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Daily Study Streak</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl sm:text-3xl font-black text-amber-400">🔥 {data?.stats?.studyStreakDays || 5}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-amber-400">🔥 {data?.stats?.studyStreakDays ?? 0}</span>
                   <span className="text-xs text-slate-400">Days</span>
                 </div>
               </div>
@@ -57,7 +57,7 @@ const ProgressTracking = () => {
               <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Study Time</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl sm:text-3xl font-black text-indigo-400">⏱️ {data?.stats?.totalStudyMinutes || 240}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-indigo-400">⏱️ {data?.stats?.totalStudyMinutes ?? 0}</span>
                   <span className="text-xs text-slate-400">Mins</span>
                 </div>
               </div>
@@ -65,7 +65,7 @@ const ProgressTracking = () => {
               <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Completed Courses</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl sm:text-3xl font-black text-emerald-400">🎓 {data?.stats?.completedCoursesCount || 2}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-emerald-400">🎓 {data?.stats?.completedCoursesCount ?? 0}</span>
                   <span className="text-xs text-slate-400">Courses</span>
                 </div>
               </div>
@@ -73,7 +73,7 @@ const ProgressTracking = () => {
               <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Personal Notes</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl sm:text-3xl font-black text-purple-400">📝 {data?.stats?.activeNotesCount || 4}</span>
+                  <span className="text-2xl sm:text-3xl font-black text-purple-400">📝 {data?.stats?.activeNotesCount ?? 0}</span>
                   <span className="text-xs text-slate-400">Notes</span>
                 </div>
               </div>

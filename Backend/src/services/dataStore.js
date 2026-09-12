@@ -145,7 +145,18 @@ const generateId = (prefix) => `${prefix}_${crypto.randomUUID().slice(0, 8)}`;
 const isDBConnected = () => mongoose.connection.readyState === 1;
 const shouldEnforceDB = () => process.env.NODE_ENV === 'production' || process.env.DATA_STORE_MODE === 'strict';
 
-export const dataStore = {
+const handleDbFailure = (msg, err) => {
+  if (shouldEnforceDB()) {
+    const error = new Error(`Database error in production mode: ${msg} ${err?.message || err || ''}`);
+    error.status = 503;
+    error.statusCode = 503;
+    error.code = 'DATABASE_ERROR';
+    throw error;
+  }
+  console.warn(msg, err);
+};
+
+const rawDataStore = {
   // ==================== USERS ====================
   getUsers: async () => {
     if (isDBConnected()) {
@@ -158,7 +169,7 @@ export const dataStore = {
           }));
         }
       } catch (err) {
-        console.warn('[dataStore] DB getUsers error, using fallback:', err.message);
+        handleDbFailure('[dataStore] DB getUsers error, using fallback:', err.message);
       }
     }
     return memUsers.map(u => ({
@@ -179,7 +190,7 @@ export const dataStore = {
         }
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getUserById error, using fallback:', err.message);
+        handleDbFailure('[dataStore] DB getUserById error, using fallback:', err.message);
       }
     }
     const u = memUsers.find(x => x.id === id);
@@ -204,7 +215,7 @@ export const dataStore = {
         }
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getUserByEmail error, using fallback:', err.message);
+        handleDbFailure('[dataStore] DB getUserByEmail error, using fallback:', err.message);
       }
     }
     const u = memUsers.find(x => x.email.toLowerCase() === cleanEmail);
@@ -245,7 +256,7 @@ export const dataStore = {
           permissions: (resObj.permissions && resObj.permissions.length > 0) ? resObj.permissions : permissions
         };
       } catch (err) {
-        console.warn('[dataStore] DB createUser error, storing in fallback:', err.message);
+        handleDbFailure('[dataStore] DB createUser error, storing in fallback:', err.message);
       }
     }
 
@@ -269,7 +280,7 @@ export const dataStore = {
           };
         }
       } catch (err) {
-        console.warn('[dataStore] DB updateUser error:', err.message);
+        handleDbFailure('[dataStore] DB updateUser error:', err.message);
       }
     }
     const idx = memUsers.findIndex(u => u.id === id);
@@ -296,7 +307,7 @@ export const dataStore = {
           { new: true }
         ).lean();
       } catch (err) {
-        console.warn('[dataStore] DB setResetOTP error:', err.message);
+        handleDbFailure('[dataStore] DB setResetOTP error:', err.message);
       }
     }
     const u = memUsers.find(x => x.email.toLowerCase() === email.toLowerCase());
@@ -315,7 +326,7 @@ export const dataStore = {
       try {
         user = await User.findOne({ email: cleanEmail }).lean();
       } catch (err) {
-        console.warn('[dataStore] DB confirmResetOTP lookup error:', err.message);
+        handleDbFailure('[dataStore] DB confirmResetOTP lookup error:', err.message);
       }
     }
     if (!user) {
@@ -339,7 +350,7 @@ export const dataStore = {
           { $set: { password: hashed, resetCode: null, resetExpires: null } }
         );
       } catch (err) {
-        console.warn('[dataStore] DB password update error:', err.message);
+        handleDbFailure('[dataStore] DB password update error:', err.message);
       }
     }
     const mUser = memUsers.find(x => x.email.toLowerCase() === cleanEmail);
@@ -358,7 +369,7 @@ export const dataStore = {
       try {
         user = await User.findOne({ id }).lean();
       } catch (err) {
-        console.warn('[dataStore] DB changeUserPassword error:', err.message);
+        handleDbFailure('[dataStore] DB changeUserPassword error:', err.message);
       }
     }
     if (!user) {
@@ -372,7 +383,7 @@ export const dataStore = {
       try {
         await User.updateOne({ id }, { $set: { password: hashed } });
       } catch (err) {
-        console.warn('[dataStore] DB update password error:', err.message);
+        handleDbFailure('[dataStore] DB update password error:', err.message);
       }
     }
     const mUser = memUsers.find(x => x.id === id);
@@ -390,7 +401,7 @@ export const dataStore = {
         if (mIdx !== -1) memUsers.splice(mIdx, 1);
         return res.deletedCount > 0;
       } catch (err) {
-        console.warn('[dataStore] DB deleteUser error:', err.message);
+        handleDbFailure('[dataStore] DB deleteUser error:', err.message);
       }
     }
     const idx = memUsers.findIndex(x => x.id === id);
@@ -408,7 +419,7 @@ export const dataStore = {
         const docs = await Notification.find().sort({ createdAt: -1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getNotifications error:', err.message);
+        handleDbFailure('[dataStore] DB getNotifications error:', err.message);
       }
     }
     return memNotifications;
@@ -434,7 +445,7 @@ export const dataStore = {
         memNotifications.unshift(resObj);
         return resObj;
       } catch (err) {
-        console.warn('[dataStore] DB createNotification error:', err.message);
+        handleDbFailure('[dataStore] DB createNotification error:', err.message);
       }
     }
     memNotifications.unshift(payload);
@@ -446,7 +457,7 @@ export const dataStore = {
       try {
         await Notification.deleteOne({ id });
       } catch (err) {
-        console.warn('[dataStore] DB deleteNotification error:', err.message);
+        handleDbFailure('[dataStore] DB deleteNotification error:', err.message);
       }
     }
     const idx = memNotifications.findIndex(x => x.id === id);
@@ -461,7 +472,7 @@ export const dataStore = {
         const docs = await Enquiry.find().sort({ createdAt: -1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getEnquiries error:', err.message);
+        handleDbFailure('[dataStore] DB getEnquiries error:', err.message);
       }
     }
     return memEnquiries;
@@ -482,7 +493,7 @@ export const dataStore = {
         memEnquiries.unshift(resObj);
         return resObj;
       } catch (err) {
-        console.warn('[dataStore] DB createEnquiry error:', err.message);
+        handleDbFailure('[dataStore] DB createEnquiry error:', err.message);
       }
     }
     memEnquiries.unshift(payload);
@@ -494,7 +505,7 @@ export const dataStore = {
       try {
         await Enquiry.deleteOne({ id });
       } catch (err) {
-        console.warn('[dataStore] DB deleteEnquiry error:', err.message);
+        handleDbFailure('[dataStore] DB deleteEnquiry error:', err.message);
       }
     }
     const idx = memEnquiries.findIndex(x => x.id === id);
@@ -509,7 +520,7 @@ export const dataStore = {
         const docs = await StudyMaterial.find().sort({ createdAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getStudyMaterials error:', err.message);
+        handleDbFailure('[dataStore] DB getStudyMaterials error:', err.message);
       }
     }
     return memStudyMaterials;
@@ -531,7 +542,7 @@ export const dataStore = {
         memStudyMaterials.unshift(resObj);
         return resObj;
       } catch (err) {
-        console.warn('[dataStore] DB createStudyMaterial error:', err.message);
+        handleDbFailure('[dataStore] DB createStudyMaterial error:', err.message);
       }
     }
     memStudyMaterials.unshift(payload);
@@ -543,7 +554,7 @@ export const dataStore = {
       try {
         await StudyMaterial.deleteOne({ id });
       } catch (err) {
-        console.warn('[dataStore] DB deleteStudyMaterial error:', err.message);
+        handleDbFailure('[dataStore] DB deleteStudyMaterial error:', err.message);
       }
     }
     const idx = memStudyMaterials.findIndex(x => x.id === id);
@@ -558,7 +569,7 @@ export const dataStore = {
         const docs = await Assignment.find().sort({ createdAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAssignments error:', err.message);
+        handleDbFailure('[dataStore] DB getAssignments error:', err.message);
       }
     }
     return memAssignments;
@@ -571,7 +582,7 @@ export const dataStore = {
         if (doc) return doc;
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getAssignmentById error:', err.message);
+        handleDbFailure('[dataStore] DB getAssignmentById error:', err.message);
       }
     }
     return memAssignments.find(x => x.id === id) || null;
@@ -591,7 +602,7 @@ export const dataStore = {
         memAssignments.unshift(resObj);
         return resObj;
       } catch (err) {
-        console.warn('[dataStore] DB createAssignment error:', err.message);
+        handleDbFailure('[dataStore] DB createAssignment error:', err.message);
       }
     }
     memAssignments.unshift(payload);
@@ -604,7 +615,7 @@ export const dataStore = {
         await Assignment.deleteOne({ id });
         await Submission.deleteMany({ assignmentId: id });
       } catch (err) {
-        console.warn('[dataStore] DB deleteAssignment error:', err.message);
+        handleDbFailure('[dataStore] DB deleteAssignment error:', err.message);
       }
     }
     const idx = memAssignments.findIndex(x => x.id === id);
@@ -619,7 +630,7 @@ export const dataStore = {
         const docs = await Submission.find().sort({ createdAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getSubmissions error:', err.message);
+        handleDbFailure('[dataStore] DB getSubmissions error:', err.message);
       }
     }
     return memSubmissions;
@@ -632,7 +643,7 @@ export const dataStore = {
         if (doc) return doc;
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getSubmissionById error:', err.message);
+        handleDbFailure('[dataStore] DB getSubmissionById error:', err.message);
       }
     }
     return memSubmissions.find(x => x.id === id) || null;
@@ -644,7 +655,7 @@ export const dataStore = {
         const docs = await Submission.find({ studentId }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getSubmissionsForStudent error:', err.message);
+        handleDbFailure('[dataStore] DB getSubmissionsForStudent error:', err.message);
       }
     }
     return memSubmissions.filter(x => x.studentId === studentId);
@@ -656,7 +667,7 @@ export const dataStore = {
         const docs = await Submission.find({ assignmentId }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getSubmissionsForAssignment error:', err.message);
+        handleDbFailure('[dataStore] DB getSubmissionsForAssignment error:', err.message);
       }
     }
     return memSubmissions.filter(x => x.assignmentId === assignmentId);
@@ -686,7 +697,7 @@ export const dataStore = {
         });
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB createSubmission error:', err.message);
+        handleDbFailure('[dataStore] DB createSubmission error:', err.message);
       }
     }
     const idx = memSubmissions.findIndex(s => s.assignmentId === subData.assignmentId && s.studentId === subData.studentId);
@@ -718,7 +729,7 @@ export const dataStore = {
         ).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB gradeSubmission error:', err.message);
+        handleDbFailure('[dataStore] DB gradeSubmission error:', err.message);
       }
     }
     const s = memSubmissions.find(x => x.id === submissionId);
@@ -740,10 +751,22 @@ export const dataStore = {
         const docs = await SupportMessage.find().sort({ createdAt: -1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getSupportMessages error:', err.message);
+        handleDbFailure('[dataStore] DB getSupportMessages error:', err.message);
       }
     }
     return memSupportMessages;
+  },
+
+  getSupportMessagesByUserId: async (userId) => {
+    if (isDBConnected()) {
+      try {
+        const docs = await SupportMessage.find({ userId }).sort({ createdAt: -1 }).lean();
+        if (docs) return docs;
+      } catch (err) {
+        handleDbFailure('[dataStore] DB getSupportMessagesByUserId error:', err.message);
+      }
+    }
+    return memSupportMessages.filter(m => m.userId === userId);
   },
 
   createSupportMessage: async (msgData) => {
@@ -759,7 +782,7 @@ export const dataStore = {
         const doc = await SupportMessage.create(payload);
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB createSupportMessage error:', err.message);
+        handleDbFailure('[dataStore] DB createSupportMessage error:', err.message);
       }
     }
     memSupportMessages.unshift(payload);
@@ -776,7 +799,7 @@ export const dataStore = {
         ).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB updateSupportMessageStatus error:', err.message);
+        handleDbFailure('[dataStore] DB updateSupportMessageStatus error:', err.message);
       }
     }
     const msg = memSupportMessages.find(x => x.id === id);
@@ -795,7 +818,7 @@ export const dataStore = {
         const docs = await Feedback.find().sort({ createdAt: -1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getPlatformFeedback error:', err.message);
+        handleDbFailure('[dataStore] DB getPlatformFeedback error:', err.message);
       }
     }
     return memFeedback;
@@ -812,7 +835,7 @@ export const dataStore = {
         const doc = await Feedback.create(payload);
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB createPlatformFeedback error:', err.message);
+        handleDbFailure('[dataStore] DB createPlatformFeedback error:', err.message);
       }
     }
     memFeedback.unshift(payload);
@@ -826,7 +849,7 @@ export const dataStore = {
         const docs = await Course.find().lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getCourses error:', err.message);
+        handleDbFailure('[dataStore] DB getCourses error:', err.message);
       }
     }
     return memCourses;
@@ -839,7 +862,7 @@ export const dataStore = {
         if (doc) return doc;
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getCourseById error:', err.message);
+        handleDbFailure('[dataStore] DB getCourseById error:', err.message);
       }
     }
     return memCourses.find(x => x.id === id) || null;
@@ -857,7 +880,7 @@ export const dataStore = {
         const doc = await Course.create(payload);
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB createCourse error:', err.message);
+        handleDbFailure('[dataStore] DB createCourse error:', err.message);
       }
     }
     memCourses.unshift(payload);
@@ -885,7 +908,7 @@ export const dataStore = {
           return { data: doc };
         }
       } catch (err) {
-        console.warn('[dataStore] DB updateCourse error:', err.message);
+        handleDbFailure('[dataStore] DB updateCourse error:', err.message);
       }
     }
     const memCourse = memCourses.find(c => c.id === courseId);
@@ -910,7 +933,7 @@ export const dataStore = {
         await Quiz.deleteMany({ courseId });
         await Assignment.deleteMany({ courseId });
       } catch (err) {
-        console.warn('[dataStore] DB deleteCourse error:', err.message);
+        handleDbFailure('[dataStore] DB deleteCourse error:', err.message);
       }
     }
     const idx = memCourses.findIndex(c => c.id === courseId);
@@ -928,7 +951,7 @@ export const dataStore = {
         const docs = await Lesson.find({ courseId }).sort({ lessonOrder: 1, order: 1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getLessonsForCourse error:', err.message);
+        handleDbFailure('[dataStore] DB getLessonsForCourse error:', err.message);
       }
     }
     return memLessons
@@ -942,7 +965,7 @@ export const dataStore = {
         const doc = await Lesson.findOne({ id: lessonId }).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB getLessonById error:', err.message);
+        handleDbFailure('[dataStore] DB getLessonById error:', err.message);
       }
     }
     return memLessons.find(l => l.id === lessonId) || null;
@@ -976,7 +999,7 @@ export const dataStore = {
         memLessons.push(resObj);
         return { data: resObj };
       } catch (err) {
-        console.warn('[dataStore] DB createLesson error:', err.message);
+        handleDbFailure('[dataStore] DB createLesson error:', err.message);
       }
     }
     memLessons.push(payload);
@@ -1005,7 +1028,7 @@ export const dataStore = {
           return { data: doc };
         }
       } catch (err) {
-        console.warn('[dataStore] DB updateLesson error:', err.message);
+        handleDbFailure('[dataStore] DB updateLesson error:', err.message);
       }
     }
     const memLesson = memLessons.find(l => l.id === lessonId);
@@ -1028,7 +1051,7 @@ export const dataStore = {
       try {
         await Lesson.deleteOne({ id: lessonId });
       } catch (err) {
-        console.warn('[dataStore] DB deleteLesson error:', err.message);
+        handleDbFailure('[dataStore] DB deleteLesson error:', err.message);
       }
     }
     const idx = memLessons.findIndex(l => l.id === lessonId);
@@ -1043,7 +1066,7 @@ export const dataStore = {
         const docs = await Quiz.find().lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getQuizzes error:', err.message);
+        handleDbFailure('[dataStore] DB getQuizzes error:', err.message);
       }
     }
     return memQuizzes;
@@ -1056,7 +1079,7 @@ export const dataStore = {
         if (doc) return doc;
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getQuizById error:', err.message);
+        handleDbFailure('[dataStore] DB getQuizById error:', err.message);
       }
     }
     return memQuizzes.find(q => q.id === quizId) || null;
@@ -1092,7 +1115,7 @@ export const dataStore = {
         memQuizzes.push(resObj);
         return { data: resObj };
       } catch (err) {
-        console.warn('[dataStore] DB createQuiz error:', err.message);
+        handleDbFailure('[dataStore] DB createQuiz error:', err.message);
       }
     }
     memQuizzes.push(payload);
@@ -1120,7 +1143,7 @@ export const dataStore = {
           return { data: doc };
         }
       } catch (err) {
-        console.warn('[dataStore] DB updateQuiz error:', err.message);
+        handleDbFailure('[dataStore] DB updateQuiz error:', err.message);
       }
     }
     const memQuiz = memQuizzes.find(q => q.id === quizId);
@@ -1144,7 +1167,7 @@ export const dataStore = {
         await Question.deleteMany({ quizId });
         await QuizAttempt.deleteMany({ quizId });
       } catch (err) {
-        console.warn('[dataStore] DB deleteQuiz error:', err.message);
+        handleDbFailure('[dataStore] DB deleteQuiz error:', err.message);
       }
     }
     const idx = memQuizzes.findIndex(q => q.id === quizId);
@@ -1160,7 +1183,7 @@ export const dataStore = {
         const doc = await QuizAttempt.create(attemptData);
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB saveQuizAttempt error:', err.message);
+        handleDbFailure('[dataStore] DB saveQuizAttempt error:', err.message);
       }
     }
     memQuizAttempts.unshift(attemptData);
@@ -1173,7 +1196,7 @@ export const dataStore = {
         const docs = await QuizAttempt.find({ studentId }).sort({ attemptedAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getQuizAttempts error:', err.message);
+        handleDbFailure('[dataStore] DB getQuizAttempts error:', err.message);
       }
     }
     return memQuizAttempts.filter(a => a.studentId === studentId);
@@ -1185,7 +1208,7 @@ export const dataStore = {
         const docs = await QuizAttempt.find({ studentId, quizId }).sort({ attemptedAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getQuizAttemptsForStudentAndQuiz error:', err.message);
+        handleDbFailure('[dataStore] DB getQuizAttemptsForStudentAndQuiz error:', err.message);
       }
     }
     return memQuizAttempts.filter(a => a.studentId === studentId && a.quizId === quizId);
@@ -1198,7 +1221,7 @@ export const dataStore = {
         const docs = await Question.find({ quizId }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getQuestionsForQuiz error:', err.message);
+        handleDbFailure('[dataStore] DB getQuestionsForQuiz error:', err.message);
       }
     }
     return memQuestions.filter(q => q.quizId === quizId);
@@ -1211,7 +1234,7 @@ export const dataStore = {
         if (doc) return doc;
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getQuestionById error:', err.message);
+        handleDbFailure('[dataStore] DB getQuestionById error:', err.message);
       }
     }
     return memQuestions.find(q => q.id === questionId) || null;
@@ -1242,7 +1265,7 @@ export const dataStore = {
         memQuestions.push(resObj);
         return { data: resObj };
       } catch (err) {
-        console.warn('[dataStore] DB createQuestion error:', err.message);
+        handleDbFailure('[dataStore] DB createQuestion error:', err.message);
       }
     }
     memQuestions.push(payload);
@@ -1271,7 +1294,7 @@ export const dataStore = {
           return { data: doc };
         }
       } catch (err) {
-        console.warn('[dataStore] DB updateQuestion error:', err.message);
+        handleDbFailure('[dataStore] DB updateQuestion error:', err.message);
       }
     }
     const memQuestion = memQuestions.find(q => q.id === questionId);
@@ -1294,7 +1317,7 @@ export const dataStore = {
       try {
         await Question.deleteOne({ id: questionId });
       } catch (err) {
-        console.warn('[dataStore] DB deleteQuestion error:', err.message);
+        handleDbFailure('[dataStore] DB deleteQuestion error:', err.message);
       }
     }
     const idx = memQuestions.findIndex(q => q.id === questionId);
@@ -1309,7 +1332,7 @@ export const dataStore = {
         const docs = await Note.find({ studentId }).sort({ isPinned: -1, updatedAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getStudentNotes error:', err.message);
+        handleDbFailure('[dataStore] DB getStudentNotes error:', err.message);
       }
     }
     return memNotes.filter(n => n.studentId === studentId);
@@ -1322,7 +1345,7 @@ export const dataStore = {
         const doc = await Note.create(payload);
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB createNote error:', err.message);
+        handleDbFailure('[dataStore] DB createNote error:', err.message);
       }
     }
     memNotes.unshift(payload);
@@ -1336,7 +1359,7 @@ export const dataStore = {
         const doc = await Note.findOneAndUpdate(filter, { $set: updates }, { new: true }).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB updateNote error:', err.message);
+        handleDbFailure('[dataStore] DB updateNote error:', err.message);
       }
     }
     const idx = memNotes.findIndex(n => n.id === noteId && (!studentId || n.studentId === studentId));
@@ -1354,7 +1377,7 @@ export const dataStore = {
         const res = await Note.deleteOne(filter);
         if (res.deletedCount > 0) return true;
       } catch (err) {
-        console.warn('[dataStore] DB deleteNote error:', err.message);
+        handleDbFailure('[dataStore] DB deleteNote error:', err.message);
       }
     }
     const idx = memNotes.findIndex(n => n.id === noteId && (!studentId || n.studentId === studentId));
@@ -1372,7 +1395,7 @@ export const dataStore = {
         const docs = await Bookmark.find({ studentId }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getStudentBookmarks error:', err.message);
+        handleDbFailure('[dataStore] DB getStudentBookmarks error:', err.message);
       }
     }
     return memBookmarks.filter(b => b.studentId === studentId);
@@ -1396,7 +1419,7 @@ export const dataStore = {
         });
         return { action: 'added', bookmarked: true, bookmark: doc.toObject ? doc.toObject() : doc };
       } catch (err) {
-        console.warn('[dataStore] DB toggleBookmark error:', err.message);
+        handleDbFailure('[dataStore] DB toggleBookmark error:', err.message);
       }
     }
     const existingIdx = memBookmarks.findIndex(b => b.studentId === studentId && b.itemId === itemId);
@@ -1421,7 +1444,7 @@ export const dataStore = {
       try {
         await Bookmark.deleteOne({ studentId, id: bookmarkId });
       } catch (err) {
-        console.warn('[dataStore] DB deleteBookmark error:', err.message);
+        handleDbFailure('[dataStore] DB deleteBookmark error:', err.message);
       }
     }
     const idx = memBookmarks.findIndex(b => b.studentId === studentId && b.id === bookmarkId);
@@ -1436,7 +1459,7 @@ export const dataStore = {
         const docs = await Progress.find({ studentId }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getStudentProgress error:', err.message);
+        handleDbFailure('[dataStore] DB getStudentProgress error:', err.message);
       }
     }
     return memProgress.filter(p => p.studentId === studentId);
@@ -1452,7 +1475,7 @@ export const dataStore = {
         ).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB updateStudentProgress error:', err.message);
+        handleDbFailure('[dataStore] DB updateStudentProgress error:', err.message);
       }
     }
     const idx = memProgress.findIndex(p => p.studentId === studentId && p.courseId === courseId);
@@ -1473,7 +1496,7 @@ export const dataStore = {
         if (doc) return doc;
         return null;
       } catch (err) {
-        console.warn('[dataStore] DB getEnrollment error:', err.message);
+        handleDbFailure('[dataStore] DB getEnrollment error:', err.message);
       }
     }
     return memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId) || null;
@@ -1485,7 +1508,7 @@ export const dataStore = {
         const docs = await Enrollment.find({ studentId }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getStudentEnrollments error:', err.message);
+        handleDbFailure('[dataStore] DB getStudentEnrollments error:', err.message);
       }
     }
     return memEnrollments.filter(e => e.studentId === studentId);
@@ -1532,7 +1555,7 @@ export const dataStore = {
         memEnrollments.push(payload);
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB enrollStudent error:', err.message);
+        handleDbFailure('[dataStore] DB enrollStudent error:', err.message);
       }
     }
 
@@ -1546,7 +1569,7 @@ export const dataStore = {
         const doc = await Enrollment.findOne({ studentId, courseId }).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB getEnrollment error:', err.message);
+        handleDbFailure('[dataStore] DB getEnrollment error:', err.message);
       }
     }
     return memEnrollments.find(e => e.studentId === studentId && e.courseId === courseId) || null;
@@ -1578,7 +1601,7 @@ export const dataStore = {
       try {
         course = await Course.findOne({ id: courseId }).lean();
       } catch (err) {
-        console.warn('[dataStore] DB course lookup error:', err.message);
+        handleDbFailure('[dataStore] DB course lookup error:', err.message);
       }
     }
     if (!course) {
@@ -1594,7 +1617,7 @@ export const dataStore = {
       try {
         lesson = await Lesson.findOne({ id: lessonId }).lean();
       } catch (err) {
-        console.warn('[dataStore] DB lesson lookup error:', err.message);
+        handleDbFailure('[dataStore] DB lesson lookup error:', err.message);
       }
     }
     if (!lesson) {
@@ -1613,7 +1636,7 @@ export const dataStore = {
       try {
         enrollment = await Enrollment.findOne({ studentId, courseId });
       } catch (err) {
-        console.warn('[dataStore] DB lookup enrollment error:', err.message);
+        handleDbFailure('[dataStore] DB lookup enrollment error:', err.message);
       }
     }
     if (!enrollment) {
@@ -1630,7 +1653,7 @@ export const dataStore = {
       try {
         courseLessons = await Lesson.find({ courseId }).lean();
       } catch (err) {
-        console.warn('[dataStore] DB lessons lookup error:', err.message);
+        handleDbFailure('[dataStore] DB lessons lookup error:', err.message);
       }
     }
     if (!courseLessons || courseLessons.length === 0) {
@@ -1684,7 +1707,7 @@ export const dataStore = {
           { upsert: true, new: true }
         );
       } catch (err) {
-        console.warn('[dataStore] DB completeStudentLesson error:', err.message);
+        handleDbFailure('[dataStore] DB completeStudentLesson error:', err.message);
       }
     }
 
@@ -1712,7 +1735,7 @@ export const dataStore = {
           }));
         }
       } catch (err) {
-        console.warn('[dataStore] DB getTeachersList error:', err.message);
+        handleDbFailure('[dataStore] DB getTeachersList error:', err.message);
       }
     }
     return memUsers.filter(u => u.role === 'teacher' || u.role === 'superadmin').map(t => ({
@@ -1731,7 +1754,7 @@ export const dataStore = {
         const docs = await TeacherQuestion.find({ studentId }).sort({ createdAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getTeacherQuestionsForStudent error:', err.message);
+        handleDbFailure('[dataStore] DB getTeacherQuestionsForStudent error:', err.message);
       }
     }
     return memTeacherQuestions.filter(q => q.studentId === studentId);
@@ -1743,7 +1766,7 @@ export const dataStore = {
         const docs = await TeacherQuestion.find({ teacherId }).sort({ createdAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getTeacherQuestionsForTeacher error:', err.message);
+        handleDbFailure('[dataStore] DB getTeacherQuestionsForTeacher error:', err.message);
       }
     }
     return memTeacherQuestions.filter(q => q.teacherId === teacherId);
@@ -1763,7 +1786,7 @@ export const dataStore = {
         const doc = await TeacherQuestion.create(payload);
         return doc.toObject ? doc.toObject() : doc;
       } catch (err) {
-        console.warn('[dataStore] DB createTeacherQuestion error:', err.message);
+        handleDbFailure('[dataStore] DB createTeacherQuestion error:', err.message);
       }
     }
     memTeacherQuestions.unshift(payload);
@@ -1785,7 +1808,7 @@ export const dataStore = {
         ).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB replyTeacherQuestion error:', err.message);
+        handleDbFailure('[dataStore] DB replyTeacherQuestion error:', err.message);
       }
     }
     const q = memTeacherQuestions.find(x => x.id === id && (!teacherId || x.teacherId === teacherId));
@@ -1813,7 +1836,7 @@ export const dataStore = {
         ).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB adminReplyTeacherQuestion error:', err.message);
+        handleDbFailure('[dataStore] DB adminReplyTeacherQuestion error:', err.message);
       }
     }
     const q = memTeacherQuestions.find(x => x.id === id);
@@ -1832,7 +1855,7 @@ export const dataStore = {
         const docs = await TeacherQuestion.find().sort({ createdAt: -1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllTeacherQuestions error:', err.message);
+        handleDbFailure('[dataStore] DB getAllTeacherQuestions error:', err.message);
       }
     }
     return memTeacherQuestions;
@@ -1844,7 +1867,7 @@ export const dataStore = {
         const docs = await QuizAttempt.find().sort({ attemptedAt: -1 }).lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllQuizAttempts error:', err.message);
+        handleDbFailure('[dataStore] DB getAllQuizAttempts error:', err.message);
       }
     }
     return memQuizAttempts;
@@ -1856,7 +1879,7 @@ export const dataStore = {
         const docs = await Question.find().lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllQuestions error:', err.message);
+        handleDbFailure('[dataStore] DB getAllQuestions error:', err.message);
       }
     }
     return memQuestions;
@@ -1868,7 +1891,7 @@ export const dataStore = {
         const docs = await Lesson.find().lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllLessons error:', err.message);
+        handleDbFailure('[dataStore] DB getAllLessons error:', err.message);
       }
     }
     return memLessons;
@@ -1880,7 +1903,7 @@ export const dataStore = {
         const docs = await Note.find().lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllNotes error:', err.message);
+        handleDbFailure('[dataStore] DB getAllNotes error:', err.message);
       }
     }
     return memNotes;
@@ -1892,7 +1915,7 @@ export const dataStore = {
         const docs = await Bookmark.find().lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllBookmarks error:', err.message);
+        handleDbFailure('[dataStore] DB getAllBookmarks error:', err.message);
       }
     }
     return memBookmarks;
@@ -1904,7 +1927,7 @@ export const dataStore = {
         const docs = await Progress.find().lean();
         if (docs && docs.length > 0) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllProgress error:', err.message);
+        handleDbFailure('[dataStore] DB getAllProgress error:', err.message);
       }
     }
     return memProgress;
@@ -1938,7 +1961,7 @@ export const dataStore = {
         const doc = await Attendance.create(payload);
         return { ...doc.toObject(), alreadyMarked: false };
       } catch (err) {
-        console.warn('[dataStore] DB markAttendance error:', err.message);
+        handleDbFailure('[dataStore] DB markAttendance error:', err.message);
       }
     }
 
@@ -1957,7 +1980,7 @@ export const dataStore = {
         const doc = await Attendance.findOne({ userId, date: todayDate }).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB getTodayAttendance error:', err.message);
+        handleDbFailure('[dataStore] DB getTodayAttendance error:', err.message);
       }
     }
     return memAttendance.find(a => a.userId === userId && a.date === todayDate) || null;
@@ -1971,7 +1994,7 @@ export const dataStore = {
       try {
         userRecords = await Attendance.find({ userId }).sort({ date: -1 }).lean();
       } catch (err) {
-        console.warn('[dataStore] DB getUserAttendanceStats error:', err.message);
+        handleDbFailure('[dataStore] DB getUserAttendanceStats error:', err.message);
       }
     }
     if (!userRecords || userRecords.length === 0) {
@@ -2006,7 +2029,7 @@ export const dataStore = {
       }
       userRecords.sort((a, b) => b.date.localeCompare(a.date));
     } catch (leaveErr) {
-      console.warn('[dataStore] getUserAttendanceStats leave merge error:', leaveErr.message);
+      handleDbFailure('[dataStore] getUserAttendanceStats leave merge error:', leaveErr.message);
     }
 
     const todayRecord = userRecords.find(a => a.date === todayDate) || null;
@@ -2057,7 +2080,7 @@ export const dataStore = {
         if (filterRole) query.userRole = filterRole;
         records = await Attendance.find(query).sort({ date: -1, createdAt: -1 }).lean();
       } catch (err) {
-        console.warn('[dataStore] DB getAllAttendanceRecords error:', err.message);
+        handleDbFailure('[dataStore] DB getAllAttendanceRecords error:', err.message);
       }
     }
     if (!records || records.length === 0) {
@@ -2096,7 +2119,7 @@ export const dataStore = {
         ).lean();
         return doc;
       } catch (err) {
-        console.warn('[dataStore] DB markStudentAttendanceOverride error:', err.message);
+        handleDbFailure('[dataStore] DB markStudentAttendanceOverride error:', err.message);
       }
     }
 
@@ -2135,7 +2158,7 @@ export const dataStore = {
         const doc = await Leave.create(payload);
         return doc.toObject();
       } catch (err) {
-        console.warn('[dataStore] DB applyLeave error:', err.message);
+        handleDbFailure('[dataStore] DB applyLeave error:', err.message);
       }
     }
 
@@ -2149,7 +2172,7 @@ export const dataStore = {
         const docs = await Leave.find({ userId }).sort({ createdAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getUserLeaves error:', err.message);
+        handleDbFailure('[dataStore] DB getUserLeaves error:', err.message);
       }
     }
     return memLeaves.filter(l => l.userId === userId).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -2164,7 +2187,7 @@ export const dataStore = {
         const docs = await Leave.find(query).sort({ createdAt: -1 }).lean();
         if (docs) return docs;
       } catch (err) {
-        console.warn('[dataStore] DB getAllLeaves error:', err.message);
+        handleDbFailure('[dataStore] DB getAllLeaves error:', err.message);
       }
     }
     return memLeaves.filter(l => {
@@ -2191,7 +2214,7 @@ export const dataStore = {
         ).lean();
         if (doc) return doc;
       } catch (err) {
-        console.warn('[dataStore] DB updateLeaveStatus error:', err.message);
+        handleDbFailure('[dataStore] DB updateLeaveStatus error:', err.message);
       }
     }
 
@@ -2218,7 +2241,7 @@ export const dataStore = {
           return true;
         }
       } catch (err) {
-        console.warn('[dataStore] DB deleteLeave error:', err.message);
+        handleDbFailure('[dataStore] DB deleteLeave error:', err.message);
       }
     }
 
@@ -2240,6 +2263,24 @@ export const dataStore = {
   // Two-Step Database Persistence Gateway
   twoStep: twoStepDB
 };
+
+export const dataStore = new Proxy(rawDataStore, {
+  get(target, prop, receiver) {
+    const orig = Reflect.get(target, prop, receiver);
+    if (typeof orig !== 'function') return orig;
+
+    return async function (...args) {
+      if (shouldEnforceDB() && !isDBConnected()) {
+        const err = new Error(`Database service is unavailable. Operation '${String(prop)}' cannot be completed without active MongoDB connection in production mode.`);
+        err.status = 503;
+        err.statusCode = 503;
+        err.code = 'DATABASE_UNAVAILABLE';
+        throw err;
+      }
+      return orig.apply(this, args);
+    };
+  }
+});
 
 export { twoStepDB };
 

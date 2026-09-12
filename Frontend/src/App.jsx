@@ -91,86 +91,74 @@ function App() {
 
           {/* Student Routes - Protected */}
           <Route
-            path="/student/*"
-            element={
-              <ProtectedRoute requiredRole="student">
-                <Routes>
-                  <Route path="/" element={<StudentDashboard />} />
-                  <Route path="/ai-coach" element={<AICoach />} />
-                  <Route path="/ai-recommendations" element={<AIRecommendations />} />
-                  <Route path="/weak-topics" element={<WeakTopicDetector />} />
-                  <Route path="/courses" element={<Courses />} />
-                  <Route path="/quizzes" element={<Quizzes />} />
-                  <Route path="/progress" element={<ProgressTracking />} />
-                  <Route path="/bookmarks" element={<Bookmarks />} />
-                  <Route path="/notifications-feed" element={<NotificationsFeed />} />
-                  <Route path="/notes" element={<PersonalNotes />} />
-                  <Route path="/search" element={<GlobalSearch />} />
-                  <Route path="/assignments" element={<ViewAssignments />} />
-                  <Route path="/submit/:assignmentId" element={<SubmitAssignment />} />
-                  <Route path="/questions" element={<StudentQuestions />} />
-                  <Route path="/study-material" element={<DownStudyMaterial />} />
-                  <Route path="/feedback" element={<StudentFeedback />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/profile" element={<Settings />} />
-                  <Route path="/change-password" element={<Settings />} />
-                  <Route path="/contact-admin" element={<ContactAdmin />} />
-                  <Route path="/leave" element={<ApplyLeave />} />
-                  <Route path="/attendance" element={<Attendance />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ProtectedRoute>
-            }
-          />
+            path="/student"
+            element={<ProtectedRoute requiredRole="student" />}
+          >
+            <Route index element={<StudentDashboard />} />
+            <Route path="ai-coach" element={<AICoach />} />
+            <Route path="ai-recommendations" element={<AIRecommendations />} />
+            <Route path="weak-topics" element={<WeakTopicDetector />} />
+            <Route path="courses" element={<Courses />} />
+            <Route path="quizzes" element={<Quizzes />} />
+            <Route path="progress" element={<ProgressTracking />} />
+            <Route path="bookmarks" element={<Bookmarks />} />
+            <Route path="notifications-feed" element={<NotificationsFeed />} />
+            <Route path="notes" element={<PersonalNotes />} />
+            <Route path="search" element={<GlobalSearch />} />
+            <Route path="assignments" element={<ViewAssignments />} />
+            <Route path="submit/:assignmentId" element={<SubmitAssignment />} />
+            <Route path="questions" element={<StudentQuestions />} />
+            <Route path="study-material" element={<DownStudyMaterial />} />
+            <Route path="feedback" element={<StudentFeedback />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="profile" element={<Settings />} />
+            <Route path="change-password" element={<Settings />} />
+            <Route path="contact-admin" element={<ContactAdmin />} />
+            <Route path="leave" element={<ApplyLeave />} />
+            <Route path="attendance" element={<Attendance />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
 
           {/* Teacher Routes - Protected */}
           <Route
-            path="/teacher/*"
-            element={
-              <ProtectedRoute requiredRole="teacher">
-                <Routes>
-                  <Route path="/" element={<TeacherDashboard />} />
-                  <Route path="/students" element={<ManageStudents />} />
-                  <Route path="/courses" element={<ManageCourses />} />
-                  <Route path="/create-course" element={<CreateCourse />} />
-                  <Route path="/assignments" element={<ManageAssignments />} />
-                  <Route path="/create-assignment" element={<CreateAssignment />} />
-                  <Route path="/submissions/:assignmentId" element={<ViewSubmissions />} />
-                  <Route path="/questions" element={<TeacherQuestions />} />
-                  <Route path="/leave" element={<TeacherLeaves />} />
-                  <Route path="/attendance" element={<Attendance />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ProtectedRoute>
-            }
-          />
+            path="/teacher"
+            element={<ProtectedRoute requiredRole="teacher" />}
+          >
+            <Route index element={<TeacherDashboard />} />
+            <Route path="students" element={<ManageStudents />} />
+            <Route path="courses" element={<ManageCourses />} />
+            <Route path="create-course" element={<CreateCourse />} />
+            <Route path="assignments" element={<ManageAssignments />} />
+            <Route path="create-assignment" element={<CreateAssignment />} />
+            <Route path="submissions/:assignmentId" element={<ViewSubmissions />} />
+            <Route path="questions" element={<TeacherQuestions />} />
+            <Route path="leave" element={<TeacherLeaves />} />
+            <Route path="attendance" element={<Attendance />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
 
           {/* Admin Routes - Protected */}
           <Route
-            path="/admin/*"
-            element={
-              <ProtectedRoute requiredRole="admin">
-                <Routes>
-                  <Route path="/" element={<AdminDashboard />} />
-                  <Route path="/analytics" element={<PlatformAnalytics />} />
-                  <Route path="/health" element={<SystemHealth />} />
-                  <Route path="/users" element={<UserManagement />} />
-                  <Route path="/students" element={<ManageStudents />} />
-                  <Route path="/notifications" element={<NotificationManagement />} />
-                  <Route path="/enquiries" element={<EnquiryManagement />} />
-                  <Route path="/study-material" element={<UploadStudyMaterial />} />
-                  <Route path="/leaves" element={<LeaveManagement />} />
-                  <Route path="/attendance" element={<Attendance />} />
-                  <Route path="/feedback" element={<ViewFeedback />} />
-                  <Route path="/messages" element={<ViewMessages />} />
-                  <Route path="/send-email" element={<SendEmail />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </ProtectedRoute>
-            }
-          />
+            path="/admin"
+            element={<ProtectedRoute requiredRole="admin" />}
+          >
+            <Route index element={<AdminDashboard />} />
+            <Route path="analytics" element={<PlatformAnalytics />} />
+            <Route path="health" element={<SystemHealth />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="students" element={<ManageStudents />} />
+            <Route path="notifications" element={<NotificationManagement />} />
+            <Route path="enquiries" element={<EnquiryManagement />} />
+            <Route path="study-material" element={<UploadStudyMaterial />} />
+            <Route path="leaves" element={<LeaveManagement />} />
+            <Route path="attendance" element={<Attendance />} />
+            <Route path="feedback" element={<ViewFeedback />} />
+            <Route path="messages" element={<ViewMessages />} />
+            <Route path="send-email" element={<SendEmail />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
 
           {/* Universal Protected Attendance Route */}
           <Route
