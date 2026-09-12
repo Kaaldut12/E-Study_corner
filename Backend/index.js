@@ -135,12 +135,11 @@ app.get('/', (req, res) => {
 
 // Health check endpoint
 app.get(['/health', '/api/health'], (req, res) => {
-  const uri = MONGODB_URI || '';
-  const sanitizedUri = uri.replace(/\/\/[^@]+@/, '//***:***@');
+  const isDbConnected = mongoose.connection.readyState === 1;
   res.json({
-    status: 'Server is running',
-    timestamp: new Date().toISOString(),
-    databaseHost: sanitizedUri
+    status: 'ok',
+    database: isDbConnected ? 'connected' : 'disconnected',
+    timestamp: new Date().toISOString()
   });
 });
 

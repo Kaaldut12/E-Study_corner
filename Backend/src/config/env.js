@@ -47,6 +47,7 @@ export const ENABLE_TWO_STEP_DB = process.env.ENABLE_TWO_STEP_DB === 'true';
 
 // Allowed CORS origins: strictly configured domains only
 const defaultOrigins = [
+  'https://estudycorner.vercel.app',
   'https://e-study-corner.vercel.app',
   'http://localhost:5173',
   'http://localhost:3000',

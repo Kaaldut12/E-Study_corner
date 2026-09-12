@@ -10,6 +10,7 @@ const TRUSTED_STORAGE_DOMAINS = [
   'storage.googleapis.com',
   'vercel-storage.com',
   'public.blob.vercel-storage.com',
+  'estudycorner.vercel.app',
   'e-study-corner.vercel.app'
 ];
 
