@@ -1,5 +1,5 @@
 // frontend/src/pages/Teacher/TeacherLeaves.jsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
@@ -56,10 +56,10 @@ const TeacherLeaves = () => {
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
 
-  const showToast = (message, isError = false) => {
+  const showToast = useCallback((message, isError = false) => {
     setToast({ message, isError });
     setTimeout(() => setToast(null), 4500);
-  };
+  }, []);
 
   const handleQuickStatus = async (leaveId, nextStatus) => {
     try {
@@ -77,7 +77,7 @@ const TeacherLeaves = () => {
     }
   };
 
-  const fetchData = async (isManual = false) => {
+  const fetchData = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
     else setLoading(true);
 
@@ -102,11 +102,11 @@ const TeacherLeaves = () => {
       setLoading(false);
       if (isManual) setRefreshing(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const calculateDays = (startStr, endStr) => {
     if (!startStr || !endStr) return 1;

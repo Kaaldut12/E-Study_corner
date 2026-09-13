@@ -1,5 +1,5 @@
 // frontend/src/pages/Admin/LeaveManagement.jsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import { useAuth } from '../../contexts/AuthContext';
@@ -48,10 +48,10 @@ const LeaveManagement = () => {
     reviewerNotes: 'Official institutional leave sanctioned by Administration.'
   });
 
-  const showToast = (message, isError = false) => {
+  const showToast = useCallback((message, isError = false) => {
     setToast({ message, isError });
     setTimeout(() => setToast(null), 4500);
-  };
+  }, []);
 
   const grantCalculatedDays = useMemo(() => {
     if (!grantForm.startDate || !grantForm.endDate) return 1;
@@ -61,7 +61,7 @@ const LeaveManagement = () => {
     return Math.max(1, Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1);
   }, [grantForm.startDate, grantForm.endDate]);
 
-  const fetchLeaves = async (isManual = false) => {
+  const fetchLeaves = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
     else setLoading(true);
 
@@ -79,11 +79,11 @@ const LeaveManagement = () => {
       setLoading(false);
       if (isManual) setRefreshing(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchLeaves();
-  }, []);
+  }, [fetchLeaves]);
 
   const handleQuickDecision = async (leaveId, status) => {
     try {

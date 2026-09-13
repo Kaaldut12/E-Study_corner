@@ -192,7 +192,7 @@ const AICoach = () => {
 
           // Bullet points
           if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('* ')) {
-            const bulletContent = trimmed.replace(/^([•\-\*]\s*)/, '');
+            const bulletContent = trimmed.replace(/^[•\-*]\s*/, '');
             return (
               <div key={pIdx} className="flex items-start gap-2 pl-1">
                 <span className="text-teal-500 dark:text-teal-400 font-bold leading-none mt-1.5">•</span>

@@ -1,5 +1,5 @@
 // frontend/src/pages/Student/ApplyLeave.jsx
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { SkeletonCardList } from '../../components/common/SkeletonLoader';
 import api from '../../services/api';
@@ -70,12 +70,12 @@ const ApplyLeave = () => {
   // Notification Toast
   const [toast, setToast] = useState(null);
 
-  const showToast = (message, isError = false) => {
+  const showToast = useCallback((message, isError = false) => {
     setToast({ message, isError });
     setTimeout(() => setToast(null), 4500);
-  };
+  }, []);
 
-  const fetchLeaves = async (isManual = false) => {
+  const fetchLeaves = useCallback(async (isManual = false) => {
     if (isManual) setRefreshing(true);
     try {
       const res = await api.get('/leaves/my-leaves');
@@ -91,11 +91,11 @@ const ApplyLeave = () => {
       setLoading(false);
       if (isManual) setRefreshing(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchLeaves();
-  }, []);
+  }, [fetchLeaves]);
 
   // Compute total days between start and end date
   const calculateDays = (startStr, endStr) => {

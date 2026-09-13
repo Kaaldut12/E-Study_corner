@@ -37,16 +37,16 @@ const FloatingAICoachWidget = () => {
 
   const messagesEndRef = useRef(null);
 
-  // Don't show floating widget on dedicated AI Coach page
-  if (location.pathname === '/student/ai-coach') {
-    return null;
-  }
-
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isOpen]);
+
+  // Don't show floating widget on dedicated AI Coach page
+  if (location.pathname === '/student/ai-coach') {
+    return null;
+  }
 
   const handleSend = async (textToSend) => {
     const query = (textToSend !== undefined ? textToSend : prompt).trim();
