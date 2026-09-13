@@ -44,7 +44,7 @@ export const studentService = {
   askTeacherQuestion: (questionData) => api.post('/student/questions', questionData).then(res => res.data),
 
   // --- AI COACH & LEARNING RECOMMENDATIONS ---
-  askAICoach: (prompt) => api.post('/student/ai-coach', { prompt }).then(res => res.data),
+  askAICoach: (prompt, history = []) => api.post('/student/ai-coach', { prompt, history }).then(res => res.data),
   getRecommendations: () => api.get('/student/recommendations').then(res => res.data),
   getWeakTopics: () => api.get('/student/weak-topics').then(res => res.data),
 

@@ -1,6 +1,6 @@
-// frontend/src/pages/Auth/Register.jsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { GraduationCap, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { register as registerRequest } from '../../services/authService';
 import PublicNavbar from '../../components/common/PublicNavbar';
 import EnquiryModal from '../../components/common/EnquiryModal';
@@ -65,12 +65,6 @@ const Register = () => {
 
   return (
     <div className="auth-shell min-h-screen dark:bg-[#070a12] flex flex-col font-sans text-slate-900 dark:text-slate-100 relative overflow-hidden">
-      {/* Background Ambient Lighting Blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="ambient-blob-a absolute top-1/4 left-1/4 w-120 h-120 rounded-full blur-[140px] animate-float-slow" />
-        <div className="ambient-blob-b absolute bottom-1/4 right-1/4 w-120 h-120 rounded-full blur-[150px] animate-float-reverse" />
-      </div>
-
       {/* Top Public Navigation Bar */}
       <PublicNavbar />
 
@@ -80,30 +74,32 @@ const Register = () => {
           <div className="w-16 h-16 rounded-2xl overflow-hidden border border-brand/40 shadow-brand ring-2 ring-white/15 mx-auto mb-3 bg-slate-900 shrink-0">
             <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white font-display">Student Registration Portal</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white font-display">Student Registration Portal</h1>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             E-Study Corner · Student Registration
           </p>
         </div>
 
         {/* Role Restriction Alert Banner */}
-        <div className="mb-6 p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs flex items-start gap-2.5">
-          <span className="text-base">🎓</span>
+        <div className="mb-6 p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs flex items-start gap-2.5">
+          <GraduationCap className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
           <div>
-            <strong className="font-bold text-white block">Student Direct Registration</strong>
+            <strong className="font-bold text-slate-900 dark:text-white block">Student Direct Registration</strong>
             <span>Public registration is open to all enrolled students. Faculty and Teacher accounts are created directly by Institutional Administrators.</span>
           </div>
         </div>
 
         {successMsg && (
-          <div className="mb-4 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
-            ✓ {successMsg}
+          <div className="mb-4 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold flex items-center gap-2 animate-fade-in">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{successMsg}</span>
           </div>
         )}
 
         {errorMsg && (
-          <div className="mb-4 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs">
-            ⚠ {errorMsg}
+          <div className="mb-4 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2 animate-fade-in">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>{errorMsg}</span>
           </div>
         )}
 

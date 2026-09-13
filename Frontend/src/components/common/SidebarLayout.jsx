@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import Navbar from '../Navbar';
+import FloatingAICoachWidget from './FloatingAICoachWidget';
 
 const SidebarLayout = ({ children }) => {
   const { user } = useAuth();
@@ -140,14 +141,7 @@ const SidebarLayout = ({ children }) => {
   const navSections = navSectionsByRole[role] || navSectionsByRole.student;
 
   return (
-    <div className="app-shell workspace-shell min-h-screen dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
-      {/* Dynamic Background Ambient Glowing Blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="ambient-blob-a absolute top-12 left-1/4 w-96 h-96 rounded-full blur-[140px] animate-float-slow" />
-        <div className="ambient-blob-b absolute bottom-16 right-1/4 w-96 h-96 rounded-full blur-[150px] animate-float-reverse" />
-        <div className="ambient-blob-c absolute top-1/2 right-12 w-80 h-80 rounded-full blur-[120px] animate-pulse-glow" />
-      </div>
-
+    <div className="app-shell workspace-shell min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans relative transition-colors duration-200">
       <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
       <div className="flex flex-1 relative z-10">
@@ -283,11 +277,17 @@ const SidebarLayout = ({ children }) => {
 
         {/* Main Content with Fixed Sidebar Offset */}
         <div className="app-main flex-1 lg:pl-64 w-full min-w-0 flex flex-col">
-          <main className="app-content flex-1 p-3.5 sm:p-5 lg:p-7 max-w-7xl w-full mx-auto animate-slide-up min-w-0">
+          <main
+            key={location.pathname}
+            className="app-content flex-1 p-3.5 sm:p-5 lg:p-7 max-w-7xl w-full mx-auto min-w-0"
+          >
             {children}
           </main>
         </div>
       </div>
+
+      {/* Floating AI Coach & Tutor Widget for Students */}
+      {user?.role === 'student' && <FloatingAICoachWidget />}
     </div>
   );
 };

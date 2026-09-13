@@ -52,6 +52,29 @@ export const validateNote = validateBody(['title', 'content']);
 
 export const validateTeacherQuestion = validateBody(['title', 'question', 'teacherId']);
 
+export const validateAICoachPrompt = (req, res, next) => {
+  const prompt = typeof req.body?.prompt === 'string' ? req.body.prompt.trim() : '';
+
+  if (!prompt) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please enter a study question or topic for the AI Coach.',
+      code: 'INVALID_AI_PROMPT'
+    });
+  }
+
+  if (prompt.length > 2000) {
+    return res.status(400).json({
+      success: false,
+      message: 'AI Coach prompts must be 2000 characters or fewer.',
+      code: 'AI_PROMPT_TOO_LONG'
+    });
+  }
+
+  req.body.prompt = prompt;
+  next();
+};
+
 export const validateGrade = (req, res, next) => {
   const grade = req.body.grade;
   if (grade === undefined || grade === null || isNaN(Number(grade)) || Number(grade) < 0) {

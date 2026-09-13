@@ -1,6 +1,24 @@
-// frontend/src/pages/Admin/AdminDashboard.jsx
 import { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  Shield,
+  Crown,
+  Megaphone,
+  GraduationCap,
+  CalendarOff,
+  BarChart3,
+  Users,
+  CheckCircle2,
+  AlertTriangle,
+  X,
+  RefreshCw,
+  LifeBuoy,
+  HelpCircle,
+  Database,
+  Zap,
+  Send,
+  ArrowRight
+} from 'lucide-react';
 import SidebarLayout from '../../components/common/SidebarLayout';
 import { SkeletonDashboard } from '../../components/common/SkeletonLoader';
 import adminService from '../../services/adminService';
@@ -167,13 +185,23 @@ const AdminDashboard = () => {
     <SidebarLayout>
       <div className="space-y-6">
         {/* Welcome Header */}
+        {/* Header Banner */}
         <div className="glass-panel p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl relative overflow-hidden border border-brand">
-          <div className="absolute right-0 top-0 w-72 h-72 rounded-full blur-3xl pointer-events-none" style={{ background: 'var(--brand-glow)' }}></div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
             <div>
               <div className="flex items-center gap-2">
-                <span className={`text-xs font-bold uppercase tracking-wider ${user?.role === 'superadmin' ? 'text-rose-400' : 'text-amber-400'}`}>
-                  {user?.role === 'superadmin' ? '👑 Super Admin Authority Command' : '🛡️ Administrator Control Center'}
+                <span className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${user?.role === 'superadmin' ? 'text-rose-400' : 'text-amber-400'}`}>
+                  {user?.role === 'superadmin' ? (
+                    <>
+                      <Crown className="w-4 h-4" />
+                      <span>Super Admin Authority Command</span>
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="w-4 h-4" />
+                      <span>Administrator Control Center</span>
+                    </>
+                  )}
                 </span>
                 {user?.role === 'superadmin' && (
                   <span className="px-2 py-0.5 bg-rose-500/20 text-rose-300 text-[10px] font-extrabold rounded-md border border-rose-500/30">
@@ -181,12 +209,12 @@ const AdminDashboard = () => {
                   </span>
                 )}
                 <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-[10px] font-extrabold rounded-md border border-emerald-500/30 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   OPERATIONAL
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-                {user?.role === 'superadmin' ? `Welcome, ${user?.name || 'Super Admin'} 👑` : 'Platform Operations & Triage Console 🛡️'}
+                {user?.role === 'superadmin' ? `Welcome, ${user?.name || 'Super Admin'}` : 'Platform Operations & Triage Console'}
               </h1>
               <p className="text-slate-400 text-xs sm:text-sm mt-1 max-w-2xl">
                 Universal platform management: oversee administrators, faculty, student coursework, doubts triage, and live institutional governance.
@@ -198,21 +226,21 @@ const AdminDashboard = () => {
                 to="/admin/students"
                 className="py-2.5 px-4 btn-dashboard-emerald text-white text-xs font-bold rounded-xl flex items-center gap-2"
               >
-                <span>🎓</span>
+                <GraduationCap className="w-4 h-4" />
                 <span>Student Actions Hub</span>
               </Link>
               <Link
                 to="/admin/analytics"
                 className="py-2.5 px-4 btn-premium text-white text-xs font-bold rounded-xl flex items-center gap-2"
               >
-                <span>📊</span>
+                <BarChart3 className="w-4 h-4" />
                 <span>Deep Analytics Hub</span>
               </Link>
               <Link
                 to="/admin/users"
                 className="py-2.5 px-4 btn-dashboard-secondary text-xs font-bold rounded-xl flex items-center gap-2"
               >
-                <span>👥</span>
+                <Users className="w-4 h-4" />
                 <span>User Directory</span>
               </Link>
             </div>
@@ -222,14 +250,24 @@ const AdminDashboard = () => {
         {/* Action Feedback Alerts */}
         {actionSuccess && (
           <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center justify-between animate-fade-in">
-            <span>✅ {actionSuccess}</span>
-            <button onClick={() => setActionSuccess('')} className="text-emerald-400 font-bold">✕</button>
+            <span className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>{actionSuccess}</span>
+            </span>
+            <button type="button" onClick={() => setActionSuccess('')} className="text-emerald-400 font-bold p-1 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
         {actionError && (
           <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center justify-between animate-fade-in">
-            <span>⚠️ {actionError}</span>
-            <button onClick={() => setActionError('')} className="text-rose-400 font-bold">✕</button>
+            <span className="flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-rose-400" />
+              <span>{actionError}</span>
+            </span>
+            <button type="button" onClick={() => setActionError('')} className="text-rose-400 font-bold p-1 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
 
@@ -240,7 +278,7 @@ const AdminDashboard = () => {
           <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-indigo-500/20 pb-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg">⚡</span>
+                <Zap className="w-5 h-5 text-indigo-400" />
                 <h2 className="text-base font-black text-white">Administrative Action Command Center</h2>
               </div>
               <p className="text-xs text-indigo-300/80 mt-0.5">
@@ -253,12 +291,15 @@ const AdminDashboard = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {/* Action 1: Broadcast */}
             <button
+              type="button"
               onClick={() => setShowBroadcastModal(true)}
               className="p-4 rounded-2xl dashboard-action-card border border-indigo-500/30 text-left space-y-1.5 group cursor-pointer hover:border-indigo-400"
             >
               <div className="flex justify-between items-center">
-                <span className="text-xl">📢</span>
-                <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider group-hover:underline">Launch →</span>
+                <Megaphone className="w-5 h-5 text-indigo-400 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider group-hover:underline flex items-center gap-1">
+                  Launch <ArrowRight className="w-3 h-3" />
+                </span>
               </div>
               <h3 className="text-xs font-bold text-white group-hover:text-indigo-300 transition">Broadcast Notice</h3>
               <p className="text-[11px] text-slate-400">Post instant announcement to student & teacher dashboards.</p>
@@ -270,8 +311,10 @@ const AdminDashboard = () => {
               className="p-4 rounded-2xl dashboard-action-card border border-emerald-500/30 text-left space-y-1.5 group cursor-pointer hover:border-emerald-400 block"
             >
               <div className="flex justify-between items-center">
-                <span className="text-xl">🎓</span>
-                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider group-hover:underline">Manage →</span>
+                <GraduationCap className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
+                <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider group-hover:underline flex items-center gap-1">
+                  Manage <ArrowRight className="w-3 h-3" />
+                </span>
               </div>
               <h3 className="text-xs font-bold text-white group-hover:text-emerald-300 transition">Student Actions Console</h3>
               <p className="text-[11px] text-slate-400">Grade coursework, manage student leaves, override attendance & answer doubts.</p>
@@ -283,7 +326,7 @@ const AdminDashboard = () => {
               className="p-4 rounded-2xl dashboard-action-card border border-purple-500/30 text-left space-y-1.5 group cursor-pointer hover:border-purple-400 block"
             >
               <div className="flex justify-between items-center">
-                <span className="text-xl">🏖️</span>
+                <CalendarOff className="w-5 h-5 text-purple-400 group-hover:scale-110 transition-transform" />
                 {(stats.pendingLeavesCount || 0) > 0 && (
                   <span className="px-1.5 py-0.5 bg-purple-500 text-white text-[10px] font-extrabold rounded-full animate-pulse">
                     {stats.pendingLeavesCount} PENDING
@@ -296,6 +339,7 @@ const AdminDashboard = () => {
 
             {/* Action 4: Resolve Support */}
             <button
+              type="button"
               onClick={() => {
                 if (data?.recentSupportMessages?.length > 0) {
                   setSelectedTicket(data.recentSupportMessages[0]);
@@ -306,7 +350,7 @@ const AdminDashboard = () => {
               className="p-4 rounded-2xl dashboard-action-card border border-amber-500/30 text-left space-y-1.5 group cursor-pointer hover:border-amber-400"
             >
               <div className="flex justify-between items-center">
-                <span className="text-xl">🎫</span>
+                <LifeBuoy className="w-5 h-5 text-amber-400 group-hover:scale-110 transition-transform" />
                 {stats.pendingSupportMessages > 0 && (
                   <span className="px-1.5 py-0.5 bg-amber-500 text-slate-950 text-[10px] font-extrabold rounded-full">
                     {stats.pendingSupportMessages} PENDING
@@ -319,6 +363,7 @@ const AdminDashboard = () => {
 
             {/* Action 5: Triage Doubts */}
             <button
+              type="button"
               onClick={() => {
                 if (data?.recentPendingQuestions?.length > 0) {
                   setSelectedQuestion(data.recentPendingQuestions[0]);
@@ -329,7 +374,7 @@ const AdminDashboard = () => {
               className="p-4 rounded-2xl dashboard-action-card border border-sky-500/30 text-left space-y-1.5 group cursor-pointer hover:border-sky-400"
             >
               <div className="flex justify-between items-center">
-                <span className="text-xl">❓</span>
+                <HelpCircle className="w-5 h-5 text-sky-400 group-hover:scale-110 transition-transform" />
                 {stats.pendingTeacherQuestions > 0 && (
                   <span className="px-1.5 py-0.5 bg-sky-500 text-slate-950 text-[10px] font-extrabold rounded-full">
                     {stats.pendingTeacherQuestions} WAITING
@@ -342,13 +387,16 @@ const AdminDashboard = () => {
 
             {/* Action 6: Resync DB */}
             <button
+              type="button"
               onClick={handleTriggerResync}
               disabled={resyncing}
               className="p-4 rounded-2xl dashboard-action-card border border-teal-500/30 text-left space-y-1.5 group cursor-pointer hover:border-teal-400 disabled:opacity-50"
             >
               <div className="flex justify-between items-center">
-                <span className={`text-xl ${resyncing ? 'animate-spin' : ''}`}>🔄</span>
-                <span className="text-[10px] font-bold text-teal-400 uppercase tracking-wider group-hover:underline">Audit →</span>
+                <RefreshCw className={`w-5 h-5 text-teal-400 ${resyncing ? 'animate-spin' : 'group-hover:rotate-45 transition-transform'}`} />
+                <span className="text-[10px] font-bold text-teal-400 uppercase tracking-wider group-hover:underline flex items-center gap-1">
+                  Audit <ArrowRight className="w-3 h-3" />
+                </span>
               </div>
               <h3 className="text-xs font-bold text-white group-hover:text-teal-300 transition">Database Integrity Audit</h3>
               <p className="text-[11px] text-slate-400">Verify MongoDB Atlas connection & refresh all collections.</p>
@@ -493,10 +541,12 @@ const AdminDashboard = () => {
                     </span>
 
                     <button
+                      type="button"
                       onClick={() => setSelectedTicket(msg)}
-                      className="py-1 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold border border-slate-700 transition"
+                      className="py-1 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-bold border border-slate-700 transition flex items-center gap-1.5 cursor-pointer"
                     >
-                      Reply ✍️
+                      <Send className="w-3 h-3 text-slate-400" />
+                      <span>Reply</span>
                     </button>
                   </div>
                 </div>
@@ -510,11 +560,12 @@ const AdminDashboard = () => {
           <div className="glass-panel p-6 rounded-2xl border border-sky-500/30 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
-                <span className="text-lg">❓</span>
+                <HelpCircle className="w-5 h-5 text-sky-400" />
                 <h3 className="text-base font-bold text-white">Student Questions Needing Administrative Triage</h3>
               </div>
-              <Link to="/admin/analytics" className="text-xs text-sky-400 hover:underline font-bold">
-                Explore in Analytics →
+              <Link to="/admin/analytics" className="text-xs text-sky-400 hover:underline font-bold flex items-center gap-1">
+                <span>Explore in Analytics</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
@@ -532,10 +583,12 @@ const AdminDashboard = () => {
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => setSelectedQuestion(q)}
-                    className="w-full mt-2 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-bold transition text-center"
+                    className="w-full mt-2 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-bold transition text-center flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    Provide Administrative Answer ✍️
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Provide Administrative Answer</span>
                   </button>
                 </div>
               ))}
@@ -551,15 +604,15 @@ const AdminDashboard = () => {
             <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full space-y-3 shadow-2xl animate-scale-up">
               <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">📢</span>
+                  <Megaphone className="w-5 h-5 text-indigo-400" />
                   <h3 className="text-base font-bold text-white">Dispatch Campus Broadcast</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowBroadcastModal(false)}
-                  className="text-slate-400 hover:text-white font-bold text-sm"
+                  className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer p-1"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
@@ -581,14 +634,14 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={() => setShowBroadcastModal(false)}
-                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
+                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={broadcasting || !broadcastMsg.trim()}
-                    className="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
+                    className="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 cursor-pointer"
                   >
                     {broadcasting ? 'Publishing...' : 'Publish Announcement'}
                   </button>
@@ -606,15 +659,15 @@ const AdminDashboard = () => {
             <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full max-h-[88vh] overflow-y-auto space-y-3 shadow-2xl animate-scale-up">
               <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">🎫</span>
+                  <LifeBuoy className="w-5 h-5 text-amber-400" />
                   <h3 className="text-base font-bold text-white">Resolve Ticket #{selectedTicket.id}</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedTicket(null)}
-                  className="text-slate-400 hover:text-white font-bold text-sm"
+                  className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer p-1"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
@@ -658,14 +711,14 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedTicket(null)}
-                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
+                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submittingTicket || !ticketReply.trim()}
-                    className="py-2 px-4 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
+                    className="py-2 px-4 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 cursor-pointer"
                   >
                     {submittingTicket ? 'Updating...' : 'Dispatch Resolution'}
                   </button>
@@ -683,15 +736,15 @@ const AdminDashboard = () => {
             <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full max-h-[88vh] overflow-y-auto space-y-3 shadow-2xl animate-scale-up">
               <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">✍️</span>
+                  <HelpCircle className="w-5 h-5 text-sky-400" />
                   <h3 className="text-base font-bold text-white">Answer Student Question</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedQuestion(null)}
-                  className="text-slate-400 hover:text-white font-bold text-sm"
+                  className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer p-1"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
@@ -720,14 +773,14 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={() => setSelectedQuestion(null)}
-                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
+                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submittingQuestion || !questionReply.trim()}
-                    className="py-2 px-4 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
+                    className="py-2 px-4 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 cursor-pointer"
                   >
                     {submittingQuestion ? 'Submitting...' : 'Dispatch Answer'}
                   </button>
@@ -745,15 +798,15 @@ const AdminDashboard = () => {
             <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full max-h-[88vh] overflow-y-auto space-y-3 shadow-2xl animate-scale-up">
               <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-lg">✅</span>
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                   <h3 className="text-base font-bold text-white">System Diagnostic & Audit</h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setShowResyncModal(false)}
-                  className="text-slate-400 hover:text-white font-bold text-sm"
+                  className="text-slate-400 hover:text-white font-bold text-sm cursor-pointer p-1"
                 >
-                  ✕
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 

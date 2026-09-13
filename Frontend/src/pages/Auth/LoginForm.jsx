@@ -1,6 +1,6 @@
-// frontend/src/pages/Auth/LoginForm.jsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { AlertTriangle, ArrowRight } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import PublicNavbar from '../../components/common/PublicNavbar';
 
@@ -40,12 +40,6 @@ const LoginForm = () => {
 
   return (
     <div className="auth-shell min-h-screen dark:bg-[#070a12] flex flex-col font-sans text-slate-900 dark:text-slate-100 relative overflow-hidden">
-      {/* Background Ambient Lighting Blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="ambient-blob-a absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-[140px] animate-float-slow" />
-        <div className="ambient-blob-b absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-[150px] animate-float-reverse" />
-      </div>
-
       <PublicNavbar />
 
       <main className="flex-1 flex items-center justify-center p-3.5 sm:p-6 relative z-10">
@@ -55,18 +49,17 @@ const LoginForm = () => {
             <div className="w-16 h-16 rounded-2xl overflow-hidden border border-brand/40 shadow-brand ring-2 ring-white/15 mx-auto mb-3 bg-slate-900 shrink-0">
               <img src="/logo.png" alt="E-Study Corner Logo" className="w-full h-full object-cover" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight font-display">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight font-display">
               Welcome Back
             </h1>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Access your coursework, learning materials, and grades
             </p>
           </div>
 
-
           {(localError || error) && (
-            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-2.5 animate-fade-in">
-              <span className="font-bold text-base">⚠️</span>
+            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2.5 animate-fade-in">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
               <span>{localError || error}</span>
             </div>
           )}

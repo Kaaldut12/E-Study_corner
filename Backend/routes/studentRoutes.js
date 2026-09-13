@@ -39,7 +39,8 @@ import { verifyToken, requireRole } from '../src/middleware/authMiddleware.js';
 import {
   validateSubmission,
   validateNote,
-  validateTeacherQuestion
+  validateTeacherQuestion,
+  validateAICoachPrompt
 } from '../src/middleware/validationMiddleware.js';
 
 const router = express.Router();
@@ -94,7 +95,7 @@ router.get('/progress', getStudentProgressStats);
 router.get('/notifications', getStudentNotifications);
 
 // AI Coach & Learning Analytics
-router.post('/ai-coach', askAICoach);
+router.post('/ai-coach', validateAICoachPrompt, askAICoach);
 router.get('/recommendations', getAIRecommendations);
 router.get('/weak-topics', getWeakTopicAnalysis);
 

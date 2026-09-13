@@ -1,6 +1,6 @@
-// frontend/src/pages/General/Home.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Sparkles, ArrowRight, BookOpen, Laptop, Video, GraduationCap, CheckCircle2 } from 'lucide-react';
 import NotificationMarquee from '../../components/common/NotificationMarquee';
 import EnquiryModal from '../../components/common/EnquiryModal';
 import PublicNavbar from '../../components/common/PublicNavbar';
@@ -49,13 +49,6 @@ const Home = () => {
 
   return (
     <div id="top" className="site-shell min-h-screen dark:bg-[#070a12] text-slate-900 dark:text-slate-100 flex flex-col font-sans relative overflow-hidden">
-      {/* Dynamic Background Ambient Glowing Blobs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="ambient-blob-a absolute top-16 left-10 w-120 h-120 rounded-full blur-[140px] animate-float-slow" />
-        <div className="ambient-blob-b absolute top-96 right-10 w-120 h-120 rounded-full blur-[160px] animate-float-reverse" />
-        <div className="ambient-blob-c absolute bottom-20 left-1/3 w-120 h-120 rounded-full blur-[120px] animate-pulse-glow" />
-      </div>
-
       {/* Marquee Ticker */}
       <NotificationMarquee />
 
@@ -72,8 +65,9 @@ const Home = () => {
             }`}
           >
             <div className="max-w-4xl space-y-4 sm:space-y-6 animate-fade-in">
-              <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-linear-to-r ${slide.badgeColor} text-[10px] sm:text-xs font-extrabold uppercase tracking-widest border backdrop-blur-md shadow-lg`}>
-                ✨ {slide.tag}
+              <span className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-linear-to-r ${slide.badgeColor} text-[10px] sm:text-xs font-extrabold uppercase tracking-widest border backdrop-blur-md shadow-lg inline-flex items-center gap-1.5`}>
+                <Sparkles className="w-3 h-3 text-indigo-300" />
+                <span>{slide.tag}</span>
               </span>
               <h1 className="home-hero__title text-2xl sm:text-5xl lg:text-6xl font-black leading-tight tracking-tight font-display drop-shadow-lg">
                 {slide.title}
@@ -84,15 +78,17 @@ const Home = () => {
               <div className="pt-2 sm:pt-3 flex flex-wrap justify-center gap-3 sm:gap-4">
                 <Link
                   to="/register"
-                  className="py-2.5 sm:py-3.5 px-5 sm:px-8 rounded-2xl btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide"
+                  className="py-2.5 sm:py-3.5 px-5 sm:px-8 rounded-2xl btn-premium text-white text-xs font-extrabold shadow-brand tracking-wide flex items-center gap-2"
                 >
-                  🚀 Get Started Free
+                  <span>Get Started Free</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   to="/login"
-                  className="py-2.5 sm:py-3.5 px-5 sm:px-8 rounded-2xl btn-secondary text-slate-200 text-xs font-bold"
+                  className="py-2.5 sm:py-3.5 px-5 sm:px-8 rounded-2xl btn-secondary text-slate-200 text-xs font-bold flex items-center gap-2"
                 >
-                  📖 Explore Course Materials
+                  <BookOpen className="w-4 h-4" />
+                  <span>Explore Course Materials</span>
                 </Link>
               </div>
             </div>
@@ -157,8 +153,8 @@ const Home = () => {
           {/* 3 Interactive Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             <div className="glass-panel glass-panel-hover glass-card-accent p-5 sm:p-7 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 group">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center text-2xl sm:text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
-                💻
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center font-bold group-hover:scale-110 transition-all shadow-md">
+                <Laptop className="w-6 h-6 text-indigo-400" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-indigo-300 transition-colors font-display">
                 Facilities of Online Classes
@@ -169,8 +165,8 @@ const Home = () => {
             </div>
 
             <div className="glass-panel glass-panel-hover glass-card-accent p-5 sm:p-7 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 group">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center text-2xl sm:text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
-                🎥
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-purple-500/15 border border-purple-500/30 text-purple-400 flex items-center justify-center font-bold group-hover:scale-110 transition-all shadow-md">
+                <Video className="w-6 h-6 text-purple-400" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-purple-300 transition-colors font-display">
                 Daily Live Classes
@@ -181,8 +177,8 @@ const Home = () => {
             </div>
 
             <div className="glass-panel glass-panel-hover glass-card-accent p-5 sm:p-7 rounded-2xl sm:rounded-3xl space-y-3 sm:space-y-4 group">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-2xl sm:text-3xl font-bold group-hover:scale-110 group-hover:rotate-6 transition-all shadow-md">
-                📚
+              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold group-hover:scale-110 transition-all shadow-md">
+                <BookOpen className="w-6 h-6 text-emerald-400" />
               </div>
               <h3 className="text-lg sm:text-xl font-bold text-white group-hover:text-emerald-300 transition-colors font-display">
                 100+ Free Courses & Notes
@@ -342,7 +338,6 @@ const Home = () => {
 
         {/* Project Introduction Card */}
         <div id="about" className="glass-panel p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl border border-slate-800 space-y-3 sm:space-y-4 relative overflow-hidden scroll-mt-24">
-          <div className="ambient-blob-a absolute -right-20 -bottom-20 w-80 h-80 rounded-full blur-3xl pointer-events-none" />
           <span className="text-xs font-extrabold t-brand uppercase tracking-widest block">Featured Portfolio Project</span>
           <h3 className="text-xl sm:text-3xl font-black text-white font-display">About E-Study Corner</h3>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed text-justify">

@@ -191,6 +191,32 @@ describe('Student Workflow & Features Tests', () => {
     });
   });
 
+  describe('AI Study Coach', () => {
+    it('rejects empty coaching prompts', async () => {
+      const res = await apiRequest('/api/student/ai-coach', {
+        method: 'POST',
+        token: studentToken,
+        body: { prompt: '   ' }
+      });
+      assert.equal(res.status, 400);
+      assert.equal(res.data.success, false);
+      assert.equal(res.data.code, 'INVALID_AI_PROMPT');
+    });
+
+    it('returns a structured coaching response for a valid prompt', async () => {
+      const res = await apiRequest('/api/student/ai-coach', {
+        method: 'POST',
+        token: studentToken,
+        body: { prompt: 'Explain SQL joins' }
+      });
+      assert.equal(res.status, 200);
+      assert.equal(res.data.success, true);
+      assert.equal(typeof res.data.response.explanation, 'string');
+      assert.ok(Array.isArray(res.data.response.practiceQuestions));
+      assert.equal(typeof res.data.response.recommendedTopic, 'string');
+    });
+  });
+
   describe('Bookmarks System', () => {
     it('toggles and retrieves bookmarks', async () => {
       // Toggle bookmark on course_3 (not in initial seed)
