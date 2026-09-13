@@ -90,7 +90,7 @@ const Navbar = ({ toggleSidebar }) => {
                   style={{ backgroundColor: activeThemeObj?.hex }}
                 />
                 <Palette className="w-3.5 h-3.5 text-brand hidden sm:inline-block" />
-                <span className="hidden md:inline-block text-[11px] font-bold truncate max-w-[90px]">
+                <span className="hidden md:inline-block text-[11px] font-bold truncate max-w-22.5">
                   {activeThemeObj?.label}
                 </span>
               </button>
@@ -220,7 +220,7 @@ const Navbar = ({ toggleSidebar }) => {
 
               {/* User Identity Details */}
               <div className="hidden md:flex flex-col text-left leading-tight pr-0.5">
-                <span className="navbar-user-name text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-brand transition-colors truncate max-w-[110px] xl:max-w-[140px]">
+                <span className="navbar-user-name text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-brand transition-colors truncate max-w-25 xl:max-w-35">
                   {user.name}
                 </span>
                 <div className="flex items-center gap-1 text-[10px] text-slate-500 dark:text-slate-400">

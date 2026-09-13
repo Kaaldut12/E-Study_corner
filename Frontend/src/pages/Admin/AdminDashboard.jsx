@@ -548,13 +548,14 @@ const AdminDashboard = () => {
         ========================================================================== */}
         {showBroadcastModal && (
           <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
-            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
-              <div className="flex justify-between items-center">
+            <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full space-y-3 shadow-2xl animate-scale-up">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">📢</span>
-                  <h3 className="text-lg font-bold text-white">Dispatch Campus Broadcast</h3>
+                  <span className="text-lg">📢</span>
+                  <h3 className="text-base font-bold text-white">Dispatch Campus Broadcast</h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setShowBroadcastModal(false)}
                   className="text-slate-400 hover:text-white font-bold text-sm"
                 >
@@ -562,32 +563,32 @@ const AdminDashboard = () => {
                 </button>
               </div>
 
-              <p className="text-xs text-slate-400">
-                Notice will be immediately synchronized across the database and displayed on all student & teacher screens.
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                Notice will be immediately synchronized across the database and displayed on student & teacher dashboards.
               </p>
 
-              <form onSubmit={handleBroadcastAnnouncement} className="space-y-4">
+              <form onSubmit={handleBroadcastAnnouncement} className="space-y-3">
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={broadcastMsg}
                   onChange={(e) => setBroadcastMsg(e.target.value)}
-                  placeholder="e.g. System maintenance scheduled for Saturday 11:00 PM. Coursework upload deadline extended by 24 hours."
+                  placeholder="e.g. System maintenance scheduled for Saturday 11:00 PM. Assignment deadline extended."
                   required
-                  className="w-full p-3.5 rounded-2xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
+                  className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
                 />
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-2 pt-1 border-t border-slate-800/80">
                   <button
                     type="button"
                     onClick={() => setShowBroadcastModal(false)}
-                    className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
+                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={broadcasting || !broadcastMsg.trim()}
-                    className="py-2.5 px-5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
+                    className="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
                   >
                     {broadcasting ? 'Publishing...' : 'Publish Announcement'}
                   </button>
@@ -602,13 +603,14 @@ const AdminDashboard = () => {
         ========================================================================== */}
         {selectedTicket && (
           <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
-            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
-              <div className="flex justify-between items-center">
+            <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full max-h-[88vh] overflow-y-auto space-y-3 shadow-2xl animate-scale-up">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">🎫</span>
-                  <h3 className="text-lg font-bold text-white">Resolve Support Ticket #{selectedTicket.id}</h3>
+                  <span className="text-lg">🎫</span>
+                  <h3 className="text-base font-bold text-white">Resolve Ticket #{selectedTicket.id}</h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setSelectedTicket(null)}
                   className="text-slate-400 hover:text-white font-bold text-sm"
                 >
@@ -616,23 +618,23 @@ const AdminDashboard = () => {
                 </button>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1 text-xs">
+              <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1 text-xs">
                 <div className="text-slate-400">
                   From: <span className="text-white font-semibold">{selectedTicket.userName}</span> ({selectedTicket.userRole})
                 </div>
                 <div className="text-slate-400">Subject: <span className="text-white font-semibold">{selectedTicket.subject}</span></div>
-                <div className="mt-2 text-slate-300 italic bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <div className="text-slate-300 italic bg-slate-950 p-2 rounded-lg border border-slate-800 mt-1">
                   "{selectedTicket.message}"
                 </div>
               </div>
 
-              <form onSubmit={handleResolveTicket} className="space-y-4">
+              <form onSubmit={handleResolveTicket} className="space-y-3">
                 <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1.5">Ticket Status</label>
+                  <label className="text-[11px] font-bold text-slate-300 block mb-1 uppercase tracking-wider">Ticket Status</label>
                   <select
                     value={ticketStatus}
                     onChange={(e) => setTicketStatus(e.target.value)}
-                    className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500"
+                    className="w-full p-2 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500"
                   >
                     <option value="resolved">Resolved (Close Ticket)</option>
                     <option value="in-progress">In-Progress (Keep Active)</option>
@@ -641,31 +643,31 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-300 block mb-1.5">Official Administrative Reply</label>
+                  <label className="text-[11px] font-bold text-slate-300 block mb-1 uppercase tracking-wider">Official Reply</label>
                   <textarea
-                    rows={4}
+                    rows={3}
                     value={ticketReply}
                     onChange={(e) => setTicketReply(e.target.value)}
-                    placeholder="Provide solution or resolution notes to user..."
+                    placeholder="Provide resolution commentary for user..."
                     required
-                    className="w-full p-3.5 rounded-2xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
+                    className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
                   />
                 </div>
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-2 pt-1 border-t border-slate-800/80">
                   <button
                     type="button"
                     onClick={() => setSelectedTicket(null)}
-                    className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
+                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submittingTicket || !ticketReply.trim()}
-                    className="py-2.5 px-5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
+                    className="py-2 px-4 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
                   >
-                    {submittingTicket ? 'Updating...' : 'Dispatch Ticket Resolution'}
+                    {submittingTicket ? 'Updating...' : 'Dispatch Resolution'}
                   </button>
                 </div>
               </form>
@@ -678,13 +680,14 @@ const AdminDashboard = () => {
         ========================================================================== */}
         {selectedQuestion && (
           <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
-            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
-              <div className="flex justify-between items-center">
+            <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full max-h-[88vh] overflow-y-auto space-y-3 shadow-2xl animate-scale-up">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">✍️</span>
-                  <h3 className="text-lg font-bold text-white">Answer Student Question</h3>
+                  <span className="text-lg">✍️</span>
+                  <h3 className="text-base font-bold text-white">Answer Student Question</h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setSelectedQuestion(null)}
                   className="text-slate-400 hover:text-white font-bold text-sm"
                 >
@@ -692,39 +695,39 @@ const AdminDashboard = () => {
                 </button>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-1 text-xs">
+              <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1 text-xs">
                 <div className="text-sky-400 font-bold">{selectedQuestion.subject}</div>
                 <h4 className="font-bold text-white">{selectedQuestion.title}</h4>
-                <p className="text-slate-300 italic mt-1 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                <p className="text-slate-300 italic mt-0.5 bg-slate-950 p-2 rounded-lg border border-slate-800">
                   "{selectedQuestion.questionText}"
                 </p>
-                <div className="text-[11px] text-slate-400 mt-1">
+                <div className="text-[10px] text-slate-400 mt-1">
                   Student: {selectedQuestion.studentName} · Assigned Teacher: {selectedQuestion.teacherName}
                 </div>
               </div>
 
-              <form onSubmit={handleAnswerQuestion} className="space-y-4">
+              <form onSubmit={handleAnswerQuestion} className="space-y-3">
                 <textarea
-                  rows={4}
+                  rows={3}
                   value={questionReply}
                   onChange={(e) => setQuestionReply(e.target.value)}
                   placeholder="Type administrative clarification or academic guidance..."
                   required
-                  className="w-full p-3.5 rounded-2xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
+                  className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs focus:outline-none focus:border-indigo-500 resize-none"
                 />
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-2 pt-1 border-t border-slate-800/80">
                   <button
                     type="button"
                     onClick={() => setSelectedQuestion(null)}
-                    className="py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
+                    className="py-2 px-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={submittingQuestion || !questionReply.trim()}
-                    className="py-2.5 px-5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
+                    className="py-2 px-4 bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold rounded-xl transition disabled:opacity-50"
                   >
                     {submittingQuestion ? 'Submitting...' : 'Dispatch Answer'}
                   </button>
@@ -739,13 +742,14 @@ const AdminDashboard = () => {
         ========================================================================== */}
         {showResyncModal && resyncAudit && (
           <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4">
-            <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-5 animate-scale-up">
-              <div className="flex justify-between items-center">
+            <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-slate-800 max-w-md w-full max-h-[88vh] overflow-y-auto space-y-3 shadow-2xl animate-scale-up">
+              <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-xl">✅</span>
-                  <h3 className="text-lg font-bold text-white">System Diagnostic & Audit Complete</h3>
+                  <span className="text-lg">✅</span>
+                  <h3 className="text-base font-bold text-white">System Diagnostic & Audit</h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setShowResyncModal(false)}
                   className="text-slate-400 hover:text-white font-bold text-sm"
                 >
@@ -753,22 +757,22 @@ const AdminDashboard = () => {
                 </button>
               </div>
 
-              <div className="space-y-3 text-xs">
-                <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-bold flex justify-between items-center">
+              <div className="space-y-2.5 text-xs">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 font-bold flex justify-between items-center">
                   <span>Engine:</span>
                   <span>{resyncAudit.databaseState}</span>
                 </div>
 
-                <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
                   <div className="text-[10px] uppercase font-bold text-slate-400">Live Collection Counts</div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="grid grid-cols-2 gap-1.5 text-xs">
                     <div>Users: <span className="font-bold text-white">{resyncAudit.recordCounts?.users}</span></div>
                     <div>Courses: <span className="font-bold text-white">{resyncAudit.recordCounts?.courses}</span></div>
                     <div>Assignments: <span className="font-bold text-white">{resyncAudit.recordCounts?.assignments}</span></div>
                     <div>Submissions: <span className="font-bold text-white">{resyncAudit.recordCounts?.submissions}</span></div>
-                    <div>Student Doubts: <span className="font-bold text-white">{resyncAudit.recordCounts?.teacherDoubts}</span></div>
+                    <div>Doubts: <span className="font-bold text-white">{resyncAudit.recordCounts?.teacherDoubts}</span></div>
                     <div>Quizzes: <span className="font-bold text-white">{resyncAudit.recordCounts?.quizzes}</span></div>
-                    <div>Support Tickets: <span className="font-bold text-white">{resyncAudit.recordCounts?.supportTickets}</span></div>
+                    <div>Tickets: <span className="font-bold text-white">{resyncAudit.recordCounts?.supportTickets}</span></div>
                     <div>Feedback: <span className="font-bold text-white">{resyncAudit.recordCounts?.feedbackReviews}</span></div>
                   </div>
                 </div>
@@ -778,10 +782,11 @@ const AdminDashboard = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end pt-1 border-t border-slate-800/80">
                 <button
+                  type="button"
                   onClick={() => setShowResyncModal(false)}
-                  className="py-2 px-5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition"
+                  className="py-2 px-4 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition"
                 >
                   Dismiss
                 </button>

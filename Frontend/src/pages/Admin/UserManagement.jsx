@@ -69,6 +69,7 @@ const UserManagement = () => {
 
   // Add User Modal State
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddPerms, setShowAddPerms] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('Admin@123');
@@ -79,6 +80,7 @@ const UserManagement = () => {
 
   // Edit User & Permissions Modal State
   const [editingUser, setEditingUser] = useState(null);
+  const [showEditPerms, setShowEditPerms] = useState(false);
   const [editRole, setEditRole] = useState('student');
   const [editDepartment, setEditDepartment] = useState('');
   const [editPermissions, setEditPermissions] = useState([]);
@@ -602,27 +604,31 @@ const UserManagement = () => {
 
         {/* Edit User & Permissions Modal */}
         {editingUser && (
-          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
-            <div className="glass-panel max-w-xl w-full p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
+            <div className="glass-panel max-w-lg w-full p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3 shadow-2xl max-h-[88vh] flex flex-col">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
                 <div>
-                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                  <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-1.5">
                     <span>🛡️ Edit Permissions & Role</span>
                   </h3>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-[11px] text-slate-400">
                     Customizing access for <strong className="text-indigo-400">{editingUser.name}</strong> ({editingUser.email})
                   </p>
                 </div>
-                <button onClick={() => setEditingUser(null)} className="text-slate-400 hover:text-white p-1 text-sm font-bold">
+                <button
+                  type="button"
+                  onClick={() => setEditingUser(null)}
+                  className="text-slate-400 hover:text-white p-1 text-sm font-bold"
+                >
                   ✕
                 </button>
               </div>
 
-              <form onSubmit={handleSaveUserEdit} className="space-y-4 overflow-y-auto pr-1 flex-1">
+              <form onSubmit={handleSaveUserEdit} className="space-y-3 overflow-y-auto pr-1 flex-1">
                 {/* Role selection */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Account Role</label>
-                  <div className={`grid ${currentUser?.role === 'superadmin' ? 'grid-cols-4' : 'grid-cols-3'} gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs`}>
+                  <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">Account Role</label>
+                  <div className={`grid ${currentUser?.role === 'superadmin' ? 'grid-cols-4' : 'grid-cols-3'} gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs`}>
                     {['student', 'teacher', 'admin', ...(currentUser?.role === 'superadmin' ? ['superadmin'] : [])].map(r => (
                       <button
                         key={r}
@@ -631,9 +637,9 @@ const UserManagement = () => {
                           setEditRole(r);
                           setEditPermissions(getRoleDefaults(r));
                         }}
-                        className={`py-2 rounded-lg font-bold capitalize transition ${
+                        className={`py-1.5 rounded-lg font-bold capitalize transition ${
                           editRole === r
-                            ? r === 'superadmin' ? 'bg-rose-600 text-white' : r === 'teacher' ? 'bg-purple-600 text-white' : r === 'admin' ? 'bg-amber-600 text-white' : 'bg-emerald-600 text-white'
+                            ? r === 'superadmin' ? 'bg-rose-600 text-white shadow-sm' : r === 'teacher' ? 'bg-purple-600 text-white shadow-sm' : r === 'admin' ? 'bg-amber-600 text-white shadow-sm' : 'bg-emerald-600 text-white shadow-sm'
                             : 'text-slate-400 hover:text-white'
                         }`}
                       >
@@ -645,82 +651,102 @@ const UserManagement = () => {
 
                 {/* Department / Program */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Department / Academic Program</label>
+                  <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">Department / Academic Program</label>
                   <input
                     type="text"
                     value={editDepartment}
                     onChange={(e) => setEditDepartment(e.target.value)}
                     placeholder="e.g. Computer Science & Engineering"
-                    className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                   />
                 </div>
 
-                {/* Permissions Checklist */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-semibold text-slate-300">
-                      Granular Capabilities ({editPermissions.length} selected)
-                    </label>
-                    <div className="flex items-center gap-2 text-[11px]">
-                      <button
-                        type="button"
-                        onClick={() => setEditPermissions(ALL_SYSTEM_PERMISSIONS.map(p => p.id))}
-                        className="text-indigo-400 hover:text-indigo-300 font-semibold"
-                      >
-                        Select All
-                      </button>
-                      <span className="text-slate-600">•</span>
-                      <button
-                        type="button"
-                        onClick={() => setEditPermissions(getRoleDefaults(editRole))}
-                        className="text-slate-400 hover:text-slate-200"
-                      >
-                        Role Defaults
-                      </button>
-                      <span className="text-slate-600">•</span>
-                      <button
-                        type="button"
-                        onClick={() => setEditPermissions([])}
-                        className="text-slate-500 hover:text-slate-300"
-                      >
-                        Clear
-                      </button>
+                {/* Permissions Collapsible Section */}
+                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-semibold text-slate-200 block">
+                        Assigned Capabilities ({editPermissions.length} selected)
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        Default role capabilities are active.
+                      </span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowEditPerms(!showEditPerms)}
+                      className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 transition flex items-center gap-1"
+                    >
+                      <span>{showEditPerms ? '▲ Hide' : '⚙️ Customize ▾'}</span>
+                    </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
-                    {ALL_SYSTEM_PERMISSIONS.map(p => {
-                      const isChecked = editPermissions.includes(p.id);
-                      return (
-                        <label
-                          key={p.id}
-                          className={`flex items-start gap-2.5 p-2 rounded-lg cursor-pointer border transition text-xs select-none ${
-                            isChecked
-                              ? 'bg-indigo-600/10 border-indigo-500/30 text-white'
-                              : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:border-slate-700'
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => toggleEditPermission(p.id)}
-                            className="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 bg-slate-900"
-                          />
-                          <div>
-                            <div className="font-semibold">{p.label}</div>
-                            <div className="text-[10px] text-slate-500">{p.description}</div>
-                          </div>
-                        </label>
-                      );
-                    })}
-                  </div>
+                  {showEditPerms && (
+                    <div className="mt-2.5 pt-2.5 border-t border-slate-800 space-y-2 animate-fadeIn">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-slate-400">Select granular permissions:</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setEditPermissions(ALL_SYSTEM_PERMISSIONS.map(p => p.id))}
+                            className="text-indigo-400 hover:text-indigo-300 font-semibold"
+                          >
+                            Select All
+                          </button>
+                          <span className="text-slate-600">•</span>
+                          <button
+                            type="button"
+                            onClick={() => setEditPermissions(getRoleDefaults(editRole))}
+                            className="text-slate-400 hover:text-slate-200"
+                          >
+                            Role Defaults
+                          </button>
+                          <span className="text-slate-600">•</span>
+                          <button
+                            type="button"
+                            onClick={() => setEditPermissions([])}
+                            className="text-slate-500 hover:text-slate-300"
+                          >
+                            Clear
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 bg-slate-950 p-2 rounded-xl border border-slate-800 max-h-36 overflow-y-auto">
+                        {ALL_SYSTEM_PERMISSIONS.map(p => {
+                          const isChecked = editPermissions.includes(p.id);
+                          return (
+                            <label
+                              key={p.id}
+                              className={`flex items-start gap-2 p-1.5 rounded-lg cursor-pointer border transition text-xs select-none ${
+                                isChecked
+                                  ? 'bg-indigo-600/10 border-indigo-500/30 text-white'
+                                  : 'bg-slate-900/60 border-slate-800/80 text-slate-400 hover:border-slate-700'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleEditPermission(p.id)}
+                                className="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 bg-slate-900"
+                              />
+                              <div>
+                                <div className="font-semibold text-[11px]">{p.label}</div>
+                                <div className="text-[9px] text-slate-500 leading-tight">{p.description}</div>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                <div className="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-800">
                   <button
                     type="button"
                     onClick={() => setEditingUser(null)}
-                    className="py-2 px-4 rounded-xl text-xs text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+                    className="py-2 px-4 rounded-xl text-xs text-slate-400 hover:text-white bg-slate-900 border border-slate-800 transition"
                   >
                     Cancel
                   </button>
@@ -737,31 +763,35 @@ const UserManagement = () => {
           </div>
         )}
 
-        {/* Add User Modal */}
+        {/* Add User / Provision Teacher Modal */}
         {showAddModal && (
-          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
-            <div className="glass-panel max-w-xl w-full p-4 sm:p-6 rounded-2xl border border-slate-800 space-y-4 shadow-2xl max-h-[90vh] flex flex-col">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
+            <div className="glass-panel max-w-lg w-full p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3 shadow-2xl max-h-[88vh] flex flex-col">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
                 <div>
-                  <h3 className="text-lg font-bold text-white">
+                  <h3 className="text-base sm:text-lg font-bold text-white">
                     {role === 'teacher' ? '👨‍🏫 Provision New Teacher Account' : role === 'superadmin' ? '👑 Provision Super Admin Account' : 'Add New Platform User'}
                   </h3>
-                  <p className="text-[11px] text-purple-400 font-semibold">
-                    🔒 Account credentials & granular permissions will be configured automatically.
+                  <p className="text-[11px] text-purple-400 font-medium">
+                    🔒 Account credentials & role permissions are automatically configured.
                   </p>
                 </div>
-                <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white p-1 text-sm font-bold">
+                <button
+                  type="button"
+                  onClick={() => setShowAddModal(false)}
+                  className="text-slate-400 hover:text-white p-1 text-sm font-bold"
+                >
                   ✕
                 </button>
               </div>
 
               {/* Role Toggle Selector */}
-              <div className={`grid ${currentUser?.role === 'superadmin' ? 'grid-cols-4' : 'grid-cols-3'} gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs`}>
+              <div className={`grid ${currentUser?.role === 'superadmin' ? 'grid-cols-4' : 'grid-cols-3'} gap-1.5 p-1 bg-slate-950 rounded-xl border border-slate-800 text-xs`}>
                 <button
                   type="button"
                   onClick={() => handleRoleChange('teacher')}
-                  className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
-                    role === 'teacher' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  className={`py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                    role === 'teacher' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <span>👨‍🏫 Teacher</span>
@@ -769,8 +799,8 @@ const UserManagement = () => {
                 <button
                   type="button"
                   onClick={() => handleRoleChange('student')}
-                  className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
-                    role === 'student' ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  className={`py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                    role === 'student' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <span>🎓 Student</span>
@@ -778,8 +808,8 @@ const UserManagement = () => {
                 <button
                   type="button"
                   onClick={() => handleRoleChange('admin')}
-                  className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
-                    role === 'admin' ? 'bg-amber-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                  className={`py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                    role === 'admin' ? 'bg-amber-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <span>⚙️ Admin</span>
@@ -788,8 +818,8 @@ const UserManagement = () => {
                   <button
                     type="button"
                     onClick={() => handleRoleChange('superadmin')}
-                    className={`py-2 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
-                      role === 'superadmin' ? 'bg-rose-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                    className={`py-1.5 rounded-lg font-bold transition flex items-center justify-center gap-1 ${
+                      role === 'superadmin' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     <span>👑 Super</span>
@@ -797,10 +827,10 @@ const UserManagement = () => {
                 )}
               </div>
 
-              <form onSubmit={handleAddUser} className="space-y-4 overflow-y-auto pr-1 flex-1">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <form onSubmit={handleAddUser} className="space-y-3 overflow-y-auto pr-1 flex-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">
                       {role === 'teacher' ? 'Faculty Full Name' : 'Full Name'}
                     </label>
                     <input
@@ -809,12 +839,12 @@ const UserManagement = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder={role === 'teacher' ? 'Dr. John Doe' : 'Student Scholar'}
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">
                       Email Address
                     </label>
                     <input
@@ -823,33 +853,33 @@ const UserManagement = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder={role === 'teacher' ? 'faculty@estudy.com' : 'scholar@estudy.com'}
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">Temporary Password</label>
+                    <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">Temporary Password</label>
                     <input
                       type="password"
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
-                      className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1">
                       {role === 'teacher' ? 'Department / Specialization' : 'Department / Academic Program'}
                     </label>
                     {role === 'teacher' ? (
                       <select
                         value={department}
                         onChange={(e) => setDepartment(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                       >
                         <option value="Computer Science & Engineering">Computer Science & Engineering</option>
                         <option value="Information Technology">Information Technology</option>
@@ -863,70 +893,90 @@ const UserManagement = () => {
                         value={department}
                         onChange={(e) => setDepartment(e.target.value)}
                         placeholder="e.g. Computer Science & Engineering"
-                        className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-slate-100 text-xs focus:outline-none focus:border-indigo-500"
                       />
                     )}
                   </div>
                 </div>
 
-                {/* Permissions section for new user */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="text-xs font-semibold text-slate-300">
-                      Assigned Capabilities ({selectedPermissions.length} selected for {role})
-                    </label>
-                    <div className="flex items-center gap-2 text-[11px]">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedPermissions(ALL_SYSTEM_PERMISSIONS.map(p => p.id))}
-                        className="text-indigo-400 hover:text-indigo-300 font-semibold"
-                      >
-                        Select All
-                      </button>
-                      <span className="text-slate-600">•</span>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedPermissions(getRoleDefaults(role))}
-                        className="text-slate-400 hover:text-slate-200"
-                      >
-                        Reset Defaults
-                      </button>
+                {/* Collapsible Permissions section */}
+                <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-semibold text-slate-200 block">
+                        Assigned Capabilities ({selectedPermissions.length} selected for {role})
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        Default role capabilities are active.
+                      </span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowAddPerms(!showAddPerms)}
+                      className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 transition flex items-center gap-1"
+                    >
+                      <span>{showAddPerms ? '▲ Hide' : '⚙️ Customize ▾'}</span>
+                    </button>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800 max-h-48 overflow-y-auto">
-                    {ALL_SYSTEM_PERMISSIONS.map(p => {
-                      const isChecked = selectedPermissions.includes(p.id);
-                      return (
-                        <label
-                          key={p.id}
-                          className={`flex items-start gap-2 p-2 rounded-lg cursor-pointer border transition text-xs select-none ${
-                            isChecked
-                              ? 'bg-indigo-600/10 border-indigo-500/30 text-white'
-                              : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700'
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={() => togglePermission(p.id)}
-                            className="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 bg-slate-900"
-                          />
-                          <div>
-                            <div className="font-semibold text-slate-200">{p.label}</div>
-                            <div className="text-[10px] text-slate-500">{p.description}</div>
-                          </div>
-                        </label>
-                      );
-                    })}
-                  </div>
+                  {showAddPerms && (
+                    <div className="mt-2.5 pt-2.5 border-t border-slate-800 space-y-2 animate-fadeIn">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-slate-400">Select granular permissions:</span>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPermissions(ALL_SYSTEM_PERMISSIONS.map(p => p.id))}
+                            className="text-indigo-400 hover:text-indigo-300 font-semibold"
+                          >
+                            Select All
+                          </button>
+                          <span className="text-slate-600">•</span>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedPermissions(getRoleDefaults(role))}
+                            className="text-slate-400 hover:text-slate-200"
+                          >
+                            Reset Defaults
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 bg-slate-950 p-2 rounded-xl border border-slate-800 max-h-36 overflow-y-auto">
+                        {ALL_SYSTEM_PERMISSIONS.map(p => {
+                          const isChecked = selectedPermissions.includes(p.id);
+                          return (
+                            <label
+                              key={p.id}
+                              className={`flex items-start gap-2 p-1.5 rounded-lg cursor-pointer border transition text-xs select-none ${
+                                isChecked
+                                  ? 'bg-indigo-600/10 border-indigo-500/30 text-white'
+                                  : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => togglePermission(p.id)}
+                                className="mt-0.5 rounded border-slate-700 text-indigo-600 focus:ring-0 focus:ring-offset-0 bg-slate-900"
+                              />
+                              <div>
+                                <div className="font-semibold text-[11px] text-slate-200">{p.label}</div>
+                                <div className="text-[9px] text-slate-500 leading-tight">{p.description}</div>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+                <div className="flex items-center justify-end gap-2 pt-2.5 border-t border-slate-800">
                   <button
                     type="button"
                     onClick={() => setShowAddModal(false)}
-                    className="py-2 px-4 rounded-xl text-xs text-slate-400 hover:text-white bg-slate-900 border border-slate-800"
+                    className="py-2 px-4 rounded-xl text-xs text-slate-400 hover:text-white bg-slate-900 border border-slate-800 transition"
                   >
                     Cancel
                   </button>

@@ -2127,6 +2127,22 @@ const rawDataStore = {
     const student = users.find(u => u.id === studentId);
     if (!student) return null;
 
+    if (status === 'unmarked') {
+      if (isDBConnected()) {
+        try {
+          await Attendance.deleteOne({ userId: studentId, date: targetDate });
+          return { id: `att_${studentId}_unmarked`, userId: studentId, date: targetDate, status: 'unmarked' };
+        } catch (err) {
+          handleDbFailure('[dataStore] DB markStudentAttendanceOverride delete error:', err.message);
+        }
+      }
+      const idx = memAttendance.findIndex(a => a.userId === studentId && a.date === targetDate);
+      if (idx !== -1) {
+        memAttendance.splice(idx, 1);
+      }
+      return { id: `att_${studentId}_unmarked`, userId: studentId, date: targetDate, status: 'unmarked' };
+    }
+
     const payload = {
       id: `att_${crypto.randomUUID()}`,
       userId: studentId,
